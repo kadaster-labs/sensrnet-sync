@@ -1,2 +1,2 @@
-# sensrnet-sync
-SensRNet Sync component
+# SensRNet Sync component
+
