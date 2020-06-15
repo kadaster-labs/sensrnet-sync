@@ -26,7 +26,7 @@ Modules:
 #### Containerized
 Hyperledger Fabric:
 
-```
+```bash
 ./network.sh down
 ./network.sh up createChannel -ca
 ./network.sh deployCC -l javascript
@@ -34,7 +34,7 @@ Hyperledger Fabric:
 
 ## Find Us
 
-* [GitHub](https://github.com/kad-floriw)
+* [GitHub](https://github.com/kadaster-labs/sensrnet-home)
 
 ## Contributing
 
