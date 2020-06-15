@@ -75,4 +75,3 @@ process = git-lfs filter-process
 .idea/
 
 fabric/bin
-bridge/node_modules/
