@@ -4,7 +4,7 @@ This is the sync component for the SensrNet application. It features a NestJS AP
 
 ## Getting Started
 
-The stack can be ran using docke.
+The stack can be ran using docker.
 
 ### Prerequisities
 
