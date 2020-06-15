@@ -47,16 +47,16 @@ class Sensrnet extends Contract {
     async createSensor(ctx, sensorNumber, sensorId, nodeId, ownerId, name) {
         console.info('============= START : Create Car ===========');
 
-        const car = {
-            color: ownerId,
+        const sensor = {
+            ownerId: ownerId,
             docType: 'sensor',
-            make: sensorId,
-            model: nodeId,
-            owner: name,
+            sensorId: sensorId,
+            nodeId: nodeId,
+            name: name,
         };
 
-        await ctx.stub.putState(sensorNumber, Buffer.from(JSON.stringify(car)));
-        console.info('============= END : Create Car ===========');
+        await ctx.stub.putState(sensorNumber, Buffer.from(JSON.stringify(sensor)));
+        console.info('============= END : Create Sensor ===========');
     }
 
     async queryAllSensors(ctx) {
@@ -85,10 +85,10 @@ class Sensrnet extends Contract {
         if (!sensorAsBytes || sensorAsBytes.length === 0) {
             throw new Error(`${sensorNumber} does not exist`);
         }
-        const car = JSON.parse(sensorAsBytes.toString());
-        car.ownerId = newOwnerId;
+        const sensor = JSON.parse(sensorAsBytes.toString());
+        sensor.ownerId = newOwnerId;
 
-        await ctx.stub.putState(sensorNumber, Buffer.from(JSON.stringify(car)));
+        await ctx.stub.putState(sensorNumber, Buffer.from(JSON.stringify(sensor)));
         console.info('============= END : changeSensorOwner ===========');
     }
 
