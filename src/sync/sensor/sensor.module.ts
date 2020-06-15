@@ -1,17 +1,25 @@
 import {Logger, Module, OnModuleInit} from '@nestjs/common';
 import {EventStoreModule} from '../../event-store/event-store.module';
 import {EventStorePublisher} from '../../event-store/event-store.publisher';
+import { SensorController } from './sensor.controller';
 import {SensorProcessor} from './processors';
 import {plainToClass} from 'class-transformer';
 import {sensorEventType} from '../../events/sensor';
+import {CqrsModule} from "@nestjs/cqrs";
+import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
 
 @Module({
   imports: [
+    CqrsModule,
     EventStoreModule,
     SensorQueryModule,
   ],
+  controllers: [
+    SensorController
+  ],
   providers: [
     SensorProcessor,
+    RetrieveSensorsQueryHandler,
   ],
 })
 
@@ -24,11 +32,14 @@ export class SensorQueryModule implements OnModuleInit {
   ) {
   }
   onModuleInit() {
+
+    // const path = require('path');
+    // const ccpPath = path.resolve(__dirname, '.',  'connection-org1.json');
+
     const onEvent = (_, eventMessage) => {
       const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
       this.sensorProcessor.process(event);
     };
-
 
     this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
       this.logger.warn('Event stream dropped');
