@@ -32,6 +32,38 @@ export class SensorsContract extends Contract {
   }
 
   @Transaction()
+  async initLedger(ctx: Context) {
+    // tslint:disable-next-line:no-console
+    console.info('============= START : Initialize Ledger ===========');
+
+    const sensors: object[] = [
+      {
+        sensorId: '1',
+        nodeId: '1',
+        ownerId: '1',
+        name: 'Camera',
+      },
+      {
+        sensorId: '2',
+        nodeId: '1',
+        ownerId: '1',
+        name: 'Verkeerslicht',
+      },
+    ];
+
+    for (let i = 0; i < sensors.length; i++) {
+      // @ts-ignore
+      sensors[i].docType = 'sensor';
+      await ctx.stub.putState('SENSOR' + i, Buffer.from(JSON.stringify(sensors[i])));
+      // tslint:disable-next-line:no-console
+      console.info('Added <--> ', sensors[i]);
+    }
+
+    // tslint:disable-next-line:no-console
+    console.info('============= END : Initialize Ledger ===========');
+  }
+
+  @Transaction()
   publishEvent(ctx: Context, payload: string) {
     // tslint:disable-next-line:no-console
     console.log(`publish event: [${payload}]`);
