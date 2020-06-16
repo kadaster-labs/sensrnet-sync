@@ -1,6 +1,7 @@
 import {Context, Contract, Default, Info, Transaction} from 'fabric-contract-api';
 import {Event} from './events/event';
 import {EventMessage} from './events/event-message';
+import {SensorsContext} from './SensorsContext';
 
 @Info({
   contact: {
@@ -22,11 +23,29 @@ export class SensorsContract extends Contract {
     super('Sensors');
   }
 
+  createContext(): SensorsContext {
+    return new SensorsContext();
+  }
+
   @Transaction()
   publishEvent(ctx: Context, event: Event) {
     // tslint:disable-next-line:no-console
     console.log(`publish event: [${JSON.stringify(event)}]`);
     const msg = EventMessage.fromEvent(event);
+    // TODO save to ledger
+  }
+
+  @Transaction()
+  sensorRegistered(ctx: SensorsContext, sensorId: string, nodeId: string, ownerId: string,
+                   name: string, longitude: number, latitude: number, height: number,
+                   baseObjectId: string, aim: string, description: string,
+                   manufacturer: string, active: boolean, observationArea: object,
+                   documentationUrl: string, theme: string[], typeName: string,
+                   typeDetails: object) {
+
+    if (nodeId !== ctx.nodeId) {
+      throw new InvalidTransactionCallException();
+    }
     // TODO save to ledger
   }
 
