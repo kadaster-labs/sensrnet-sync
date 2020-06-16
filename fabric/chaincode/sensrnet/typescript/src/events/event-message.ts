@@ -1,18 +1,19 @@
 import {Event} from './event';
+import {v4 as uuidv4} from 'uuid';
 
 export class EventMessage {
-  public readonly streamId: string;
+  public readonly messageId: string;
   public readonly eventType: string;
   public readonly data: object = {};
   public readonly metadata: object = {};
 
   protected constructor(
-    streamId: string,
+    messageId: string,
     eventType: string,
     data: object = {},
     metadata: object = {},
   ) {
-    this.streamId = streamId;
+    this.messageId = messageId;
     this.eventType = eventType;
     this.data = data;
     this.metadata = metadata;
@@ -20,9 +21,18 @@ export class EventMessage {
 
   static fromEvent(event: Event, metadata: object = {}): EventMessage {
     return new this(
-      `${event.streamRoot()}-${event.aggregateId}`,
+      uuidv4(),
       event.constructor.name,
       event,
+      metadata,
+    );
+  }
+
+  static fromPayload(payload: object, eventType: string, metadata: object = {}): EventMessage {
+    return new this(
+      uuidv4(),
+      eventType,
+      payload,
       metadata,
     );
   }

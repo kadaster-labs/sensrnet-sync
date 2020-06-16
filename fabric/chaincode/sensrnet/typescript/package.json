@@ -24,7 +24,8 @@
   "license": "EUPL-1.2",
   "dependencies": {
     "fabric-contract-api": "^2.1.2",
-    "fabric-shim": "^2.1.2"
+    "fabric-shim": "^2.1.2",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

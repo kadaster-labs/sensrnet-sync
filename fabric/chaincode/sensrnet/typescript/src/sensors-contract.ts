@@ -1,7 +1,8 @@
 import {Context, Contract, Default, Info, Transaction} from 'fabric-contract-api';
-import {Event} from './events/event';
 import {EventMessage} from './events/event-message';
-import {SensorsContext} from './SensorsContext';
+import {SensorsContext} from './sensors-context';
+import {sensorEventType} from './events/sensor';
+import {ownerEventType} from './events/owner';
 
 @Info({
   contact: {
@@ -18,9 +19,12 @@ import {SensorsContext} from './SensorsContext';
 })
 @Default()
 export class SensorsContract extends Contract {
+  private supportedEventTypes: string[] = [];
 
   constructor() {
     super('Sensors');
+    this.supportedEventTypes = this.supportedEventTypes.concat(sensorEventType.getSupportedEventTypes());
+    this.supportedEventTypes = this.supportedEventTypes.concat(ownerEventType.getSupportedEventTypes());
   }
 
   createContext(): SensorsContext {
@@ -28,25 +32,19 @@ export class SensorsContract extends Contract {
   }
 
   @Transaction()
-  publishEvent(ctx: Context, event: Event) {
+  publishEvent(ctx: Context, payload: string) {
     // tslint:disable-next-line:no-console
-    console.log(`publish event: [${JSON.stringify(event)}]`);
-    const msg = EventMessage.fromEvent(event);
-    // TODO save to ledger
-  }
+    console.log(`publish event: [${payload}]`);
 
-  @Transaction()
-  sensorRegistered(ctx: SensorsContext, sensorId: string, nodeId: string, ownerId: string,
-                   name: string, longitude: number, latitude: number, height: number,
-                   baseObjectId: string, aim: string, description: string,
-                   manufacturer: string, active: boolean, observationArea: object,
-                   documentationUrl: string, theme: string[], typeName: string,
-                   typeDetails: object) {
-
-    if (nodeId !== ctx.nodeId) {
+    const obj = JSON.parse(payload);
+    if (!!this.supportedEventTypes.includes(obj.eventType)) {
       throw new InvalidTransactionCallException();
     }
-    // TODO save to ledger
+
+    // TODO other validations on the posted payload / events
+
+    const msg = EventMessage.fromPayload(obj, obj.eventType);
+    ctx.stub.putState(msg.messageId, Buffer.from(JSON.stringify(msg)));
   }
 
 }

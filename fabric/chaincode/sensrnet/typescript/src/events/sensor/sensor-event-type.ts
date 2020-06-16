@@ -10,7 +10,6 @@ import {
   SensorRelocated,
   SensorUpdated,
 } from './index';
-import {Logger} from '@nestjs/common';
 
 class SensorEventType {
   constructor() {
@@ -31,7 +30,8 @@ class SensorEventType {
   getType(eventTypeName: string) {
     const t = this.supportedTypes[eventTypeName];
     if (!t) {
-      Logger.warn(`Unsupported event received! eventType: ${eventTypeName}`);
+      // tslint:disable-next-line:no-console
+      console.warn(`Unsupported event received! eventType: ${eventTypeName}`);
     }
     return t;
   }
@@ -40,6 +40,9 @@ class SensorEventType {
     this.supportedTypes[event.name] = event;
   }
 
+  getSupportedEventTypes(): string[] {
+    return this.supportedTypes.map((k, _) => k);
+  }
 }
 
 export const sensorEventType = new SensorEventType();

@@ -1,5 +1,4 @@
 import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from '.';
-import {Logger} from '@nestjs/common';
 
 class OwnerEventType {
   constructor() {
@@ -13,7 +12,8 @@ class OwnerEventType {
   getType(eventTypeName: string) {
     const t = this.supportedTypes[eventTypeName];
     if (!t) {
-      Logger.warn(`Unsupported event received! eventType: ${eventTypeName}`);
+      // tslint:disable-next-line:no-console
+      console.warn(`Unsupported event received! eventType: ${eventTypeName}`);
     }
     return t;
   }
@@ -22,6 +22,9 @@ class OwnerEventType {
     this.supportedTypes[event.name] = event;
   }
 
+  getSupportedEventTypes(): string[] {
+    return this.supportedTypes.map((k, _) => k);
+  }
 }
 
 export const ownerEventType = new OwnerEventType();
