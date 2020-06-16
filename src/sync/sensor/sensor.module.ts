@@ -6,6 +6,7 @@ import {SensorProcessor} from './processors';
 import {plainToClass} from 'class-transformer';
 import {sensorEventType} from '../../events/sensor';
 import {CqrsModule} from "@nestjs/cqrs";
+import { LedgerConnection } from './ledger.connection';
 import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
 
 @Module({
@@ -19,6 +20,7 @@ import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
   ],
   providers: [
     SensorProcessor,
+    LedgerConnection,
     RetrieveSensorsQueryHandler,
   ],
 })
@@ -32,10 +34,6 @@ export class SensorQueryModule implements OnModuleInit {
   ) {
   }
   onModuleInit() {
-
-    // const path = require('path');
-    // const ccpPath = path.resolve(__dirname, '.',  'connection-org1.json');
-
     const onEvent = (_, eventMessage) => {
       const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
       this.sensorProcessor.process(event);

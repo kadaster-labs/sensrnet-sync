@@ -72,3 +72,5 @@ process = git-lfs filter-process
 .idea/
 
 fabric/bin
+src/sync/sensor/wallet
+src/sync/sensor/connection-org1.json
