@@ -1,97 +1,51 @@
-/*
- * Copyright IBM Corp. All Rights Reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
-
-'use strict';
-
 const { Contract } = require('fabric-contract-api');
 
 class Sensrnet extends Contract {
 
     async initLedger(ctx) {
-        console.info('============= START : Initialize Ledger ===========');
         const sensors = [
             {
                 sensorId: '1',
                 nodeId: '1',
                 ownerId: '1',
                 name: 'Camera',
-            },
-            {
-                sensorId: '2',
-                nodeId: '1',
-                ownerId: '1',
-                name: 'Verkeerslicht',
             }
         ];
-
         for (let i = 0; i < sensors.length; i++) {
             sensors[i].docType = 'sensor';
             await ctx.stub.putState('SENSOR' + i, Buffer.from(JSON.stringify(sensors[i])));
-            console.info('Added <--> ', sensors[i]);
         }
-        console.info('============= END : Initialize Ledger ===========');
     }
 
-    async querySensor(ctx, sensorNumber) {
-        const sensorAsBytes = await ctx.stub.getState(sensorNumber); // get the sensor from chaincode state
+    async querySensor(ctx, sensorId) {
+        const sensorAsBytes = await ctx.stub.getState(sensorId);
         if (!sensorAsBytes || sensorAsBytes.length === 0) {
-            throw new Error(`${sensorNumber} does not exist`);
+            throw new Error(`${sensorId} does not exist`);
         }
-        console.log(sensorAsBytes.toString());
         return sensorAsBytes.toString();
     }
 
-    async createSensor(ctx, sensorNumber, sensorId, nodeId, ownerId, name) {
-        console.info('============= START : Create Car ===========');
-
+    async createSensor(ctx, sensorId, nodeId, ownerId, name) {
         const sensor = {
-            ownerId: ownerId,
-            docType: 'sensor',
             sensorId: sensorId,
             nodeId: nodeId,
+            ownerId: ownerId,
             name: name,
+            docType: 'sensor',
         };
-
-        await ctx.stub.putState(sensorNumber, Buffer.from(JSON.stringify(sensor)));
-        console.info('============= END : Create Sensor ===========');
+        await ctx.stub.putState(sensorId, Buffer.from(JSON.stringify(sensor)));
     }
 
-    async queryAllSensors(ctx) {
-        const startKey = 'SENSOR0';
-        const endKey = 'SENSOR999';
-        const allResults = [];
-        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
-            const strValue = Buffer.from(value).toString('utf8');
-            let record;
-            try {
-                record = JSON.parse(strValue);
-            } catch (err) {
-                console.log(err);
-                record = strValue;
-            }
-            allResults.push({ Key: key, Record: record });
-        }
-        console.info(allResults);
-        return JSON.stringify(allResults);
-    }
-
-    async changeSensorOwner(ctx, sensorNumber, newOwnerId) {
-        console.info('============= START : changeCarOwner ===========');
-
-        const sensorAsBytes = await ctx.stub.getState(sensorNumber); // get the car from chaincode state
+    async changeSensorOwner(ctx, sensorId, newOwnerId) {
+        const sensorAsBytes = await ctx.stub.getState(sensorId);
         if (!sensorAsBytes || sensorAsBytes.length === 0) {
-            throw new Error(`${sensorNumber} does not exist`);
+            throw new Error(`Sensor ${sensorId} does not exist.`);
         }
         const sensor = JSON.parse(sensorAsBytes.toString());
         sensor.ownerId = newOwnerId;
 
-        await ctx.stub.putState(sensorNumber, Buffer.from(JSON.stringify(sensor)));
-        console.info('============= END : changeSensorOwner ===========');
+        await ctx.stub.putState(sensorId, Buffer.from(JSON.stringify(sensor)));
     }
-
 }
 
 module.exports = Sensrnet;

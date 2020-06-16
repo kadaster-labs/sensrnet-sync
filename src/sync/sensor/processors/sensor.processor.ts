@@ -54,7 +54,7 @@ export class SensorProcessor {
       const gateway = await this.ledgerConnection.openGateway();
       const contract = await this.ledgerConnection.getContract(gateway);
 
-      await contract.submitTransaction('createSensor', 'SENSOR19', event.sensorId, event.nodeId, event.ownerId, event.name);
+      await contract.submitTransaction('createSensor', event.sensorId, event.nodeId, event.ownerId, event.name);
 
       await this.ledgerConnection.closeGateway(gateway);
     } catch (error) {

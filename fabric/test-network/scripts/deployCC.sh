@@ -210,7 +210,7 @@ chaincodeQuery() {
     sleep $DELAY
     echo "Attempting to Query peer0.org${ORG}, Retry after $DELAY seconds."
     set -x
-    peer chaincode query -C $CHANNEL_NAME -n sensrnet -c '{"Args":["queryAllSensors"]}' >&log.txt
+    peer chaincode query -C $CHANNEL_NAME -n sensrnet -c '{"Args":["querySensor", "SENSOR0"]}' >&log.txt
     res=$?
     set +x
 		let rc=$res

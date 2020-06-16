@@ -14,8 +14,8 @@ export class RetrieveSensorsQueryHandler implements IQueryHandler<RetrieveSensor
             const gateway = await this.ledgerConnection.openGateway();
             const contract = await this.ledgerConnection.getContract(gateway);
 
-            const transactionPromise = await contract.evaluateTransaction('queryAllSensors');
-            result = transactionPromise.toString();
+            const transactionPromise = await contract.evaluateTransaction('querySensor', retrieveSensorsQuery.id);
+            result = JSON.parse(transactionPromise.toString());
 
             await this.ledgerConnection.closeGateway(gateway);
         } catch (error) {
