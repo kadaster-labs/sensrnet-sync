@@ -3,8 +3,6 @@ import {EventStoreModule} from '../../event-store/event-store.module';
 import {EventStorePublisher} from '../../event-store/event-store.publisher';
 import { SensorController } from './sensor.controller';
 import {SensorProcessor} from './processors';
-import {plainToClass} from 'class-transformer';
-import {sensorEventType} from '../../events/sensor';
 import {CqrsModule} from "@nestjs/cqrs";
 import { LedgerConnection } from './ledger.connection';
 import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
@@ -35,8 +33,7 @@ export class SensorQueryModule implements OnModuleInit {
   }
   onModuleInit() {
     const onEvent = (_, eventMessage) => {
-      const event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage.data);
-      this.sensorProcessor.process(event);
+      this.sensorProcessor.process(eventMessage);
     };
 
     this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {

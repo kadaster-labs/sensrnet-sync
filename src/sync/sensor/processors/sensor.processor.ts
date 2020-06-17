@@ -1,20 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  DatastreamAdded,
-  DatastreamDeleted,
-  SensorActivated,
-  SensorDeactivated,
-  SensorDeleted,
-  SensorOwnershipShared,
-  SensorOwnershipTransferred,
-  SensorRegistered,
-  SensorRelocated,
-  SensorUpdated,
-} from 'src/events/sensor';
-import {LedgerConnection} from "../ledger.connection";
-const { Gateway, Wallets } = require('fabric-network');
-const path = require('path');
-const fs = require('fs');
+import { LedgerConnection } from "../ledger.connection";
 
 @Injectable()
 export class SensorProcessor {
@@ -23,74 +8,25 @@ export class SensorProcessor {
   constructor(private readonly ledgerConnection: LedgerConnection) {
   }
 
-  async process(event): Promise<void> {
-    if (event instanceof SensorRegistered) {
-      await this.processCreated(event);
-    } else if (event instanceof SensorUpdated) {
-      await this.processUpdated(event);
-    } else if (event instanceof SensorDeleted) {
-      await this.processDeleted(event);
-    } else if (event instanceof SensorActivated) {
-      await this.processActivated(event);
-    } else if (event instanceof SensorDeactivated) {
-      await this.processDeactivated(event);
-    } else if (event instanceof SensorOwnershipShared) {
-      await this.processOwnershipShared(event);
-    } else if (event instanceof SensorOwnershipTransferred) {
-      await this.processOwnershipTransferred(event);
-    } else if (event instanceof DatastreamAdded) {
-      await this.processDataStreamCreated(event);
-    } else if (event instanceof DatastreamDeleted) {
-      await this.processDataStreamDeleted(event);
-    } else if (event instanceof SensorRelocated) {
-      await this.processLocationUpdated(event);
-    } else {
-      this.logger.warn(`Caught unsupported event: ${event}`);
-    }
-  }
-
-  async processCreated(event: SensorRegistered) {
+  async process(eventMessage): Promise<void> {
     try {
       const gateway = await this.ledgerConnection.openGateway();
       const contract = await this.ledgerConnection.getContract(gateway);
 
-      await contract.submitTransaction('createSensor', event.sensorId, event.nodeId, event.ownerId, event.name);
+      let eventMessageFormatted = {
+        ...eventMessage.data,
+        messageId: eventMessage.eventId,
+        eventType: eventMessage.eventType,
+      }
+      await contract.submitTransaction('submitEvent', JSON.stringify(eventMessageFormatted));
 
       await this.ledgerConnection.closeGateway(gateway);
     } catch (error) {
-      console.error(`Failed to evaluate sensorCreated transaction: ${error}.`);
+      this.logError(eventMessage.eventType, error);
     }
   }
 
-  async processUpdated(event: SensorUpdated) {
+  private logError(eventType, error) {
+    this.logger.error(`Error while syncing ${eventType}: ${error}.`);
   }
-
-  async processDeleted(event: SensorDeleted) {
-  }
-
-  async processActivated(event: SensorActivated) {
-  }
-
-  async processDeactivated(event: SensorDeactivated) {
-  }
-
-  async processOwnershipShared(event: SensorOwnershipShared) {
-  }
-
-  async processOwnershipTransferred(event: SensorOwnershipTransferred) {
-  }
-
-  async processDataStreamCreated(event: DatastreamAdded) {
-  }
-
-  async processDataStreamDeleted(event: DatastreamDeleted) {
-  }
-
-  async processLocationUpdated(event: SensorRelocated) {
-  }
-
-  private logError(event) {
-    this.logger.error(`Error while syncing ${event.eventType}.`);
-  }
-
 }

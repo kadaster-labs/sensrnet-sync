@@ -10,7 +10,7 @@ async function bootstrap() {
   app.enableCors();
 
   const documentOptions = new DocumentBuilder()
-      .setTitle('Sensrnet Sync API')
+      .setTitle('SensRNet Sync API')
       .setVersion('1.0')
       .addBearerAuth()
       .build();

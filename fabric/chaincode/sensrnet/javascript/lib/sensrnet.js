@@ -8,7 +8,7 @@ class Sensrnet extends Contract {
                 sensorId: '1',
                 nodeId: '1',
                 ownerId: '1',
-                name: 'Camera',
+                name: 'Test Sensor',
             }
         ];
         for (let i = 0; i < sensors.length; i++) {
@@ -17,34 +17,17 @@ class Sensrnet extends Contract {
         }
     }
 
-    async querySensor(ctx, sensorId) {
-        const sensorAsBytes = await ctx.stub.getState(sensorId);
+    async querySensor(ctx, eventId) {
+        const sensorAsBytes = await ctx.stub.getState(eventId);
         if (!sensorAsBytes || sensorAsBytes.length === 0) {
-            throw new Error(`${sensorId} does not exist`);
+            throw new Error(`${eventId} does not exist`);
         }
         return sensorAsBytes.toString();
     }
 
-    async createSensor(ctx, sensorId, nodeId, ownerId, name) {
-        const sensor = {
-            sensorId: sensorId,
-            nodeId: nodeId,
-            ownerId: ownerId,
-            name: name,
-            docType: 'sensor',
-        };
-        await ctx.stub.putState(sensorId, Buffer.from(JSON.stringify(sensor)));
-    }
-
-    async changeSensorOwner(ctx, sensorId, newOwnerId) {
-        const sensorAsBytes = await ctx.stub.getState(sensorId);
-        if (!sensorAsBytes || sensorAsBytes.length === 0) {
-            throw new Error(`Sensor ${sensorId} does not exist.`);
-        }
-        const sensor = JSON.parse(sensorAsBytes.toString());
-        sensor.ownerId = newOwnerId;
-
-        await ctx.stub.putState(sensorId, Buffer.from(JSON.stringify(sensor)));
+    async submitEvent(ctx, payload) {
+        const obj = JSON.parse(payload);
+        await ctx.stub.putState(obj.messageId, Buffer.from(JSON.stringify(obj)));
     }
 }
 
