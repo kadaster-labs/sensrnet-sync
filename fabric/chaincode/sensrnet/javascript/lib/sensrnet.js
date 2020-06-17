@@ -25,7 +25,7 @@ class Sensrnet extends Contract {
         return sensorAsBytes.toString();
     }
 
-    async submitEvent(ctx, payload) {
+    async publishEvent(ctx, payload) {
         const obj = JSON.parse(payload);
         await ctx.stub.putState(obj.messageId, Buffer.from(JSON.stringify(obj)));
     }

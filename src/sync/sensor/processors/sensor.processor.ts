@@ -18,7 +18,7 @@ export class SensorProcessor {
         messageId: eventMessage.eventId,
         eventType: eventMessage.eventType,
       }
-      await contract.submitTransaction('submitEvent', JSON.stringify(eventMessageFormatted));
+      await contract.submitTransaction('publishEvent', JSON.stringify(eventMessageFormatted));
 
       await this.ledgerConnection.closeGateway(gateway);
     } catch (error) {
