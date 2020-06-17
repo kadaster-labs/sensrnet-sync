@@ -64,7 +64,7 @@ export class SensorsContract extends Contract {
   }
 
   @Transaction()
-  publishEvent(ctx: Context, payload: string) {
+  async publishEvent(ctx: Context, payload: string) {
     // tslint:disable-next-line:no-console
     console.log(`publish event: [${payload}]`);
 
@@ -76,7 +76,16 @@ export class SensorsContract extends Contract {
     // TODO other validations on the posted payload / events
 
     const msg = EventMessage.fromPayload(obj, obj.eventType);
-    ctx.stub.putState(msg.messageId, Buffer.from(JSON.stringify(msg)));
+    await ctx.stub.putState(msg.messageId, Buffer.from(JSON.stringify(msg)));
+  }
+
+  @Transaction()
+  async querySensor(ctx, eventId) {
+    const sensorAsBytes = await ctx.stub.getState(eventId);
+    if (!sensorAsBytes || sensorAsBytes.length === 0) {
+      throw new Error(`${eventId} does not exist`);
+    }
+    return sensorAsBytes.toString();
   }
 
 }
