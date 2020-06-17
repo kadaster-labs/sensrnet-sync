@@ -29,7 +29,7 @@ Hyperledger Fabric:
 ```bash
 ./network.sh down
 ./network.sh up createChannel -ca
-./network.sh deployCC -l javascript
+./network.sh deployCC -l typescript
 ```
 
 ## Find Us
