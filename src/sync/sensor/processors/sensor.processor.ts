@@ -1,17 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { LedgerConnection } from "../ledger.connection";
+import { LedgerInterface } from "../ledger-interface.service";
 
 @Injectable()
 export class SensorProcessor {
   protected logger: Logger = new Logger(this.constructor.name);
 
-  constructor(private readonly ledgerConnection: LedgerConnection) {
+  constructor(private readonly ledgerInterface: LedgerInterface) {
   }
 
   async process(eventMessage): Promise<void> {
     try {
-      const gateway = await this.ledgerConnection.openGateway();
-      const contract = await this.ledgerConnection.getContract(gateway);
+      const gateway = await this.ledgerInterface.openGateway();
+      const contract = await this.ledgerInterface.getContract(gateway);
 
       let eventMessageFormatted = {
         ...eventMessage.data,
@@ -20,7 +20,7 @@ export class SensorProcessor {
       }
       await contract.submitTransaction('publishEvent', JSON.stringify(eventMessageFormatted));
 
-      await this.ledgerConnection.closeGateway(gateway);
+      await this.ledgerInterface.closeGateway(gateway);
     } catch (error) {
       this.logError(eventMessage.eventType, error);
     }

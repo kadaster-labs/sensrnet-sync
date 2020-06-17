@@ -4,21 +4,24 @@ import {EventStorePublisher} from '../../event-store/event-store.publisher';
 import { SensorController } from './sensor.controller';
 import {SensorProcessor} from './processors';
 import {CqrsModule} from "@nestjs/cqrs";
-import { LedgerConnection } from './ledger.connection';
+import { LedgerInterface } from './ledger-interface.service';
 import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
+import {MongooseModule} from '@nestjs/mongoose';
+import {StateSchema} from './models/state.model';
 
 @Module({
   imports: [
     CqrsModule,
     EventStoreModule,
     SensorQueryModule,
+    MongooseModule.forFeature([{name: 'State', schema: StateSchema}]),
   ],
   controllers: [
     SensorController
   ],
   providers: [
     SensorProcessor,
-    LedgerConnection,
+    LedgerInterface,
     RetrieveSensorsQueryHandler,
   ],
 })
@@ -29,6 +32,7 @@ export class SensorQueryModule implements OnModuleInit {
   constructor(
       private readonly eventStore: EventStorePublisher,
       private readonly sensorProcessor: SensorProcessor,
+      private readonly ledgerInterface: LedgerInterface,
   ) {
   }
   onModuleInit() {
@@ -39,5 +43,8 @@ export class SensorQueryModule implements OnModuleInit {
     this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
       this.logger.warn('Event stream dropped');
     });
+
+    const publishEventCallback = (event) => Logger.log('Publishing received event.');
+    this.ledgerInterface.initBlockListener(publishEventCallback);
   }
 }

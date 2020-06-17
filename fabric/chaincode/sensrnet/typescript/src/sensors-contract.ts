@@ -64,7 +64,9 @@ export class SensorsContract extends Contract {
     // TODO other validations on the posted payload / events
 
     // const msg = EventMessage.fromPayload(obj, obj.eventType);
-    await ctx.stub.putState(obj.messageId, Buffer.from(JSON.stringify(obj)));
+
+    const eventString = JSON.stringify(obj);
+    await ctx.stub.putState(obj.messageId, Buffer.from(eventString));
   }
 
   async querySensor(ctx, eventId) {
