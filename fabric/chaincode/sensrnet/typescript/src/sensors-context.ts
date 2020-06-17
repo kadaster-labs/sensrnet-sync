@@ -5,7 +5,7 @@ export class SensorsContext extends Context {
 
   constructor() {
     super();
-    this.nodeId = process.env.nodeId;
+    this.nodeId = process.env.nodeId || '1';
   }
 
 }

@@ -1,8 +1,7 @@
-import {Context, Contract, Default, Info, Transaction} from 'fabric-contract-api';
-import {EventMessage} from './events/event-message';
-import {SensorsContext} from './sensors-context';
-import {sensorEventType} from './events/sensor';
-import {ownerEventType} from './events/owner';
+import {Context, Contract, Info, Transaction} from 'fabric-contract-api';
+import {sensorEventType} from "./events/sensor";
+import {ownerEventType} from "./events/owner";
+import {EventMessage} from "./events/event-message";
 
 @Info({
   contact: {
@@ -17,22 +16,16 @@ import {ownerEventType} from './events/owner';
   title: 'SensRNet-Sensors ChainCode',
   version: '0.0.1',
 })
-@Default()
 export class SensorsContract extends Contract {
   private supportedEventTypes: string[] = [];
 
   constructor() {
     super('Sensors');
-    this.supportedEventTypes = this.supportedEventTypes.concat(sensorEventType.getSupportedEventTypes());
-    this.supportedEventTypes = this.supportedEventTypes.concat(ownerEventType.getSupportedEventTypes());
+    // this.supportedEventTypes = this.supportedEventTypes.concat(sensorEventType.getSupportedEventTypes());
+    // this.supportedEventTypes = this.supportedEventTypes.concat(ownerEventType.getSupportedEventTypes());
   }
 
-  createContext(): SensorsContext {
-    return new SensorsContext();
-  }
-
-  @Transaction()
-  async initLedger(ctx: Context) {
+  public async initLedger(ctx: Context) {
     // tslint:disable-next-line:no-console
     console.info('============= START : Initialize Ledger ===========');
 
@@ -53,7 +46,6 @@ export class SensorsContract extends Contract {
 
     for (let i = 0; i < sensors.length; i++) {
       // @ts-ignore
-      sensors[i].docType = 'sensor';
       await ctx.stub.putState('SENSOR' + i, Buffer.from(JSON.stringify(sensors[i])));
       // tslint:disable-next-line:no-console
       console.info('Added <--> ', sensors[i]);
@@ -63,23 +55,18 @@ export class SensorsContract extends Contract {
     console.info('============= END : Initialize Ledger ===========');
   }
 
-  @Transaction()
-  async publishEvent(ctx: Context, payload: string) {
-    // tslint:disable-next-line:no-console
-    console.log(`publish event: [${payload}]`);
-
+  async publishEvent(ctx: Context, payload) {
     const obj = JSON.parse(payload);
-    if (!!this.supportedEventTypes.includes(obj.eventType)) {
-      throw new InvalidTransactionCallException();
-    }
+    // if (!!this.supportedEventTypes.includes(obj.eventType)) {
+    //   throw new InvalidTransactionCallException();
+    // }
 
     // TODO other validations on the posted payload / events
 
-    const msg = EventMessage.fromPayload(obj, obj.eventType);
-    await ctx.stub.putState(msg.messageId, Buffer.from(JSON.stringify(msg)));
+    // const msg = EventMessage.fromPayload(obj, obj.eventType);
+    await ctx.stub.putState(obj.messageId, Buffer.from(JSON.stringify(obj)));
   }
 
-  @Transaction()
   async querySensor(ctx, eventId) {
     const sensorAsBytes = await ctx.stub.getState(eventId);
     if (!sensorAsBytes || sensorAsBytes.length === 0) {
