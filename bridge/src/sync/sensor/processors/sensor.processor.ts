@@ -17,6 +17,7 @@ export class SensorProcessor {
         ...eventMessage.data,
         messageId: eventMessage.eventId,
         eventType: eventMessage.eventType,
+        eventNumber: eventMessage.eventNumber,
       }
       await contract.submitTransaction('publishEvent', JSON.stringify(eventMessageFormatted));
 

@@ -1,7 +1,12 @@
 {
-  "name": "fabcar",
-  "version": "1.0.0",
-  "description": "FabCar contract implemented in TypeScript",
+  "name": "sensrnet-sync-fabric-chaincode",
+  "version": "0.0.1",
+  "description": "SensRNet Sync Fabric Chaincode",
+  "author": "Hyperledger",
+  "license": "Apache-2.0",
+  "repository": {
+    "url": "https://github.com/kadaster-labs/sensrnet-sync"
+  },
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "engines": {
@@ -18,8 +23,6 @@
     "prepublishOnly": "npm run build"
   },
   "engineStrict": true,
-  "author": "Hyperledger",
-  "license": "Apache-2.0",
   "dependencies": {
     "fabric-contract-api": "^2.0.0",
     "fabric-shim": "^2.0.0"

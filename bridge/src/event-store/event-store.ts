@@ -1,4 +1,4 @@
-import {NewEvent, TCPClient, TCPWriteEventsOptions} from 'geteventstore-promise';
+import {NewEvent, TCPClient, TCPWriteEventOptions, TCPWriteEventsOptions} from 'geteventstore-promise';
 import {EventStoreConfiguration} from './event-store.configuration';
 import {Injectable} from '@nestjs/common';
 import {EventMessage} from './event-message';
@@ -22,17 +22,14 @@ export class EventStore {
     return await this.client.checkStreamExists(streamName);
   }
 
-  async createEvent(event: EventMessage) {
+  async createEvent(event: EventMessage, options?: TCPWriteEventOptions) {
     await this.client.writeEvent(
         event.streamId,
         event.eventType,
         event.data,
         event.metadata,
+        options,
     );
-  }
-
-  async writeEvents(streamName: string, events: NewEvent[], options?: TCPWriteEventsOptions) {
-    await this.client.writeEvents(streamName, events, options);
   }
 
   async getEvents(streamName: string) {

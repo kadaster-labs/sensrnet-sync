@@ -46,18 +46,18 @@ export class SensorQueryModule implements OnModuleInit {
     });
 
     const publishEventCallback = (event) => {
-      const newEvent: NewEvent = {
-        eventId: event.messageId,
-        eventType: `test-test`,
+      const newEvent = {
+        streamId: `test-${event.aggregateId}`,
+        eventType: event.eventType,
         data: event,
       }
 
       const writeEventOptions: TCPWriteEventsOptions = {
-        expectedVersion: -1  // ExpectedVersion.NoStream.
+        expectedVersion: event.eventNumber > 0 ? event.eventNumber - 1 : -1
       }
 
-      this.eventStore.writeEvents('$ce-test', [newEvent], writeEventOptions).then(() => {},
-          () => this.logger.log('Event has already been written.'));
+      this.eventStore.createEvent(newEvent, writeEventOptions)
+          .then(() => {}, (error) => this.logger.log(`Event has already been written: ${error.toString()}`));
     };
     this.ledgerInterface.initContractListener(publishEventCallback);
   }

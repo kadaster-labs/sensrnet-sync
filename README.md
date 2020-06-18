@@ -27,9 +27,10 @@ Modules:
 Hyperledger Fabric:
 
 ```bash
-./network.sh down
-./network.sh up createChannel -ca -s couchdb
-./network.sh deployCC -l typescript
+$ cd fabric/test-network
+$ ./network.sh down
+$ ./network.sh up createChannel -ca -s couchdb
+$ ./network.sh deployCC -l typescript
 ```
 
 ## Find Us
