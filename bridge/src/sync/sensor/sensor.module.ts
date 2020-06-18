@@ -47,17 +47,17 @@ export class SensorQueryModule implements OnModuleInit {
 
     const publishEventCallback = (event) => {
       const newEvent = {
-        streamId: `test-${event.messageId}`,
+        streamId: `test-${event.aggregateId}`,
         eventType: event.eventType,
         data: event,
       }
 
       const writeEventOptions: TCPWriteEventsOptions = {
-        expectedVersion: -1  // ExpectedVersion.NoStream. -> should fix this to avoid dups.
+        expectedVersion: event.eventNumber > 0 ? event.eventNumber - 1 : -1
       }
 
       this.eventStore.createEvent(newEvent, writeEventOptions)
-          .then(() => {}, () => this.logger.log('Error while writing to stream.'));
+          .then(() => {}, (error) => this.logger.log(`Event has already been written: ${error.toString()}`));
     };
     this.ledgerInterface.initContractListener(publishEventCallback);
   }
