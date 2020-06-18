@@ -1,6 +1,7 @@
 import { EventStore } from './event-store';
 import { Injectable } from '@nestjs/common';
-import {NewEvent, TCPWriteEventsOptions} from "geteventstore-promise";
+import {NewEvent, TCPWriteEventOptions, TCPWriteEventsOptions} from "geteventstore-promise";
+import {EventMessage} from "./event-message";
 
 @Injectable()
 export class EventStorePublisher {
@@ -8,8 +9,8 @@ export class EventStorePublisher {
     this.eventStore.connect();
   }
 
-  async writeEvents(streamName: string, events: NewEvent[], options?: TCPWriteEventsOptions) {
-    return await this.eventStore.writeEvents(streamName, events, options);
+  async createEvent(event, options?: TCPWriteEventOptions) {
+    return await this.eventStore.createEvent(event, options);
   }
 
   async subscribeToStream(streamName: string, onEvent, onDropped) {
