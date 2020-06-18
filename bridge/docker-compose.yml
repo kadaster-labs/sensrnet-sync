@@ -4,7 +4,7 @@ services:
 
   event-bridge:
     build:
-      context: .
+      context: ..
     ports:
       - 3500:3500
     environment:
