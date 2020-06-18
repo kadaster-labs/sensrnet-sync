@@ -67,6 +67,7 @@ export class SensorsContract extends Contract {
 
     const eventString = JSON.stringify(obj);
     await ctx.stub.putState(obj.messageId, Buffer.from(eventString));
+    ctx.stub.setEvent('publishEvent', Buffer.from(eventString));
   }
 
   async querySensor(ctx, eventId) {

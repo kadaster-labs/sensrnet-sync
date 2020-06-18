@@ -5,7 +5,7 @@ import { Logger } from "@nestjs/common";
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { State } from "./models/state.interface";
-import { BlockListener, Gateway, ListenerOptions, Wallets } from 'fabric-network';
+import { ContractListener, Gateway, ListenerOptions, Wallets } from 'fabric-network';
 
 @Injectable()
 export class LedgerInterface {
@@ -57,22 +57,22 @@ export class LedgerInterface {
         return network.getContract(this.contractName);
     }
 
-    async initBlockListener(publishEventCallback) {
+    async initContractListener(publishEventCallback) {
         const channelName = this.getChannelName();
         const lastState = await this.stateModel.findOne({_id: channelName});
-        const lastBlockNumber = lastState ? lastState.blockNumber : 0;
+        const lastBlockNumber = 0; // lastState ? lastState.blockNumber :
+        // When the block number is higher than the current, the app loops.
 
         try {
             const gateway = await this.openGateway();
-            const network = await gateway.getNetwork(channelName);
+            const contract = await this.getContract(gateway);
 
-            const listener: BlockListener = async (event) => {
-                const blockNumber = event.blockNumber.toNumber();
+            const listener: ContractListener = async (event) => {
+                const transactionEvent = event.getTransactionEvent();
+                const blockEvent = transactionEvent.getBlockEvent();
+                const blockNumber = blockEvent.blockNumber.toNumber();
                 if (blockNumber > lastBlockNumber) {
-                    const transactions = event.getTransactionEvents();
-                    for (const transaction of transactions) {
-                        publishEventCallback(transaction);
-                    }
+                    publishEventCallback(JSON.parse(event.payload.toString()));
 
                     const filterKwargs = {
                         _id: channelName
@@ -87,7 +87,7 @@ export class LedgerInterface {
             const options: ListenerOptions = {
                 startBlock: lastBlockNumber
             };
-            await network.addBlockListener(listener, options);
+            await contract.addContractListener(listener, options);
         } catch (error) {
             console.log(error);
         }

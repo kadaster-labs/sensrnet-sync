@@ -8,6 +8,7 @@ import { LedgerInterface } from './ledger-interface.service';
 import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
 import {MongooseModule} from '@nestjs/mongoose';
 import {StateSchema} from './models/state.model';
+import {NewEvent, TCPWriteEventsOptions} from "geteventstore-promise";
 
 @Module({
   imports: [
@@ -44,7 +45,20 @@ export class SensorQueryModule implements OnModuleInit {
       this.logger.warn('Event stream dropped');
     });
 
-    const publishEventCallback = (event) => Logger.log('Publishing received event.');
-    this.ledgerInterface.initBlockListener(publishEventCallback);
+    const publishEventCallback = (event) => {
+      const newEvent: NewEvent = {
+        eventId: event.messageId,
+        eventType: `test-test`,
+        data: event,
+      }
+
+      const writeEventOptions: TCPWriteEventsOptions = {
+        expectedVersion: -1  // ExpectedVersion.NoStream.
+      }
+
+      this.eventStore.writeEvents('$ce-test', [newEvent], writeEventOptions).then(() => {},
+          () => this.logger.log('Event has already been written.'));
+    };
+    this.ledgerInterface.initContractListener(publishEventCallback);
   }
 }
