@@ -14,6 +14,9 @@ export class LedgerInterface {
     private readonly channelName: string = 'mychannel';
     private readonly contractName: string = 'sensrnet';
 
+    private connectionTimeout = 1000;
+    private connectionSuccess: boolean = false;
+
     protected logger: Logger = new Logger(this.constructor.name);
 
     constructor(
@@ -57,37 +60,50 @@ export class LedgerInterface {
         return network.getContract(this.contractName);
     }
 
+    async registerContractListener(contract, lastBlockNumber, listener) {
+        const options: ListenerOptions = {};
+        if (lastBlockNumber !== null) {
+            options.startBlock = lastBlockNumber;
+        }
+        return await contract.addContractListener(listener, options);
+    }
+
     async initContractListener(publishEventCallback) {
         const channelName = this.getChannelName();
         const lastState = await this.stateModel.findOne({_id: channelName});
-        const lastBlockNumber = 0; // lastState ? lastState.blockNumber :
-        // When the block number is higher than the current, the app loops.
+        const lastBlockNumber = lastState ? lastState.blockNumber : 0;
 
         try {
             const gateway = await this.openGateway();
             const contract = await this.getContract(gateway);
 
             const listener: ContractListener = async (event) => {
+                this.connectionSuccess = true;
+
                 const transactionEvent = event.getTransactionEvent();
                 const blockEvent = transactionEvent.getBlockEvent();
                 const blockNumber = blockEvent.blockNumber.toNumber();
-                if (blockNumber > lastBlockNumber) {
-                    publishEventCallback(JSON.parse(event.payload.toString()));
+                publishEventCallback(JSON.parse(event.payload.toString()));
 
-                    const filterKwargs = {
-                        _id: channelName
-                    }
-                    const updateKwargs = {
-                        $set: { blockNumber: blockNumber },
-                        $setOnInsert: { _id: channelName }
-                    }
-                    await this.stateModel.updateOne(filterKwargs, updateKwargs, { upsert: true })
+                const filterKwargs = {
+                    _id: channelName
                 }
+                const updateKwargs = {
+                    $set: { blockNumber: blockNumber },
+                    $setOnInsert: { _id: channelName }
+                }
+                await this.stateModel.updateOne(filterKwargs, updateKwargs, { upsert: true })
             }
-            const options: ListenerOptions = {
-                startBlock: lastBlockNumber
-            };
-            await contract.addContractListener(listener, options);
+
+            const listenerObject = await this.registerContractListener(contract, lastBlockNumber, listener);
+
+            // In case the block number is higher than the current (after a network restart), the app gets stuck.
+            setTimeout(() => {
+                if (!this.connectionSuccess) {
+                    contract.removeContractListener(listenerObject);
+                    this.registerContractListener(contract, null, listener); // Replay from the start.
+                }
+            }, this.connectionTimeout);
         } catch (error) {
             console.log(error);
         }
