@@ -99,7 +99,7 @@ export class LedgerInterface {
 
             // In case the block number is higher than the current (after a network restart), the app gets stuck.
             setTimeout(() => {
-                if (!this.connectionSuccess) {
+                if (lastBlockNumber > 0 && !this.connectionSuccess) {
                     contract.removeContractListener(listenerObject);
                     this.registerContractListener(contract, null, listener); // Replay from the start.
                 }
