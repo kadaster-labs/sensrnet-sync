@@ -23,14 +23,16 @@ Modules:
 
 ### Usage
 
-#### Containerized
-Hyperledger Fabric:
+Start up:
 
 ```bash
-$ cd fabric/test-network
-$ ./network.sh down
-$ ./network.sh up createChannel -ca -s couchdb
-$ ./network.sh deployCC -l typescript
+$ ./sync.sh up
+```
+
+Bringing down:
+
+```bash
+$ ./sync.sh down
 ```
 
 ## Find Us

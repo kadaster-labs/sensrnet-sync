@@ -32,5 +32,5 @@ typings/
 # Optional REPL history
 .node_repl_history
 
-src/sync/sensor/wallet
-src/sync/sensor/connection-org1.json
+connection-org1.json
+wallet/

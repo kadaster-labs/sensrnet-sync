@@ -22,7 +22,7 @@ export class LedgerInterface {
     constructor(
         @InjectModel('State') private stateModel: Model<State>,
     ) {
-        const ccpPath = resolve(__dirname, '.', 'connection-org1.json');
+        const ccpPath = resolve(process.cwd(), '.', 'connection-org1.json');
         this.ccp = JSON.parse(readFileSync(ccpPath, 'utf8'));
     }
 
@@ -31,13 +31,14 @@ export class LedgerInterface {
     }
 
     async openGateway() {
-        const walletPath = resolve(__dirname, '.', 'wallet');
+        const walletPath = resolve(process.cwd(), '.', 'wallet');
         const wallet = await Wallets.newFileSystemWallet(walletPath);
 
         const identity = await wallet.get(this.userName);
         if (!identity) {
             Logger.error('An identity for the user "appUser" does not exist in the wallet');
             Logger.error('Run the registerUser.js application before retrying');
+            // Logger.error(`Current path: ${walletPath}`)
             return;
         }
 
