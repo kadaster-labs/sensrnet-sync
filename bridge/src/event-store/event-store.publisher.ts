@@ -1,7 +1,6 @@
 import { EventStore } from './event-store';
 import { Injectable } from '@nestjs/common';
-import {NewEvent, TCPWriteEventOptions, TCPWriteEventsOptions} from "geteventstore-promise";
-import {EventMessage} from "./event-message";
+import { TCPWriteEventOptions } from 'geteventstore-promise';
 
 @Injectable()
 export class EventStorePublisher {

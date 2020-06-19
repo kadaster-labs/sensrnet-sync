@@ -1,7 +1,7 @@
-import {NewEvent, TCPClient, TCPWriteEventOptions, TCPWriteEventsOptions} from 'geteventstore-promise';
-import {EventStoreConfiguration} from './event-store.configuration';
-import {Injectable} from '@nestjs/common';
-import {EventMessage} from './event-message';
+import { TCPClient, TCPWriteEventOptions } from 'geteventstore-promise';
+import { EventStoreConfiguration } from './event-store.configuration';
+import { Injectable } from '@nestjs/common';
+import { EventMessage } from './event-message';
 
 @Injectable()
 export class EventStore {
@@ -24,11 +24,11 @@ export class EventStore {
 
   async createEvent(event: EventMessage, options?: TCPWriteEventOptions) {
     await this.client.writeEvent(
-        event.streamId,
-        event.eventType,
-        event.data,
-        event.metadata,
-        options,
+      event.streamId,
+      event.eventType,
+      event.data,
+      event.metadata,
+      options,
     );
   }
 

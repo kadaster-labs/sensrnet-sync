@@ -1,24 +1,23 @@
-import {Logger, Module, OnModuleInit} from '@nestjs/common';
-import {EventStoreModule} from '../../event-store/event-store.module';
-import {EventStorePublisher} from '../../event-store/event-store.publisher';
+import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { EventStoreModule } from '../../event-store/event-store.module';
+import { EventStorePublisher } from '../../event-store/event-store.publisher';
 import { SensorController } from './sensor.controller';
-import {SensorProcessor} from './processors';
-import {CqrsModule} from "@nestjs/cqrs";
+import { SensorProcessor } from './processors';
+import { CqrsModule } from '@nestjs/cqrs';
 import { LedgerInterface } from './ledger-interface.service';
-import {RetrieveSensorsQueryHandler} from './queries/sensors.handler';
-import {MongooseModule} from '@nestjs/mongoose';
-import {StateSchema} from './models/state.model';
-import {NewEvent, TCPWriteEventsOptions} from "geteventstore-promise";
+import { RetrieveSensorsQueryHandler } from './queries/sensors.handler';
+import { MongooseModule } from '@nestjs/mongoose';
+import { StateSchema } from './models/state.model';
+import { TCPWriteEventsOptions } from 'geteventstore-promise';
 
 @Module({
   imports: [
     CqrsModule,
     EventStoreModule,
-    SensorQueryModule,
-    MongooseModule.forFeature([{name: 'State', schema: StateSchema}]),
+    MongooseModule.forFeature([{ name: 'State', schema: StateSchema }]),
   ],
   controllers: [
-    SensorController
+    SensorController,
   ],
   providers: [
     SensorProcessor,
@@ -31,11 +30,12 @@ export class SensorQueryModule implements OnModuleInit {
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
-      private readonly eventStore: EventStorePublisher,
-      private readonly sensorProcessor: SensorProcessor,
-      private readonly ledgerInterface: LedgerInterface,
+    private readonly eventStore: EventStorePublisher,
+    private readonly sensorProcessor: SensorProcessor,
+    private readonly ledgerInterface: LedgerInterface,
   ) {
   }
+
   onModuleInit() {
     const onEvent = (_, eventMessage) => {
       this.sensorProcessor.process(eventMessage);
@@ -50,14 +50,15 @@ export class SensorQueryModule implements OnModuleInit {
         streamId: `test-${event.aggregateId}`,
         eventType: event.eventType,
         data: event,
-      }
+      };
 
       const writeEventOptions: TCPWriteEventsOptions = {
-        expectedVersion: event.eventNumber > 0 ? event.eventNumber - 1 : -1
-      }
+        expectedVersion: event.eventNumber > 0 ? event.eventNumber - 1 : -1,
+      };
 
       this.eventStore.createEvent(newEvent, writeEventOptions)
-          .then(() => {}, (error) => this.logger.log(`Event has already been written: ${error.toString()}`));
+        .then(() => {
+        }, (error) => this.logger.log(`Event has already been written: ${error.toString()}`));
     };
     this.ledgerInterface.initContractListener(publishEventCallback);
   }

@@ -1,7 +1,4 @@
-import {Context, Contract, Info, Transaction} from 'fabric-contract-api';
-import {sensorEventType} from "./events/sensor";
-import {ownerEventType} from "./events/owner";
-import {EventMessage} from "./events/event-message";
+import { Context, Contract, Info } from 'fabric-contract-api';
 
 @Info({
   contact: {
