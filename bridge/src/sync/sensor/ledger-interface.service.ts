@@ -10,7 +10,7 @@ import { ContractListener, Gateway, ListenerOptions, Wallets } from 'fabric-netw
 @Injectable()
 export class LedgerInterface {
     private readonly ccp: any;
-    private readonly userName: string = 'appUser';
+    private readonly userName: string = 'admin';
     private readonly channelName: string = 'mychannel';
     private readonly contractName: string = 'sensrnet';
 
