@@ -39,8 +39,8 @@ function syncUp() {
   shout "Bringing up all sync components ..."
   echo
 
-#  fabricUp
-#  prepareBridgeForFabricNetwork
+  fabricUp
+  prepareBridgeForFabricNetwork
   bridgeUp
 
   exit 0

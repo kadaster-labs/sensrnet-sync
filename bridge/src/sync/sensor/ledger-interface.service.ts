@@ -46,7 +46,7 @@ export class LedgerInterface {
         await gateway.connect(this.ccp, {
             wallet,
             identity: this.userName,
-            discovery: {enabled: true, asLocalhost: true}
+            discovery: {enabled: true, asLocalhost: false}
         });
 
         return gateway;

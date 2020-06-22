@@ -19,7 +19,8 @@ async function main() {
 
         // Create a new CA client for interacting with the CA.
         const caURL = ccp.certificateAuthorities['ca.org1.example.com'].url;
-        const ca = new FabricCAServices(caURL);
+        const url = 'https://localhost:' + caURL.split(':')[1];
+        const ca = new FabricCAServices(url);
 
         // Create a new file system based wallet for managing identities.
         const walletPath = path.join(process.cwd(), 'wallet');

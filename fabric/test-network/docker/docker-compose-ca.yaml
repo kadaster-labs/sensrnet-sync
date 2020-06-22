@@ -7,6 +7,8 @@ version: '2'
 
 networks:
   test:
+    external:
+      name: backend
 
 services:
 
