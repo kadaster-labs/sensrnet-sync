@@ -14,7 +14,6 @@ export class LedgerInterface {
     private readonly channelName: string = 'mychannel';
     private readonly contractName: string = 'sensrnet';
 
-    private connectionTimeout = 1000;
     private connectionSuccess: boolean = false;
 
     protected logger: Logger = new Logger(this.constructor.name);
@@ -72,7 +71,7 @@ export class LedgerInterface {
     async initContractListener(publishEventCallback) {
         const channelName = this.getChannelName();
         const lastState = await this.stateModel.findOne({_id: channelName});
-        const lastBlockNumber = lastState ? lastState.blockNumber : 0;
+        const lastBlockNumber = 0; // lastState ? lastState.blockNumber :
 
         try {
             const gateway = await this.openGateway();
@@ -96,15 +95,7 @@ export class LedgerInterface {
                 await this.stateModel.updateOne(filterKwargs, updateKwargs, { upsert: true })
             }
 
-            const listenerObject = await this.registerContractListener(contract, lastBlockNumber, listener);
-
-            // In case the block number is higher than the current (after a network restart), the app gets stuck.
-            setTimeout(() => {
-                if (lastBlockNumber > 0 && !this.connectionSuccess) {
-                    contract.removeContractListener(listenerObject);
-                    this.registerContractListener(contract, null, listener); // Replay from the start.
-                }
-            }, this.connectionTimeout);
+            await this.registerContractListener(contract, lastBlockNumber, listener);
         } catch (error) {
             console.log(error);
         }
