@@ -14,16 +14,12 @@ CC_SRC_LANGUAGE=`echo "$CC_SRC_LANGUAGE" | tr [:upper:] [:lower:]`
 
 FABRIC_CFG_PATH=$PWD/../config/
 
-if [ "$CC_SRC_LANGUAGE" = "javascript" ]; then
+if [ "$CC_SRC_LANGUAGE" = "typescript" ]; then
 	CC_RUNTIME_LANGUAGE=node # chaincode runtime language is node.js
-	CC_SRC_PATH="../chaincode/sensrnet/javascript/"
-
-elif [ "$CC_SRC_LANGUAGE" = "typescript" ]; then
-	CC_RUNTIME_LANGUAGE=node # chaincode runtime language is node.js
-	CC_SRC_PATH="../chaincode/sensrnet/typescript/"
+	CC_SRC_PATH="../chaincode/"
 
 	echo Compiling TypeScript code into JavaScript ...
-	pushd ../chaincode/sensrnet/typescript
+	pushd $CC_SRC_PATH
 	npm install
 	npm run build
 	popd

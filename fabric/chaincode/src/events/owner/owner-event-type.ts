@@ -1,4 +1,4 @@
-import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from '.';
+import {OwnerDeleted, OwnerRegistered, OwnerUpdated} from './index';
 
 class OwnerEventType {
   constructor() {
