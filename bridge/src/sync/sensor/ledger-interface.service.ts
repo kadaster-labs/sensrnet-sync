@@ -21,7 +21,7 @@ export class LedgerInterface {
     constructor(
         @InjectModel('State') private stateModel: Model<State>,
     ) {
-        const ccpPath = resolve(process.cwd(), '.', 'connection-org1.json');
+        const ccpPath = resolve(process.cwd(), '.', 'connection.json');
         this.ccp = JSON.parse(readFileSync(ccpPath, 'utf8'));
     }
 
