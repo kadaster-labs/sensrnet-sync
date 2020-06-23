@@ -228,9 +228,9 @@ COMPOSE_FILE_ORG3=docker/docker-compose-org3.yaml
 # certificate authorities compose file
 COMPOSE_FILE_CA_ORG3=docker/docker-compose-ca-org3.yaml
 # default image tag
-IMAGETAG="latest"
+IMAGETAG=2.1.1
 # default ca image tag
-CA_IMAGETAG="latest"
+CA_IMAGETAG=1.4.7
 # database
 DATABASE="leveldb"
 

@@ -3,13 +3,15 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-version: '2'
+version: '3.7'
 
 volumes:
   peer0.org3.example.com:
 
 networks:
-  test:
+  sync:
+    name: sync
+    driver: bridge
 
 services:
 
@@ -22,7 +24,7 @@ services:
       # the following setting starts chaincode containers on the same
       # bridge network as the peers
       # https://docs.docker.com/compose/networking/
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_test
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=sync
       - FABRIC_LOGGING_SPEC=INFO
       #- FABRIC_LOGGING_SPEC=DEBUG
       - CORE_PEER_TLS_ENABLED=true
@@ -51,7 +53,7 @@ services:
     ports:
       - 11051:11051
     networks:
-      - test
+      - sync
 
   Org3cli:
     container_name: Org3cli
@@ -81,4 +83,4 @@ services:
     depends_on:
       - peer0.org3.example.com
     networks:
-      - test
+      - sync

@@ -23,13 +23,16 @@ Modules:
 
 ### Usage
 
-#### Containerized
-Hyperledger Fabric:
+Start up:
 
 ```bash
-./network.sh down
-./network.sh up createChannel -ca
-./network.sh deployCC -l javascript
+$ ./sync.sh up
+```
+
+Bringing down:
+
+```bash
+$ ./sync.sh down
 ```
 
 ## Find Us

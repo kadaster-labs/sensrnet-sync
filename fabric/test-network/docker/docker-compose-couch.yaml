@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-version: '2'
+version: '3.7'
 
 networks:
-  test:
+  sync:
+    name: sync
+    driver: bridge
 
 services:
   couchdb0:
@@ -22,7 +24,7 @@ services:
     ports:
       - "5984:5984"
     networks:
-      - test
+      - sync
 
   peer0.org1.example.com:
     environment:
@@ -49,7 +51,7 @@ services:
     ports:
       - "7984:5984"
     networks:
-      - test
+      - sync
 
   peer0.org2.example.com:
     environment:

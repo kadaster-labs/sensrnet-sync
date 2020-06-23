@@ -6,7 +6,9 @@
 version: '2'
 
 networks:
-  test:
+  sync:
+    name: sync
+    driver: bridge
 
 services:
   couchdb4:
@@ -22,7 +24,7 @@ services:
     ports:
       - "9984:5984"
     networks:
-      - test
+      - sync
 
   peer0.org3.example.com:
     environment:
@@ -36,4 +38,4 @@ services:
     depends_on:
       - couchdb4
     networks:
-      - test
+      - sync
