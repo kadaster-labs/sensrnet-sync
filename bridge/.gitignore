@@ -32,5 +32,5 @@ typings/
 # Optional REPL history
 .node_repl_history
 
-connection.json
+connection*.json
 wallet/
