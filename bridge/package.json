@@ -37,7 +37,8 @@
     "mongoose": "^5.9.15",
     "swagger-ui-express": "^4.1.4",
     "fabric-ca-client": "^2.1.0",
-    "fabric-network": "^2.1.0"
+    "fabric-network": "^2.1.0",
+    "node-eventstore-client": "^0.2.16"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
@@ -53,7 +54,6 @@
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
-    "geteventstore-promise": "^3.2.1",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2",

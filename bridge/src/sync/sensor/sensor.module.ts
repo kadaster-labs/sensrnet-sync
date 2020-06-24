@@ -5,17 +5,13 @@ import { StateSchema } from './models/state.model';
 import { SensorController } from './sensor.controller';
 import { LedgerInterface } from './ledger-interface.service';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
-import { TCPWriteEventsOptions } from 'geteventstore-promise';
-import { EventStoreModule } from '../../event-store/event-store.module';
+import { EventStoreConfiguration } from '../../event-store.configuration';
 import { RetrieveSensorsQueryHandler } from './queries/sensors.handler';
-import { EventStorePublisher } from '../../event-store/event-store.publisher';
-
-const NODE_ID = process.env.NODE_ID || 'node_1';
+import { UserCredentials, createConnection, createJsonEventData, expectedVersion } from 'node-eventstore-client';
 
 @Module({
   imports: [
     CqrsModule,
-    EventStoreModule,
     MongooseModule.forFeature([{ name: 'State', schema: StateSchema }]),
   ],
   controllers: [
@@ -24,6 +20,7 @@ const NODE_ID = process.env.NODE_ID || 'node_1';
   providers: [
     SensorProcessor,
     LedgerInterface,
+    EventStoreConfiguration,
     RetrieveSensorsQueryHandler,
   ],
 })
@@ -32,38 +29,70 @@ export class SensorQueryModule implements OnModuleInit {
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
-    private readonly eventStore: EventStorePublisher,
     private readonly sensorProcessor: SensorProcessor,
     private readonly ledgerInterface: LedgerInterface,
+    private readonly eventStoreConfiguration: EventStoreConfiguration,
   ) {
   }
 
   onModuleInit() {
-    const onEvent = (_, eventMessage) => {
-      if (eventMessage.data.nodeId == NODE_ID) {
-        this.sensorProcessor.process(eventMessage);
+    const syncEventTypePrefix = 'Sync-';
+
+    const onEvent = (_, event) => {
+      const eventStoreEvent = {
+        eventType: event.event.eventType,
+        data: JSON.parse(event.event.data.toString()),
+        eventNumber: event.event.eventNumber.toNumber(),
+      };
+
+      if (!eventStoreEvent.eventType.startsWith(syncEventTypePrefix)) {
+        this.sensorProcessor.process(eventStoreEvent);
       }
     };
 
-    this.eventStore.subscribeToStream('$ce-sensor', onEvent, () => {
-      this.logger.warn('Event stream dropped.');
+    const resolveLinkTos = true
+
+    const subscriptionDropped = (subscription, reason, error) => {
+      this.logger.log(error ? error : 'Subscription dropped.')
+    }
+
+    const config = this.eventStoreConfiguration.config;
+
+    const settings = {};
+    const endpoint = `tcp://${config.hostname}:${config.port}`
+    const connection = createConnection(settings, endpoint);
+    const credentials = new UserCredentials(config.credentials.username, config.credentials.password);
+
+    connection.connect().catch(err => this.logger.log(err))
+
+    connection.once('connected', _ => {
+      connection.subscribeToStream(
+          '$ce-sensor',
+          resolveLinkTos,
+          onEvent,
+          subscriptionDropped,
+          credentials
+      ).then(() => {})
     });
 
-    const publishEventCallback = (event) => {
-      if (event.nodeId != NODE_ID) {
-        const newEvent = {
-          streamId: `sensor-${event.aggregateId}`,
-          eventType: event.eventType,
-          data: event,
-        };
+    connection.on('error', error => {
+      this.logger.log(`Error occurred on connection: ${error}`);
+    })
 
-        const writeEventOptions: TCPWriteEventsOptions = {
-          expectedVersion: event.eventNumber - 1,
-        };
+    connection.on('closed', reason => {
+      this.logger.log(`Connection closed, reason: ${reason}`);
+    })
 
-        this.eventStore.createEvent(newEvent, writeEventOptions)
-            .then(() => {}, (error) => this.logger.log(`Event has already been written: ${error.toString()}`));
-      }
+    const publishEventCallback = (eventMessage) => {
+      const eventType = `${syncEventTypePrefix}-${eventMessage.eventType}`;
+      const event = createJsonEventData(eventMessage.eventId, eventMessage, null, eventType);
+      connection.appendToStream(`sensor-${eventMessage.aggregateId}`, expectedVersion.any, event)
+          .then((_) => {
+            this.logger.log(`Event with id ${eventMessage.eventId} has been received.`);
+          })
+          .catch((err) => {
+            this.logger.log(err);
+          });
     };
     this.ledgerInterface.initContractListener(publishEventCallback);
   }

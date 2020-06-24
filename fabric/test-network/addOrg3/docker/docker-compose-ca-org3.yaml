@@ -5,6 +5,11 @@
 
 version: '3.7'
 
+networks:
+  sync:
+    name: sync
+    driver: bridge
+
 services:
 
   ca_org3:
@@ -20,3 +25,5 @@ services:
     volumes:
       - ../fabric-ca/org3:/etc/hyperledger/fabric-ca-server
     container_name: ca_org3
+    networks:
+      - sync

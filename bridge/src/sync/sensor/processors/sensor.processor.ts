@@ -15,7 +15,7 @@ export class SensorProcessor {
 
       let eventMessageFormatted = {
         ...eventMessage.data,
-        messageId: eventMessage.eventId,
+        messageId: eventMessage.messageId,
         eventType: eventMessage.eventType,
         eventNumber: eventMessage.eventNumber,
       }
