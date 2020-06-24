@@ -35,39 +35,44 @@ export class SensorQueryModule implements OnModuleInit {
   ) {
   }
 
-  onModuleInit() {
-    const syncEventTypePrefix = 'Sync-';
+  getConnection() {
+    const settings = {};
+    const config = this.eventStoreConfiguration.config;
+    const endpoint = `tcp://${config.hostname}:${config.port}`
+    const connection = createConnection(settings, endpoint);
+    connection.connect().catch(err => this.logger.log(err));
+
+    return connection;
+  }
+
+  initSubscriptionListener(streamName: string) {
+    const resolveLinkTos = true;
 
     const onEvent = (_, event) => {
       const eventStoreEvent = {
         eventType: event.event.eventType,
         data: JSON.parse(event.event.data.toString()),
-        eventNumber: event.event.eventNumber.toNumber(),
       };
+      if (event.event.metadata) {
+        eventStoreEvent['metadata'] = JSON.parse(event.event.metadata.toString())
+      }
 
-      if (!eventStoreEvent.eventType.startsWith(syncEventTypePrefix)) {
-        this.sensorProcessor.process(eventStoreEvent);
+      if (!eventStoreEvent['metadata'] || !eventStoreEvent['metadata'].originSync) {
+        this.sensorProcessor.process(eventStoreEvent).then(() => {});
       }
     };
-
-    const resolveLinkTos = true
 
     const subscriptionDropped = (subscription, reason, error) => {
       this.logger.log(error ? error : 'Subscription dropped.')
     }
 
+    const connection = this.getConnection();
     const config = this.eventStoreConfiguration.config;
-
-    const settings = {};
-    const endpoint = `tcp://${config.hostname}:${config.port}`
-    const connection = createConnection(settings, endpoint);
     const credentials = new UserCredentials(config.credentials.username, config.credentials.password);
-
-    connection.connect().catch(err => this.logger.log(err))
 
     connection.once('connected', _ => {
       connection.subscribeToStream(
-          '$ce-sensor',
+          streamName,
           resolveLinkTos,
           onEvent,
           subscriptionDropped,
@@ -75,25 +80,33 @@ export class SensorQueryModule implements OnModuleInit {
       ).then(() => {})
     });
 
-    connection.on('error', error => {
-      this.logger.log(`Error occurred on connection: ${error}`);
-    })
-
     connection.on('closed', reason => {
       this.logger.log(`Connection closed, reason: ${reason}`);
-    })
+    });
+  }
+
+  initContractListener() {
+    const connection = this.getConnection();
 
     const publishEventCallback = (eventMessage) => {
-      const eventType = `${syncEventTypePrefix}-${eventMessage.eventType}`;
-      const event = createJsonEventData(eventMessage.eventId, eventMessage, null, eventType);
+      const metaData = {
+        originSync: true
+      }
+      const event = createJsonEventData(eventMessage.eventId, eventMessage, metaData, eventMessage.eventType);
+
       connection.appendToStream(`sensor-${eventMessage.aggregateId}`, expectedVersion.any, event)
           .then((_) => {
-            this.logger.log(`Event with id ${eventMessage.eventId} has been received.`);
+            this.logger.log(`Sync event with id ${eventMessage.eventId} has been written.`);
           })
           .catch((err) => {
             this.logger.log(err);
           });
     };
-    this.ledgerInterface.initContractListener(publishEventCallback);
+    this.ledgerInterface.initContractListener(publishEventCallback).then(() => {});
+  }
+
+  onModuleInit() {
+    this.initSubscriptionListener('$ce-sensor');
+    this.initContractListener();
   }
 }
