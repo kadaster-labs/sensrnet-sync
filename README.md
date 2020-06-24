@@ -1,6 +1,16 @@
 # SensrNet Sync Application
 
-This is the sync component for the SensRNet application. It features a NestJS API and makes use of HyperLedger Fabric.
+This is the sync component for the SensRNet application. 
+It features a NestJS API and makes use of HyperLedger Fabric.
+
+For more information see our [documentation](https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/Architecture.md#component-sync) (and especially details about [HyperLedger Fabric](https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/SyncFabricEN.md)).
+
+## Architecture
+
+Modules:
+
+- **bridge** > the synchronization API to communicate with the eventstore.
+- **fabric** > the Hyperledger Fabric code for synchronization.
 
 ## Getting Started
 
@@ -14,12 +24,12 @@ In order to run this application containerized, you'll need docker installed.
 * [OS X](https://docs.docker.com/mac/started/)
 * [Linux](https://docs.docker.com/linux/started/)
 
-### Architecture
+To run all scripts you'll need to download the HyperLedger Fabric tools by running:
 
-Modules:
-
-- bridge > the synchronization API to communicate with the backend.
-- fabric > the Hyperledger Fabric code for synchronization.
+```bash
+$ cd fabric
+$ ./install-fabric-tools.sh
+```
 
 ### Usage
 
