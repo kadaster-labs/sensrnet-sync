@@ -12,8 +12,6 @@ RUN npm install
 COPY src src
 COPY tsconfig.json tsconfig.json
 
-EXPOSE 3500
-
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD ["run"]
