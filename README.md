@@ -1,7 +1,7 @@
 # SensrNet Sync Application
 
 This is the sync component for the SensRNet application. 
-It features a NestJS API and makes use of HyperLedger Fabric.
+It features a NestJS API.
 
 For more information see our [documentation](https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/Architecture.md#component-sync) (and especially details about [HyperLedger Fabric](https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/SyncFabricEN.md)).
 

@@ -1,4 +1,3 @@
-import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { StateSchema } from './models/state.model';
 import { KafkaConsumer } from '../kafka/kafka-consumer';
@@ -11,7 +10,6 @@ import { createJsonEventData, expectedVersion } from 'node-eventstore-client';
 
 @Module({
   imports: [
-    CqrsModule,
     MongooseModule.forFeature([{ name: 'State', schema: StateSchema }]),
   ],
   providers: [
@@ -31,8 +29,7 @@ export class SensorQueryModule implements OnModuleInit {
     private readonly kafkaConsumer: KafkaConsumer,
     private readonly eventStoreInterface: EventStoreInterface,
     private readonly eventStoreConnection: EventStoreConnection,
-  ) {
-  }
+  ) {}
 
   eventListener(connection, eventMessage) {
     const metaData = { originSync: true };
@@ -41,7 +38,7 @@ export class SensorQueryModule implements OnModuleInit {
 
     connection.appendToStream(streamId, expectedVersion.any, event)
         .then((_) => {
-          this.logger.log(`Sync event ${eventMessage.eventId} has been written.`);
+          this.logger.log(`Sync event ${eventMessage.eventId} has been written to the EventStore.`);
         })
         .catch((err) => this.logger.log(err));
   }

@@ -1,7 +1,5 @@
 FROM node:12
 
-LABEL maintainer="Wim Florijn <wim.florijn@kadaster.nl>"
-
 WORKDIR /app
 
 COPY entrypoint.sh entrypoint.sh
