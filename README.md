@@ -10,7 +10,6 @@ For more information see our [documentation](https://github.com/kadaster-labs/se
 Modules:
 
 - **bridge** > the synchronization API to communicate with the eventstore.
-- **fabric** > the Hyperledger Fabric code for synchronization.
 
 ## Getting Started
 
@@ -23,13 +22,6 @@ In order to run this application containerized, you'll need docker installed.
 * [Windows](https://docs.docker.com/windows/started)
 * [OS X](https://docs.docker.com/mac/started/)
 * [Linux](https://docs.docker.com/linux/started/)
-
-To run all scripts you'll need to download the HyperLedger Fabric tools by running:
-
-```bash
-$ cd fabric
-$ ./install-fabric-tools.sh
-```
 
 ### Usage
 
