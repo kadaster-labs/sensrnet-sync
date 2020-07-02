@@ -17,6 +17,7 @@ services:
     environment:
       - PORT=3500
       - KAFKA_HOST=kafka
+      - KAFKA_PORT=9092
       - KAFKA_TOPIC=sync
       - MONGO_HOST=mongo
       - MONGO_PORT=27017
