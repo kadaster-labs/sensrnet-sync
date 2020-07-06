@@ -26,7 +26,7 @@ export class KafkaConsumer implements OnModuleInit {
         const kafkaHost = process.env.KAFKA_HOST || 'localhost';
         this.client = new KafkaClient({ kafkaHost: `${kafkaHost}:${kafkaPort}` });
 
-        const fetchRequest = [{ topic: this.topic, partition: 0 }]
+        const fetchRequest = [{ topic: this.topic, partition: 0 }];
         this.consumer = new Consumer(this.client, fetchRequest, { autoCommit: false });
     }
 }

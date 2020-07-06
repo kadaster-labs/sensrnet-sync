@@ -26,6 +26,7 @@ In order to run this application containerized, you'll need docker installed.
 ### Usage
 
 Start up:
+Edit the kafka hostname in KAFKA_HOST in docker-compose.yml.
 
 ```bash
 $ ./sync.sh up

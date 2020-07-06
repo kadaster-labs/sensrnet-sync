@@ -25,7 +25,6 @@ export class SensorQueryModule implements OnModuleInit {
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
-    private readonly kafkaProducer: KafkaProducer,
     private readonly kafkaConsumer: KafkaConsumer,
     private readonly eventStoreInterface: EventStoreInterface,
     private readonly eventStoreConnection: EventStoreConnection,
