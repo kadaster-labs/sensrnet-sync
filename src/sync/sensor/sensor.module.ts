@@ -3,6 +3,7 @@ import { StateSchema } from './models/state.model';
 import { KafkaConsumer } from '../kafka/kafka-consumer';
 import { KafkaProducer } from '../kafka/kafka-producer';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { KafkaConfiguration } from '../../kafka.configuration';
 import { EventStoreInterface } from './eventstore/eventstore.interface';
 import { EventStoreConnection } from './eventstore/eventstore.connection';
 import { EventStoreConfiguration } from '../../event-store.configuration';
@@ -15,6 +16,7 @@ import { createJsonEventData, expectedVersion } from 'node-eventstore-client';
   providers: [
     KafkaConsumer,
     KafkaProducer,
+    KafkaConfiguration,
     EventStoreInterface,
     EventStoreConnection,
     EventStoreConfiguration,
