@@ -34,9 +34,13 @@ spec:
           value: "3500"
         image: sensrnetregistry.azurecr.io/sensrnet/sync-bridge:latest
         name: sync-bridge
+        volumeMounts:
+        - name: kafka-secrets
+          mountPath: "/etc/kafka"
+          readOnly: true
         resources: {}
       volumes:
-      - name: foo
+      - name: kafka-secrets
         secret:
           secretName: kafka_ca
       restartPolicy: Always
