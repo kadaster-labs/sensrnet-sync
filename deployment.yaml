@@ -45,5 +45,5 @@ spec:
       volumes:
       - name: kafka-secrets
         secret:
-          secretName: kafka_ca
+          secretName: kafka-ca
       restartPolicy: Always
