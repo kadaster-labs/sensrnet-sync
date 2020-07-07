@@ -5,19 +5,28 @@ networks:
     name: backend
     driver: bridge
 
+secrets:
+  kafka_certificate:
+    file: ./certs/ca.crt
+  kafka_password:
+    file: ./certs/ca.password
+
 services:
   sync-bridge:
     build:
       context: .
     environment:
       - PORT=3500
-      - KAFKA_HOST=kafka
-      - KAFKA_PORT=9092
+      - KAFKA_HOST=20.50.245.119
+      - KAFKA_PORT=9094
       - KAFKA_TOPIC=sync
       - MONGO_HOST=mongo
       - MONGO_PORT=27017
       - MONGO_DATABASE=sensrnet
       - EVENT_STORE_HOST=eventstore
       - EVENT_STORE_PORT=1113
+    secrets:
+      - kafka_certificate
+      - kafka_password
     networks:
       - backend

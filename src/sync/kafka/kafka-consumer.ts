@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { KafkaClient, Consumer, Message } from 'kafka-node';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
@@ -24,7 +25,22 @@ export class KafkaConsumer implements OnModuleInit {
         this.topic = process.env.KAFKA_TOPIC || 'sync';
         const kafkaPort = process.env.KAFKA_PORT || 9092;
         const kafkaHost = process.env.KAFKA_HOST || 'localhost';
-        this.client = new KafkaClient({ kafkaHost: `${kafkaHost}:${kafkaPort}` });
+        const kafkaCert = readFileSync('/run/secrets/kafka_certificate', 'utf-8');
+        const kafkaPassword = readFileSync('/run/secrets/kafka_password', 'utf-8');
+
+        const kafkaOptions = {
+            kafkaHost: `${kafkaHost}:${kafkaPort}`,
+        }
+        if (kafkaCert && kafkaPassword) {
+            kafkaOptions['ssl'] = true;
+            kafkaOptions['sslOptions'] = {
+                cert: kafkaCert,
+                passphrase: kafkaPassword,
+                requestCert: true,
+                rejectUnauthorized: false
+            }
+        }
+        this.client = new KafkaClient(kafkaOptions);
 
         const fetchRequest = [{ topic: this.topic, partition: 0 }];
         this.consumer = new Consumer(this.client, fetchRequest, { autoCommit: false });
