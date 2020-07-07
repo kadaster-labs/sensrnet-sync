@@ -4,6 +4,7 @@ metadata:
   labels:
     app: sync-bridge
   name: sync-bridge
+  namespace: sensrnet-backend
 spec:
   selector:
     matchLabels:
