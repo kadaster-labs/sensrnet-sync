@@ -16,8 +16,8 @@ export class KafkaConfiguration {
     get config() {
         const hostname = process.env.KAFKA_HOST || 'localhost'
         const port = parseInt(process.env.KAFKA_PORT) || 9092;
-        const password = getFileContent('/run/secrets/kafka_password');
-        const certificate = getFileContent('/run/secrets/kafka_certificate');
+        const password = getFileContent('/etc/kafka/ca.password');
+        const certificate = getFileContent('/etc/kafka/ca.crt');
 
         const kafkaOptions = {
             kafkaHost: `${hostname}:${port}`,
