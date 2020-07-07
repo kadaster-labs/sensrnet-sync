@@ -1,10 +1,13 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: sync-bridge
   name: sync-bridge
 spec:
+  selector:
+    matchLabels:
+      app: sync-bridge
   replicas: 1
   strategy: {}
   template:
