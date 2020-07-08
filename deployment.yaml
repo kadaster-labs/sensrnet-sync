@@ -19,7 +19,7 @@ spec:
       containers:
       - env:
         - name: EVENT_STORE_HOST
-          value: eventstore
+          value: eventstore-cluster
         - name: EVENT_STORE_PORT
           value: "1113"
         - name: KAFKA_HOST
