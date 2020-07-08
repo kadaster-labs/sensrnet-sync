@@ -27,7 +27,15 @@ export class KafkaConsumer implements OnModuleInit {
 
     onModuleInit() {
         this.topic = process.env.KAFKA_TOPIC || 'sync';
-        this.client = new KafkaClient(this.kafkaConfiguration.config);
+        const config = this.kafkaConfiguration.config;
+        this.logger.log(`Connecting Kafka consumer to host ${config.kafkaHost}.`);
+        if (config['ssl']) {
+            this.logger.log(`Consumer TLS is enabled.`);
+        } else {
+            this.logger.log(`Consumer TLS is disabled. Supply a certificate and password.`);
+        }
+
+        this.client = new KafkaClient(config);
         const fetchRequest = [{ topic: this.topic, partition: 0 }];
         this.consumer = new Consumer(this.client, fetchRequest, { autoCommit: false });
     }

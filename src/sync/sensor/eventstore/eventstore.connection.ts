@@ -13,7 +13,12 @@ export class EventStoreConnection {
     ) {
         const config = this.eventStoreConfiguration.config;
         this.connection = createConnection({}, `tcp://${config.hostname}:${config.port}`);
-        this.connection.connect().catch(err => this.logger.log(err));
+
+        this.connection.connect().then(() => {
+            this.logger.log(`Succesfully connected to eventstore.`);
+        }, (err) => {
+            this.logger.log(`Failed to connect to eventstore: ${err}`);
+        });
     }
 
     getConnection() {

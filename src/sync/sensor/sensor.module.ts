@@ -41,7 +41,7 @@ export class SensorQueryModule implements OnModuleInit {
         .then((_) => {
           this.logger.log(`Sync event ${eventMessage.eventId} has been written to the EventStore.`);
         })
-        .catch((err) => this.logger.log(err));
+        .catch((err) => this.logger.error(err));
   }
 
   onModuleInit() {

@@ -21,7 +21,8 @@ export class EventStoreInterface implements OnModuleInit{
     }
 
     onClosed(reason) {
-        this.logger.log(`Connection closed, reason: ${reason}`);
+        this.logger.log(`Connection to eventstore closed, reason: ${reason}. Exiting.`);
+        process.exit(0);
     }
 
     listen(streamName, onEvent) {

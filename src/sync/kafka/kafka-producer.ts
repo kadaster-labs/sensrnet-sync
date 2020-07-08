@@ -28,7 +28,15 @@ export class KafkaProducer implements OnModuleInit {
 
     onModuleInit() {
         this.topic = process.env.KAFKA_TOPIC || 'sync';
-        this.client = new KafkaClient(this.kafkaConfiguration.config);
+        const config = this.kafkaConfiguration.config;
+        this.logger.log(`Connecting Kafka producer to host ${config.kafkaHost}.`);
+        if (config['ssl']) {
+            this.logger.log(`Producer TLS is enabled.`);
+        } else {
+            this.logger.log(`Producer TLS is disabled. Supply a certificate and password.`);
+        }
+
+        this.client = new KafkaClient(config);
         this.producer = new Producer(this.client);
     }
 }

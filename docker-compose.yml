@@ -20,6 +20,8 @@ services:
       - KAFKA_HOST=20.50.245.119
       - KAFKA_PORT=9094
       - KAFKA_TOPIC=sync
+      - KAFKA_PASSWORD_LOCATION=/run/secrets/kafka_password
+      - KAFKA_CERTIFICATE_LOCATION=/run/secrets/kafka_certificate
       - MONGO_HOST=mongo
       - MONGO_PORT=27017
       - MONGO_DATABASE=sensrnet
