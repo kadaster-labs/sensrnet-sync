@@ -32,11 +32,12 @@ export class SensorQueryModule implements OnModuleInit {
     private readonly eventStoreConnection: EventStoreConnection,
   ) {}
 
-  eventListener(connection, eventMessage) {
+  eventListener(eventStoreConnection, eventMessage) {
     const metaData = { originSync: true };
     const streamId = `sensor-${eventMessage.aggregateId}`;
     const event = createJsonEventData(eventMessage.eventId, eventMessage, metaData, eventMessage.eventType);
 
+    const connection = eventStoreConnection.getConnection();
     connection.appendToStream(streamId, expectedVersion.any, event)
         .then((_) => {
           this.logger.log(`Sync event ${eventMessage.eventId} has been written to EventStore.`);
@@ -45,7 +46,6 @@ export class SensorQueryModule implements OnModuleInit {
   }
 
   onModuleInit() {
-    const connection = this.eventStoreConnection.getConnection();
-    this.kafkaConsumer.registerListener((message) => this.eventListener(connection, message));
+    this.kafkaConsumer.registerListener((message) => this.eventListener(this.eventStoreConnection, message));
   }
 }

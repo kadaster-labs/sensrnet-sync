@@ -5,17 +5,24 @@ import { EventStoreConfiguration } from '../../../event-store.configuration';
 @Injectable()
 export class EventStoreConnection {
 
+    private connection;
     protected logger: Logger = new Logger(this.constructor.name);
 
     constructor(
         private readonly eventStoreConfiguration: EventStoreConfiguration,
-    ) {}
-
-    getConnection() {
+    ) {
         const config = this.eventStoreConfiguration.config;
         const connection = createConnection({}, `tcp://${config.hostname}:${config.port}`);
         connection.connect().then();
 
-        return connection;
+        this.setConnection(connection);
+    }
+
+    getConnection() {
+        return this.connection;
+    }
+
+    setConnection(connection) {
+        this.connection = connection;
     }
 }

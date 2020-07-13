@@ -21,7 +21,7 @@ export class EventStoreInterface implements OnModuleInit{
         const connection = this.eventStoreConnection.getConnection();
         const credentials = new UserCredentials(config.credentials.username, config.credentials.password);
 
-        const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 5000;
+        const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
         const timeout = setTimeout(() => {
             this.logger.error(`Failed to connect to EventStore. Exiting.`);
             process.exit(0);
