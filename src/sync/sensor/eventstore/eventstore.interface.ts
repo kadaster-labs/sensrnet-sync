@@ -16,26 +16,28 @@ export class EventStoreInterface implements OnModuleInit{
     ) {
     }
 
-    onSubscriptionDropped(subscription, reason, error) {
-        this.logger.log(error ? error : 'Subscription dropped.');
-    }
-
-    onClosed(reason) {
-        this.logger.log(`Connection to eventstore closed, reason: ${reason}. Exiting.`);
-        process.exit(0);
-    }
-
     listen(streamName, onEvent) {
         const config = this.eventStoreConfiguration.config;
         const connection = this.eventStoreConnection.getConnection();
         const credentials = new UserCredentials(config.credentials.username, config.credentials.password);
 
-        connection.once('connected', _ => {
-            connection.subscribeToStream(streamName, true, onEvent, this.onSubscriptionDropped,
-                credentials).then();
+        const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 5000;
+        const timeout = setTimeout(() => {
+            this.logger.error(`Failed to connect to EventStore. Exiting.`);
+            process.exit(0);
+        }, timeoutMs);
+
+        const onDropped = () => {
+            this.logger.warn(`Event stream dropped. Retrying in ${timeoutMs}ms.`);
+            setTimeout(() => this.listen(streamName, onEvent), timeoutMs);
+        };
+
+        connection.once('connected', () => {
+            connection.subscribeToStream(streamName, true, onEvent, onDropped, credentials)
+                .then(() => clearTimeout(timeout), () => this.logger.error('Failed to subscribe to stream.'));
         });
 
-        connection.on('closed', this.onClosed);
+        connection.on('closed', () => this.logger.error(`Connection to EventStore has been closed.`));
     }
 
     onModuleInit() {
