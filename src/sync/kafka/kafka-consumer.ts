@@ -32,10 +32,11 @@ export class KafkaConsumer implements OnModuleInit {
         if (config['ssl']) {
             this.logger.log(`Consumer TLS is enabled.`);
         } else {
-            this.logger.log(`Consumer TLS is disabled. Supply a certificate and password.`);
+            this.logger.log(`Consumer TLS is disabled. Supply a certificate and password to use TLS.`);
         }
 
         this.client = new KafkaClient(config);
+
         const fetchRequest = [{ topic: this.topic, partition: 0 }];
         this.consumer = new Consumer(this.client, fetchRequest, { autoCommit: false });
     }
