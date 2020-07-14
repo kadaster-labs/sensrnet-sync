@@ -39,10 +39,8 @@ export class SensorQueryModule implements OnModuleInit {
 
     const connection = eventStoreConnection.getConnection();
     connection.appendToStream(streamId, expectedVersion.any, event)
-        .then((_) => {
-          this.logger.log(`Sync event ${eventMessage.eventId} has been written to EventStore.`);
-        })
-        .catch(() => this.logger.error('An error has occurred while writing to EventStore.'));
+        .then(() => this.logger.log(`Sync event ${eventMessage.eventId} has been written to the EventStore.`))
+        .catch(() => this.logger.error('An error has occurred while writing to the EventStore.'));
   }
 
   onModuleInit() {

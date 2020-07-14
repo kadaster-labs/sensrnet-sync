@@ -8,10 +8,11 @@ export class KafkaProducer implements OnModuleInit {
     private topic: string;
     private producer: Producer;
     private client: KafkaClient;
+
     protected logger: Logger = new Logger(this.constructor.name);
 
     constructor(
-        private readonly kafkaConfiguration: KafkaConfiguration
+        private readonly kafkaConfiguration: KafkaConfiguration,
     ){};
 
     writeEvent(event) {
@@ -29,11 +30,12 @@ export class KafkaProducer implements OnModuleInit {
     onModuleInit() {
         this.topic = process.env.KAFKA_TOPIC || 'sync';
         const config = this.kafkaConfiguration.config;
+
         this.logger.log(`Connecting Kafka producer to host ${config.kafkaHost}.`);
         if (config['ssl']) {
             this.logger.log(`Producer TLS is enabled.`);
         } else {
-            this.logger.log(`Producer TLS is disabled. Supply a certificate and password.`);
+            this.logger.log(`Producer TLS is disabled. Supply a certificate and password to use TLS.`);
         }
 
         this.client = new KafkaClient(config);

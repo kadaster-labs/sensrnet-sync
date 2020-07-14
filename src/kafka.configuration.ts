@@ -5,7 +5,7 @@ const getFileContent = (location) => {
     let content;
     try {
         content = readFileSync(location, 'utf-8');
-    } catch (_) {}
+    } catch {}
 
     return content;
 }
