@@ -1,5 +1,5 @@
 import { KafkaClient, Producer } from 'kafka-node';
-import { KafkaConfiguration } from '../../kafka.configuration';
+import { KafkaConfiguration } from '../../../kafka.configuration';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class KafkaProducer implements OnModuleInit {
         private readonly kafkaConfiguration: KafkaConfiguration,
     ){};
 
-    writeEvent(event) {
+    writeEvent(event, callback) {
         const payloads = [
             { topic: this.topic, key: event.eventId, messages: JSON.stringify(event), partition: 0 }
         ];
@@ -24,6 +24,7 @@ export class KafkaProducer implements OnModuleInit {
             if (err) {
                 this.logger.log(`Error occurred while writing to kafka: ${err}.`);
             }
+            callback();
         });
     }
 

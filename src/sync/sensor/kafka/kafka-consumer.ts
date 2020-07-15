@@ -1,7 +1,7 @@
 import { KafkaClient, Consumer, Message } from 'kafka-node';
-import { KafkaConfiguration } from '../../kafka.configuration';
+import { KafkaConfiguration } from '../../../kafka.configuration';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CheckpointService } from '../checkpoint/checkpoint.service';
+import { CheckpointService } from '../../checkpoint/checkpoint.service';
 
 @Injectable()
 export class KafkaConsumer implements OnModuleInit {
@@ -9,7 +9,7 @@ export class KafkaConsumer implements OnModuleInit {
     private topic: string;
     private consumer: Consumer;
     private client: KafkaClient;
-    private checkpointId: string = 'sensor-kafka-consumer';
+    private checkpointId: string = 'sync-sensor-kafka';
 
     protected logger: Logger = new Logger(this.constructor.name);
 

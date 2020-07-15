@@ -1,16 +1,19 @@
 import { UserCredentials } from 'node-eventstore-client';
-import { KafkaProducer } from '../../kafka/kafka-producer';
+import { KafkaProducer } from '../kafka/kafka-producer';
 import { EventStoreConnection } from './eventstore.connection';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { EventStoreConfiguration } from '../../../event-store.configuration';
 
 @Injectable()
 export class EventStoreInterface implements OnModuleInit{
 
+    private checkpointId: string = 'sync-sensor-es';
     protected logger: Logger = new Logger(this.constructor.name);
 
     constructor(
         private readonly kafkaProducer: KafkaProducer,
+        private readonly checkpointService: CheckpointService,
         private readonly eventStoreConnection: EventStoreConnection,
         private readonly eventStoreConfiguration: EventStoreConfiguration,
     ) {}
@@ -31,9 +34,21 @@ export class EventStoreInterface implements OnModuleInit{
             setTimeout(() => this.listen(streamName, onEvent), timeoutMs);
         };
 
+        const liveProcessingStartedCallback = () => {
+            this.logger.log(`Catched up to stream ${streamName}.`);
+        }
+
         connection.once('connected', () => {
-            connection.subscribeToStream(streamName, true, onEvent, onDropped, credentials)
-                .then(() => clearTimeout(timeout), () => this.logger.error('Failed to subscribe to stream.'));
+            this.checkpointService.findOne({_id: this.checkpointId}).then(async (data) => {
+                const offset = data ? data.offset : 0;
+                try {
+                    await connection.subscribeToStreamFrom(streamName, offset, true, onEvent,
+                        liveProcessingStartedCallback, onDropped, credentials);
+                    clearTimeout(timeout);
+                } catch {
+                    this.logger.error(`Failed to subscribe to stream ${streamName}.`)
+                }
+            });
         });
 
         connection.on('closed', () => this.logger.error(`Connection to EventStore has been closed.`));
@@ -41,6 +56,9 @@ export class EventStoreInterface implements OnModuleInit{
 
     onModuleInit() {
         const onEvent = (_, event) => {
+            const offset = Number(event.link.eventNumber);
+            const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
+
             const eventStoreEvent = {
                 eventType: event.event.eventType,
                 data: JSON.parse(event.event.data.toString()),
@@ -55,7 +73,7 @@ export class EventStoreInterface implements OnModuleInit{
                     eventType: eventStoreEvent.eventType,
                 }
 
-                this.kafkaProducer.writeEvent(eventMessageFormatted);
+                this.kafkaProducer.writeEvent(eventMessageFormatted, callback);
             }
         };
 

@@ -1,5 +1,5 @@
-import { KafkaConsumer } from '../kafka/kafka-consumer';
-import { KafkaProducer } from '../kafka/kafka-producer';
+import { KafkaConsumer } from './kafka/kafka-consumer';
+import { KafkaProducer } from './kafka/kafka-producer';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { KafkaConfiguration } from '../../kafka.configuration';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
