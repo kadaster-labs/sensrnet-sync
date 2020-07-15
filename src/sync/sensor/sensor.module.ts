@@ -33,14 +33,13 @@ export class SensorQueryModule implements OnModuleInit {
   ) {}
 
   eventListener(eventStoreConnection, eventMessage) {
-    const metaData = { originSync: true };
-    const streamId = `sensor-${eventMessage.aggregateId}`;
-    const event = createJsonEventData(eventMessage.eventId, eventMessage, metaData, eventMessage.eventType);
+    const streamId = `sensor_sync-${eventMessage.eventId}`;
+    const event = createJsonEventData(eventMessage.eventId, eventMessage, null, eventMessage.eventType);
 
     const connection = eventStoreConnection.getConnection();
-    connection.appendToStream(streamId, expectedVersion.any, event)
-        .then(() => this.logger.log(`Sync event ${eventMessage.eventId} has been written to the EventStore.`))
-        .catch(() => this.logger.error('An error has occurred while writing to the EventStore.'));
+    connection.appendToStream(streamId, expectedVersion.noStream, event)
+        .then(_ => this.logger.log(`Sync event ${eventMessage.eventId} has been written to the EventStore.`))
+        .catch(_ => this.logger.error('An error has occurred while writing to the EventStore.'));
   }
 
   onModuleInit() {
