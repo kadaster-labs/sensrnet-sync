@@ -13,8 +13,7 @@ export class EventStoreInterface implements OnModuleInit{
         private readonly kafkaProducer: KafkaProducer,
         private readonly eventStoreConnection: EventStoreConnection,
         private readonly eventStoreConfiguration: EventStoreConfiguration,
-    ) {
-    }
+    ) {}
 
     listen(streamName, onEvent) {
         const config = this.eventStoreConfiguration.config;
