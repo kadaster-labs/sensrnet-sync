@@ -1,10 +1,7 @@
 import { resolve } from 'path';
-import { Model } from 'mongoose';
 import { readFileSync } from 'fs';
 import { Logger } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { State } from '../sensor/models/state.interface';
 import { ContractListener, Gateway, ListenerOptions, Wallets } from 'fabric-network';
 
 @Injectable()
@@ -18,9 +15,7 @@ export class LedgerInterface {
 
     protected logger: Logger = new Logger(this.constructor.name);
 
-    constructor(
-        @InjectModel('State') private stateModel: Model<State>,
-    ) {
+    constructor() {
         const ccpPath = resolve(process.cwd(), '.', 'connection.json');
         this.ccp = JSON.parse(readFileSync(ccpPath, 'utf8'));
     }
@@ -70,7 +65,6 @@ export class LedgerInterface {
 
     async initContractListener(publishEventCallback) {
         const channelName = this.getChannelName();
-        const lastState = await this.stateModel.findOne({_id: channelName});
         const lastBlockNumber = 0; // lastState ? lastState.blockNumber :
 
         try {
@@ -92,7 +86,6 @@ export class LedgerInterface {
                     $set: { blockNumber: blockNumber },
                     $setOnInsert: { _id: channelName }
                 }
-                await this.stateModel.updateOne(filterKwargs, updateKwargs, { upsert: true })
             }
 
             await this.registerContractListener(contract, lastBlockNumber, listener);

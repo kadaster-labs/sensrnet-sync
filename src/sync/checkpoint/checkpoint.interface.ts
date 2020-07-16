@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface State extends Document {
+export interface Checkpoint extends Document {
     _id: string;
     offset: number;
 }
