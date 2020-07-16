@@ -4,5 +4,4 @@ kind: Kustomization
 namespace: sensrnet-backend
 
 resources:
-  - namespace.yaml
   - deployment.yaml
