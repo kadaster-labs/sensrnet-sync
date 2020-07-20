@@ -1,4 +1,4 @@
-import { KafkaProducer } from './kafka/kafka-producer';
+import { KafkaProducer } from './kafka-producer';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../checkpoint/checkpoint.service';
 import { EventStoreService } from '../eventstore/event-store.service';
@@ -15,44 +15,43 @@ export class EventStoreListener implements OnModuleInit{
         private readonly checkpointService: CheckpointService,
     ) {}
 
-    subscribeToStreamWithReconnect(streamName, checkpointId, onEvent) {
+    subscribeToStreamFrom(streamName, checkpointId, onEvent) {
         const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
-        const timeout = setTimeout(() => {
+        const exitCallback = () => {
             this.logger.error(`Failed to connect to EventStore. Exiting.`);
             process.exit(0);
-        }, timeoutMs);
+        }
 
-        const onDropped = () => {
-            this.logger.warn(`Event stream dropped. Retrying in ${timeoutMs}ms.`);
-            setTimeout(() => this.subscribeToStreamWithReconnect(streamName, checkpointId, onEvent), timeoutMs);
-        };
-
+        const timeout = setTimeout(exitCallback, timeoutMs);
         this.checkpointService.findOne({_id: checkpointId}).then((data) => {
             const offset = data ? data.offset : -1;
-            this.logger.log(`Subscribing to stream ${streamName} from offset ${offset}.`);
-            this.eventStoreService.subscribeToStreamFrom(streamName, offset, onEvent, null, onDropped)
+            this.logger.log(`Subscribing to ES stream ${streamName} from offset ${offset}.`);
+
+            this.eventStoreService.subscribeToStreamFrom(streamName, offset, onEvent, null, exitCallback)
                 .then(() => clearTimeout(timeout), () => this.logger.error(`Failed to subscribe to stream ${streamName}.`));
         }, () => this.logger.error(`Failed to determine offset of stream ${streamName}.`));
     }
 
     onModuleInit() {
         const onEvent = (_, eventMessage) => {
-            if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
-                const offset = eventMessage.positionEventNumber;
-                const callback = () => {
-                    this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
-                }
+            const offset = eventMessage.positionEventNumber;
+            const callback = () => {
+                this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
+            }
 
+            if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
                 const eventMessageFormatted = {
                     ...eventMessage.data,
                     eventType: eventMessage.eventType,
                 }
 
                 this.kafkaProducer.writeEvent(eventMessageFormatted, callback);
+            } else {
+                callback();
             }
         };
 
-        this.subscribeToStreamWithReconnect('$ce-sensor', this.checkpointId, onEvent);
+        this.subscribeToStreamFrom('$ce-sensor', this.checkpointId, onEvent);
     }
 }

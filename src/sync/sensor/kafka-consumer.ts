@@ -1,7 +1,7 @@
 import { KafkaClient, Consumer, Message } from 'kafka-node';
-import { KafkaConfiguration } from '../../../kafka.configuration';
+import { KafkaConfiguration } from '../../kafka.configuration';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CheckpointService } from '../../checkpoint/checkpoint.service';
+import { CheckpointService } from '../checkpoint/checkpoint.service';
 
 @Injectable()
 export class KafkaConsumer implements OnModuleInit {
@@ -18,21 +18,17 @@ export class KafkaConsumer implements OnModuleInit {
         private readonly kafkaConfiguration: KafkaConfiguration
     ){};
 
-    registerListener(callback) {
-        this.consumer.on('message', (message: Message) => {
-            const incrementOffsetCallback = () => {
-                const updateOffset = {
-                    offset: message.offset + 1
-                }
-                this.checkpointService.updateOne({_id: this.checkpointId}, updateOffset);
-            }
+    async registerListener(callback) {
+        this.consumer.on('message', async (message: Message) => {
             try {
                 const obj = JSON.parse(message.value.toString());
-                callback(obj);
+                await callback(obj);
+
+                const updateOffset = { offset: message.offset + 1 }
+                await this.checkpointService.updateOne({_id: this.checkpointId}, updateOffset);
             } catch {
-                this.logger.warn('Failed to parse kafka message.');
+                this.logger.warn('Failed to process kafka message.');
             }
-            incrementOffsetCallback();
         });
     }
 
@@ -49,8 +45,11 @@ export class KafkaConsumer implements OnModuleInit {
 
         this.client = new KafkaClient(config);
         const data = await this.checkpointService.findOne({_id: this.checkpointId});
+
         const offset = data ? data.offset : 0;
         const fetchRequest = [{ topic: this.topic, partition: 0, offset: offset }];
+        this.logger.log(`Subscribing to Kafka topic ${this.topic} from offset ${offset}.`);
+
         this.consumer = new Consumer(this.client, fetchRequest, { autoCommit: false, fromOffset: true });
     }
 }

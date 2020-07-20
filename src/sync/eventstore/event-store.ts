@@ -13,8 +13,12 @@ export class EventStore {
     this.client = new TCPClient(this.configuration.config);
   }
 
-  close() {
-    this.client.close();
+  async close() {
+    return await this.client.close();
+  }
+
+  async closeAllPools() {
+    return await this.client.closeAllPools();
   }
 
   async exists(streamName: string) {
@@ -38,8 +42,8 @@ export class EventStore {
     return await this.client.deleteStream(streamName, hardDelete);
   }
 
-  async subscribeToStream(streamName: string, onEventAppeared, onDropped) {
-    return await this.client.subscribeToStream(streamName, onEventAppeared, onDropped, true);
+  async checkStreamExists(streamName) {
+    return await this.client.checkStreamExists(streamName);
   }
 
   async subscribeToStreamFrom(streamName: string, fromEventNumber: number, onEventAppeared, onLiveProcessingStarted, onDropped) {

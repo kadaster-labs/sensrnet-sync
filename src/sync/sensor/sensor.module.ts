@@ -1,11 +1,11 @@
-import { KafkaConsumer } from './kafka/kafka-consumer';
-import { KafkaProducer } from './kafka/kafka-producer';
+import { KafkaConsumer } from './kafka-consumer';
+import { KafkaProducer } from './kafka-producer';
+import { EventStoreListener } from './eventstore.listener';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { KafkaConfiguration } from '../../kafka.configuration';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
 import { EventStoreModule } from '../eventstore/event-store.module';
 import { EventStoreService } from '../eventstore/event-store.service';
-import { EventStoreListener } from "./eventstore.listener";
 
 
 @Module({
@@ -30,7 +30,7 @@ export class SensorQueryModule implements OnModuleInit {
     private readonly eventStoreService: EventStoreService,
   ) {}
 
-  eventListener(eventStoreService, eventMessage) {
+  async eventListener(eventStoreService, eventMessage) {
     const metaData = { originSync: true };
     const streamId = `sensor-${eventMessage.aggregateId}`;
 
@@ -39,7 +39,7 @@ export class SensorQueryModule implements OnModuleInit {
       data: eventMessage, metadata: metaData,
     }
 
-    eventStoreService.createEvent(event);
+    await eventStoreService.createEvent(event);
   }
 
   onModuleInit() {

@@ -13,8 +13,12 @@ export class EventStoreService {
     await this.eventStore.createEvent(event);
   }
 
-  subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped) {
+  async subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped) {
     return this.eventStore.subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped);
+  }
+
+  async checkStreamExists(streamName) {
+    return this.eventStore.checkStreamExists(streamName);
   }
 
   async deleteStream(streamName: string, hardDelete?: boolean) {
