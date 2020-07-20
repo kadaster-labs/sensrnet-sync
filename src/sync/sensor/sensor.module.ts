@@ -3,23 +3,22 @@ import { KafkaProducer } from './kafka/kafka-producer';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { KafkaConfiguration } from '../../kafka.configuration';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
-import { EventStoreInterface } from './eventstore/eventstore.interface';
-import { EventStoreConnection } from './eventstore/eventstore.connection';
-import { EventStoreConfiguration } from '../../event-store.configuration';
-import { createJsonEventData, expectedVersion } from 'node-eventstore-client';
+import { EventStoreModule } from '../eventstore/event-store.module';
+import { EventStoreService } from '../eventstore/event-store.service';
+import { EventStoreListener } from "./eventstore.listener";
 
 
 @Module({
   imports: [
     CheckpointModule,
+    EventStoreModule,
   ],
   providers: [
     KafkaConsumer,
     KafkaProducer,
+    EventStoreService,
     KafkaConfiguration,
-    EventStoreInterface,
-    EventStoreConnection,
-    EventStoreConfiguration,
+    EventStoreListener,
   ],
 })
 
@@ -28,22 +27,22 @@ export class SensorQueryModule implements OnModuleInit {
 
   constructor(
     private readonly kafkaConsumer: KafkaConsumer,
-    private readonly eventStoreInterface: EventStoreInterface,
-    private readonly eventStoreConnection: EventStoreConnection,
+    private readonly eventStoreService: EventStoreService,
   ) {}
 
-  eventListener(eventStoreConnection, eventMessage) {
+  eventListener(eventStoreService, eventMessage) {
     const metaData = { originSync: true };
     const streamId = `sensor-${eventMessage.aggregateId}`;
-    const event = createJsonEventData(eventMessage.eventId, eventMessage, metaData, eventMessage.eventType);
 
-    const connection = eventStoreConnection.getConnection();
-    connection.appendToStream(streamId, expectedVersion.any, event)
-        .then(_ => this.logger.log(`Sync event ${eventMessage.eventId} has been written to the EventStore.`))
-        .catch(_ => this.logger.error('An error has occurred while writing to the EventStore.'));
+    const event = {
+      streamId, eventType: eventMessage.eventType,
+      data: eventMessage, metadata: metaData,
+    }
+
+    eventStoreService.createEvent(event);
   }
 
   onModuleInit() {
-    this.kafkaConsumer.registerListener((message) => this.eventListener(this.eventStoreConnection, message));
+    this.kafkaConsumer.registerListener((message) => this.eventListener(this.eventStoreService, message));
   }
 }

@@ -35,7 +35,7 @@
     "mongoose": "^5.9.21",
     "fabric-ca-client": "^2.1.0",
     "fabric-network": "^2.1.0",
-    "node-eventstore-client": "^0.2.16",
+    "geteventstore-promise": "^3.2.1",
     "kafka-node": "^5.0.0"
   },
   "devDependencies": {
