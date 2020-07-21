@@ -1,5 +1,5 @@
 import { KafkaClient, Producer } from 'kafka-node';
-import { KafkaConfiguration } from '../../../kafka.configuration';
+import { KafkaConfiguration } from '../../kafka.configuration';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 @Injectable()

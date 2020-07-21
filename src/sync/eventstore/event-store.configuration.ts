@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { TCPConfig } from 'geteventstore-promise';
 
 @Injectable()
 export class EventStoreConfiguration {
-  get config() {
+  get config(): TCPConfig {
     return {
       hostname: process.env.EVENT_STORE_HOST || 'localhost',
       // tslint:disable-next-line:radix
