@@ -1,0 +1,172 @@
+name: Continuous Integration and Deployment
+# This GitHub Action performs the following steps:
+# - Updating the NPM version
+# - Building new Docker image
+# - Pushing image to registry
+# - Updating package.json in repo
+# - Deploying image on K8s cluster
+#
+# Prerequisites
+# - AKS cluster w/ attached ACR
+# - Managed identity for cluster access
+# - Github secrets: REGISTRY_USERNAME and REGISTRY_PASSWORD for ACR
+# - Github secret: KUBE_CONFIG containing credentials for managed identity for cluster access
+on:
+  # Trigger the workflow on push or pull request for the master branch
+  push:
+    branches:
+      - master
+
+env:
+  REGISTRY: sensrnetregistry.azurecr.io
+  USERNAME: sensrnet
+  IMAGE: sync-bridge
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump-version.outputs.version }}
+    steps:
+    # Check out the code
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12
+
+    # Bump the version, https://github.com/marketplace/actions/setup-node-js-environment
+    - name: Bump npm version
+      id: bump-version
+      run: |
+        npm version patch --no-git-tag-version
+        VERSION=$(node -pe "require('./package.json').version")
+        echo "$VERSION" > VERSION
+        echo "::set-output name=version::${VERSION}"
+
+    # This step uses Azure's azure-container-registry-login
+    # https://github.com/marketplace/actions/azure-container-registry-login
+    - uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.REGISTRY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+
+    - name: Build Docker images
+      env:
+        VERSION: ${{ steps.bump-version.outputs.version }}
+      run: |
+        docker build . -t $REGISTRY/$USERNAME/$IMAGE:$VERSION
+        docker tag $REGISTRY/$USERNAME/$IMAGE:$VERSION $REGISTRY/$USERNAME/$IMAGE:latest
+
+    - name: Push Docker images
+      env:
+        VERSION: ${{ steps.bump-version.outputs.version }}
+      run: |
+        docker push $REGISTRY/$USERNAME/$IMAGE:latest
+        docker push $REGISTRY/$USERNAME/$IMAGE:$VERSION
+
+    # https://github.com/marketplace/actions/add-commit
+    - name: Add and commit changes
+      uses: EndBug/add-and-commit@v4
+      env:
+        # This is necessary in order to push a commit to the repo
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged, is set by GH.
+      with:
+        message: 'Release v${{ steps.bump-version.outputs.version }}'
+        ref: 'development'  # Branch to commit to
+
+    # https://github.com/marketplace/actions/create-a-release
+    - name: Create Github release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.bump-version.outputs.version }}
+        release_name: Release v${{ steps.bump-version.outputs.version }}
+        commitish: refs/heads/development
+
+  deploy-to-aks-gemeente-a:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/kubernetes-set-context
+      - uses: Azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+          context: sensrnet-gemeente-a
+
+      # https://github.com/Azure/k8s-bake
+      - uses: azure/k8s-bake@v1
+        with:
+          renderEngine: 'kustomize'
+          kustomizationPath: './deployment/overlays/labs/'
+          kubectl-version: 'latest'
+        id: bake
+
+      # https://github.com/marketplace/actions/deploy-to-kubernetes-cluster
+      - uses: Azure/k8s-deploy@v1
+        with:
+          manifests: ${{ steps.bake.outputs.manifestsBundle }}
+          namespace: sensrnet-backend
+          images: |
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/${{ env.IMAGE }}:${{ needs.build-and-push.outputs.version }}
+
+  deploy-to-aks-gemeente-b:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/kubernetes-set-context
+      - uses: Azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+          context: sensrnet-gemeente-b
+
+      # https://github.com/Azure/k8s-bake
+      - uses: azure/k8s-bake@v1
+        with:
+          renderEngine: 'kustomize'
+          kustomizationPath: './deployment/overlays/labs/'
+          kubectl-version: 'latest'
+        id: bake
+
+      # https://github.com/marketplace/actions/deploy-to-kubernetes-cluster
+      - uses: Azure/k8s-deploy@v1
+        with:
+          manifests: ${{ steps.bake.outputs.manifestsBundle }}
+          namespace: sensrnet-backend
+          images: |
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/${{ env.IMAGE }}:${{ needs.build-and-push.outputs.version }}
+
+  deploy-to-aks-viewer:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/kubernetes-set-context
+      - uses: Azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+          context: sensrnet-viewer
+
+      # https://github.com/Azure/k8s-bake
+      - uses: azure/k8s-bake@v1
+        with:
+          renderEngine: 'kustomize'
+          kustomizationPath: './deployment/overlays/labs/'
+          kubectl-version: 'latest'
+        id: bake
+
+      # https://github.com/marketplace/actions/deploy-to-kubernetes-cluster
+      - uses: Azure/k8s-deploy@v1
+        with:
+          manifests: ${{ steps.bake.outputs.manifestsBundle }}
+          namespace: sensrnet-backend
+          images: |
+            ${{ env.REGISTRY }}/${{ env.USERNAME }}/${{ env.IMAGE }}:${{ needs.build-and-push.outputs.version }}
