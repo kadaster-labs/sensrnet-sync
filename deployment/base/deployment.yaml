@@ -23,7 +23,7 @@ spec:
         - name: EVENT_STORE_PORT
           value: "1113"
         - name: KAFKA_HOST
-          value: 20.50.245.119
+          value: 51.124.90.210
         - name: KAFKA_PORT
           value: "9094"
         - name: KAFKA_TOPIC
