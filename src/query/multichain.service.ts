@@ -26,10 +26,10 @@ export class MultiChainService {
         return await this.connection.getAddresses();
     }
 
-    async grantSend(address) {
+    async grant(address, permissions) {
         return await this.connection.grant({
             addresses: address,
-            permissions: 'send'
+            permissions: permissions
         })
     }
 }

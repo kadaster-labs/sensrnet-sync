@@ -1,6 +1,6 @@
+import { GrantBody } from './models/body/grant-body';
 import { MultiChainService } from './multichain.service';
-import { Controller, Get, Post, Param } from '@nestjs/common';
-import { AddressParams } from './models/params/address-params';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
@@ -20,11 +20,11 @@ export class QueryController {
     return this.multiChainService.getAddress();
   }
 
-  @Post('grant/send/:address')
-  @ApiOperation({ summary: 'Grant Send Rights' })
-  @ApiResponse({ status: 200, description: 'Send rights granted' })
-  @ApiResponse({ status: 400, description: 'Send rights grant failed' })
-  async grantSend(@Param() params: AddressParams) {
-    return this.multiChainService.grantSend(params.address);
+  @Post('grant')
+  @ApiOperation({ summary: 'Grant Permissions' })
+  @ApiResponse({ status: 200, description: 'Permissions granted' })
+  @ApiResponse({ status: 400, description: 'Permissions grant failed' })
+  async grant(@Body() params: GrantBody) {
+    return this.multiChainService.grant(params.address, params.permissions);
   }
 }
