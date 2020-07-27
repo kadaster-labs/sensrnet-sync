@@ -33,8 +33,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.0",
     "mongoose": "^5.9.21",
-    "fabric-ca-client": "^2.1.0",
-    "fabric-network": "^2.1.0",
+    "multichain-node": "^2.2.0-version1.0.4",
     "geteventstore-promise": "^3.2.1",
     "kafka-node": "^5.0.0"
   },

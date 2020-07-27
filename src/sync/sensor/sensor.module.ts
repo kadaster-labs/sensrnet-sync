@@ -1,5 +1,5 @@
-import { KafkaConsumer } from './kafka-consumer';
-import { KafkaProducer } from './kafka-producer';
+import { MultichainConsumer } from './multichain-consumer';
+import { MultichainProducer } from './multichain-producer';
 import { EventStoreListener } from './eventstore.listener';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { KafkaConfiguration } from '../../kafka.configuration';
@@ -14,8 +14,8 @@ import { EventStoreService } from '../eventstore/event-store.service';
     EventStoreModule,
   ],
   providers: [
-    KafkaConsumer,
-    KafkaProducer,
+    MultichainConsumer,
+    MultichainProducer,
     EventStoreService,
     KafkaConfiguration,
     EventStoreListener,
@@ -26,7 +26,7 @@ export class SensorQueryModule implements OnModuleInit {
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
-    private readonly kafkaConsumer: KafkaConsumer,
+    private readonly multichainConsumer: MultichainConsumer,
     private readonly eventStoreService: EventStoreService,
   ) {}
 
@@ -43,6 +43,6 @@ export class SensorQueryModule implements OnModuleInit {
   }
 
   onModuleInit() {
-    this.kafkaConsumer.registerListener((message) => this.eventListener(this.eventStoreService, message));
+    this.multichainConsumer.listenerLoop((message) => this.eventListener(this.eventStoreService, message));
   }
 }

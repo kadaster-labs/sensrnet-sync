@@ -1,4 +1,4 @@
-import { KafkaProducer } from './kafka-producer';
+import { MultichainProducer } from './multichain-producer';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../checkpoint/checkpoint.service';
 import { EventStoreService } from '../eventstore/event-store.service';
@@ -10,7 +10,7 @@ export class EventStoreListener implements OnModuleInit{
     protected logger: Logger = new Logger(this.constructor.name);
 
     constructor(
-        private readonly kafkaProducer: KafkaProducer,
+        private readonly multichainProducer: MultichainProducer,
         private readonly eventStoreService: EventStoreService,
         private readonly checkpointService: CheckpointService,
     ) {}
@@ -46,7 +46,7 @@ export class EventStoreListener implements OnModuleInit{
                     eventType: eventMessage.eventType,
                 }
 
-                this.kafkaProducer.writeEvent(eventMessageFormatted, callback);
+                this.multichainProducer.writeEvent(eventMessageFormatted, callback);
             } else {
                 callback();
             }
