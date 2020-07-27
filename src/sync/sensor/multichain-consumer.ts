@@ -1,6 +1,7 @@
-const multichain = require('multichain-node');
+import * as multichain from 'multichain-node';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../checkpoint/checkpoint.service';
+import { MultichainConfiguration } from '../../multichain.configuration';
 
 @Injectable()
 export class MultichainConsumer implements OnModuleInit {
@@ -12,17 +13,18 @@ export class MultichainConsumer implements OnModuleInit {
 
     constructor(
         private readonly checkpointService: CheckpointService,
+        private readonly multichainConfiguration: MultichainConfiguration,
     ){};
 
     async listenerLoop(callback) {
+        const stream = 'sensors';
         const data = await this.checkpointService.findOne({_id: this.checkpointId});
         const offset = data ? data.offset : 0;
 
         try {
             const items = await this.connection.listStreamItems({
-                stream: 'sensors',
                 start: offset,
-                verbose: true
+                stream: stream,
             });
 
             for (let i = 0; i < items.length; i++) {
@@ -35,22 +37,21 @@ export class MultichainConsumer implements OnModuleInit {
             }
         } catch (e){
             if (e.code === -703) {
-                await this.connection.subscribe({stream: 'sensors'});
+                await this.connection.subscribe({stream: stream});
             }
         }
 
-        setTimeout(() => this.listenerLoop(callback), 5000);
+        setTimeout(() => this.listenerLoop(callback), 1000);
     }
 
     async onModuleInit() {
-        this.connection = multichain({
-            port: 8002,
-            host: '127.0.0.1',
-            user: 'multichainrpc',
-            pass: 'password'
-        });
+        const config = this.multichainConfiguration.config;
 
-        const data = await this.checkpointService.findOne({_id: this.checkpointId});
-        const offset = data ? data.offset : 0;
+        this.connection = multichain({
+            port: config.port,
+            host: config.hostname,
+            user: config.username,
+            pass: config.password,
+        });
     }
 }

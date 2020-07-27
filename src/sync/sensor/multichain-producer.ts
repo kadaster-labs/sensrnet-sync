@@ -1,32 +1,35 @@
 import { v4 } from 'uuid';
-const multichain = require('multichain-node');
+import * as multichain from 'multichain-node';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { MultichainConfiguration } from '../../multichain.configuration';
 
 @Injectable()
 export class MultichainProducer implements OnModuleInit {
 
     private connection;
+
     protected logger: Logger = new Logger(this.constructor.name);
 
-    constructor(){};
+    constructor(
+        private readonly multichainConfiguration: MultichainConfiguration,
+    ){};
 
     writeEvent(event, callback) {
         this.connection.publish({
-            stream: 'sensors',
             key: v4(),
+            stream: 'sensors',
             data: Buffer.from(JSON.stringify(event)).toString('hex')
-        }).then(() => {
-            console.log('Successfully written event to MultiChain.')
-            callback();
-        }, (e) => console.error(e));
+        }).then(callback, (e) => this.logger.error(e));
     }
 
     onModuleInit() {
+        const config = this.multichainConfiguration.config;
+
         this.connection = multichain({
-            port: 8002,
-            host: '127.0.0.1',
-            user: 'multichainrpc',
-            pass: 'password'
+            port: config.port,
+            host: config.hostname,
+            user: config.username,
+            pass: config.password,
         });
     }
 }

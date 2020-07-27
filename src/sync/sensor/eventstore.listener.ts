@@ -7,12 +7,13 @@ import { EventStoreService } from '../eventstore/event-store.service';
 export class EventStoreListener implements OnModuleInit{
 
     private checkpointId: string = 'sync-sensor-es';
+
     protected logger: Logger = new Logger(this.constructor.name);
 
     constructor(
-        private readonly multichainProducer: MultichainProducer,
         private readonly eventStoreService: EventStoreService,
         private readonly checkpointService: CheckpointService,
+        private readonly multichainProducer: MultichainProducer,
     ) {}
 
     subscribeToStreamFrom(streamName, checkpointId, onEvent) {

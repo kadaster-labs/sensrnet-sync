@@ -2,11 +2,10 @@ import { MultichainConsumer } from './multichain-consumer';
 import { MultichainProducer } from './multichain-producer';
 import { EventStoreListener } from './eventstore.listener';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
-import { KafkaConfiguration } from '../../kafka.configuration';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
 import { EventStoreModule } from '../eventstore/event-store.module';
 import { EventStoreService } from '../eventstore/event-store.service';
-
+import { MultichainConfiguration } from '../../multichain.configuration';
 
 @Module({
   imports: [
@@ -14,11 +13,11 @@ import { EventStoreService } from '../eventstore/event-store.service';
     EventStoreModule,
   ],
   providers: [
+    EventStoreService,
+    EventStoreListener,
     MultichainConsumer,
     MultichainProducer,
-    EventStoreService,
-    KafkaConfiguration,
-    EventStoreListener,
+    MultichainConfiguration,
   ],
 })
 
