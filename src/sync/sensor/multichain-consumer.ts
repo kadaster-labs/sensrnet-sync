@@ -28,8 +28,10 @@ export class MultichainConsumer implements OnModuleInit {
             });
 
             for (let i = 0; i < items.length; i++) {
-                const event = JSON.parse(Buffer.from(items[i].data, 'hex').toString());
-                await callback(event);
+                try {
+                    const event = JSON.parse(Buffer.from(items[i].data, 'hex').toString());
+                    await callback(event);
+                } catch {}
 
                 const newOffset = offset + i + 1;
                 const updateOffset = { offset: newOffset };
