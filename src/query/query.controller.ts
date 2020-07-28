@@ -1,7 +1,6 @@
 import { GrantBody } from './models/body/grant-body';
 import { StreamBody } from './models/body/stream-body';
 import { MultiChainService } from './multichain.service';
-import { DomainException } from './errors/domain-exception';
 import { TransactionBody } from './models/body/transaction-body';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { UseFilters, Controller, Get, Post, Body } from '@nestjs/common';
