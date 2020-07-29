@@ -45,6 +45,6 @@ export class QueryController {
   @ApiResponse({ status: 200, description: 'Transaction created' })
   @ApiResponse({ status: 400, description: 'Transaction creation failed' })
   async createTransaction(@Body() params: TransactionBody) {
-    return this.multiChainService.createTransaction(params.name, params.data);
+    return this.multiChainService.createTransaction(params.stream, params.data);
   }
 }

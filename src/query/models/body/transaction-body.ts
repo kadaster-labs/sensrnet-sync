@@ -10,7 +10,7 @@ export class TransactionBody {
         required: true,
         description: 'The stream name.',
     })
-    readonly name: string;
+    readonly stream: string;
 
     @IsString()
     @IsNotEmpty()
