@@ -1,9 +1,9 @@
-import { MultichainProducer } from './multichain/multichain-producer';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../checkpoint/checkpoint.service';
 import { EventStoreService } from '../eventstore/event-store.service';
-import { SubscriptionExistsException } from './errors/subscription-exists-exception';
+import { MultichainProducer } from './multichain/multichain-producer';
 import { NoSubscriptionException } from './errors/no-subscription-exception';
+import { SubscriptionExistsException } from './errors/subscription-exists-exception';
 
 @Injectable()
 export class EventStoreListener implements OnModuleInit{
@@ -44,9 +44,7 @@ export class EventStoreListener implements OnModuleInit{
         if (!this.subscriptionExists()) {
             const onEvent = (_, eventMessage) => {
                 const offset = eventMessage.positionEventNumber;
-                const callback = () => {
-                    this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
-                }
+                const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
 
                 if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
                     const eventMessageFormatted = {
@@ -66,7 +64,20 @@ export class EventStoreListener implements OnModuleInit{
         }
     }
 
-    subscribeToStreamFrom(streamName, checkpointId, onEvent) {
+    async getOffset() {
+        const checkpoint = await this.checkpointService.findOne({_id: this.checkpointId});
+        return checkpoint ? checkpoint.offset : -1;
+    }
+
+    async setOffset(offset) {
+        if (!this.subscriptionExists()) {
+            await this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
+        } else {
+            throw new SubscriptionExistsException();
+        }
+    }
+
+    async subscribeToStreamFrom(streamName, checkpointId, onEvent) {
         const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
         const exitCallback = () => {
@@ -81,16 +92,20 @@ export class EventStoreListener implements OnModuleInit{
         }
 
         const timeout = setTimeout(exitCallback, timeoutMs);
-        this.checkpointService.findOne({_id: checkpointId}).then((data) => {
-            const offset = data ? data.offset : -1;
+        try {
+            const offset = await this.getOffset();
             this.logger.log(`Subscribing to ES stream ${streamName} from offset ${offset}.`);
 
-            this.eventStoreService.subscribeToStreamFrom(streamName, offset, onEvent, null, droppedCallback)
-                .then((s) => {
-                    clearTimeout(timeout);
-                    this.setSubscription(s);
-                }, () => this.logger.error(`Failed to subscribe to stream ${streamName}.`));
-        }, () => this.logger.error(`Failed to determine offset of stream ${streamName}.`));
+            try {
+                const s = await this.eventStoreService.subscribeToStreamFrom(streamName, offset, onEvent, null, droppedCallback);
+                clearTimeout(timeout);
+                this.setSubscription(s);
+            } catch {
+                this.logger.error(`Failed to subscribe to stream ${streamName}.`);
+            }
+        } catch {
+            this.logger.error(`Failed to determine offset of stream ${streamName}.`);
+        }
     }
 
     onModuleInit() {
