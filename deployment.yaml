@@ -22,12 +22,14 @@ spec:
           value: eventstore-cluster
         - name: EVENT_STORE_PORT
           value: "1113"
-        - name: KAFKA_HOST
-          value: 20.50.245.119
-        - name: KAFKA_PORT
-          value: "9094"
-        - name: KAFKA_TOPIC
-          value: sync
+        - name: MULTICHAIN_HOST
+          value: multichain
+        - name: MULTICHAIN_USER
+          value: multichainrpc
+        - name: MULTICHAIN_PORT
+          value: "8002"
+        - name: MULTICHAIN_PASSWORD
+          value: password
         - name: MONGO_DATABASE
           value: sensrnet
         - name: MONGO_HOST
@@ -38,13 +40,7 @@ spec:
           value: "3500"
         image: sensrnetregistry.azurecr.io/sensrnet/sync-bridge:latest
         name: sync-bridge
-        volumeMounts:
-        - name: kafka-secrets
-          mountPath: "/etc/kafka"
-          readOnly: true
+        ports:
+          - containerPort: 3500
         resources: {}
-      volumes:
-      - name: kafka-secrets
-        secret:
-          secretName: kafka-ca
       restartPolicy: Always
