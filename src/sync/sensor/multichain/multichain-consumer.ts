@@ -44,10 +44,18 @@ export class MultichainConsumer implements OnModuleInit {
         this.retryCount = 0;
     }
 
+    async getOffset() {
+        const checkpoint = await this.checkpointService.findOne({_id: this.checkpointId});
+        return checkpoint ? checkpoint.offset : 0;
+    }
+
+    async setOffset(offset) {
+        await this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
+    }
+
     async listenerLoop(callback) {
         const stream = 'sensors';
-        const data = await this.checkpointService.findOne({_id: this.checkpointId});
-        const offset = data ? data.offset : 0;
+        const offset = await this.getOffset();
 
         try {
             const items = await this.connection.listStreamItems({
@@ -65,8 +73,7 @@ export class MultichainConsumer implements OnModuleInit {
                 }
 
                 const newOffset = offset + i + 1;
-                const updateOffset = { offset: newOffset };
-                await this.checkpointService.updateOne({_id: this.checkpointId}, updateOffset);
+                await this.setOffset(newOffset);
 
                 this.resetRetryCount();
             }

@@ -1,22 +1,22 @@
 import { GrantBody } from './models/body/grant-body';
 import { StreamBody } from './models/body/stream-body';
-import { EventStoreListener } from './eventstore.listener';
-import { EsOffsetBody } from './models/body/es-offset-body';
+import { OffsetBody } from './models/body/offset-body';
 import { TransactionBody } from './models/body/transaction-body';
 import { MultiChainService } from './multichain/multichain.service';
+import { MultichainConsumer } from './multichain/multichain-consumer';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { UseFilters, Controller, Get, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
-@ApiTags('MultiChain')
-@Controller('MultiChain')
+@ApiTags('Multichain')
+@Controller('Multichain')
 @UseFilters(new DomainExceptionFilter())
-export class SensorController {
+export class MultichainController {
 
   constructor(
       private readonly multiChainService: MultiChainService,
-      private readonly eventStoreListener: EventStoreListener,
+      private readonly multichainConsumer: MultichainConsumer,
   ) {}
 
   @Get()
@@ -51,35 +51,19 @@ export class SensorController {
     return this.multiChainService.createTransaction(body.stream, body.data);
   }
 
-  @Post('subscription/es/open')
-  @ApiOperation({ summary: 'Open EventStore subscription' })
-  @ApiResponse({ status: 200, description: 'EventStore subscription opened' })
-  @ApiResponse({ status: 400, description: 'Failed to open EventStore subscription' })
-  async openEventStoreSubscription() {
-    this.eventStoreListener.openSubscription();
+  @Get('checkpoint')
+  @ApiOperation({ summary: 'Retrieve checkpoint offset' })
+  @ApiResponse({ status: 200, description: 'Checkpoint offset retrieved' })
+  @ApiResponse({ status: 400, description: 'Failed to retrieve Checkpoint offset' })
+  async retrieveMultichainOffset() {
+    return this.multichainConsumer.getOffset();
   }
 
-  @Post('subscription/es/close')
-  @ApiOperation({ summary: 'Close EventStore subscription' })
-  @ApiResponse({ status: 200, description: 'EventStore subscription closed' })
-  @ApiResponse({ status: 400, description: 'Failed to close EventStore subscription' })
-  async closeEventStoreSubscription() {
-    this.eventStoreListener.closeSubscription();
-  }
-
-  @Get('checkpoint/es')
-  @ApiOperation({ summary: 'Retrieve EventStore checkpoint offset' })
-  @ApiResponse({ status: 200, description: 'EventStore checkpoint offset retrieved' })
-  @ApiResponse({ status: 400, description: 'Failed to retrieve EventStore checkpoint offset' })
-  async retrieveEventStoreOffset() {
-    return this.eventStoreListener.getOffset();
-  }
-
-  @Post('checkpoint/es')
-  @ApiOperation({ summary: 'Set EventStore checkpoint offset' })
-  @ApiResponse({ status: 200, description: 'EventStore checkpoint offset set' })
-  @ApiResponse({ status: 400, description: 'Failed to set EventStore checkpoint offset' })
-  async setEventStoreOffset(@Body() body: EsOffsetBody) {
-    await this.eventStoreListener.setOffset(body.offset);
+  @Post('checkpoint')
+  @ApiOperation({ summary: 'Set checkpoint offset' })
+  @ApiResponse({ status: 200, description: 'Checkpoint offset set' })
+  @ApiResponse({ status: 400, description: 'Failed to set Checkpoint offset' })
+  async setMultichainOffset(@Body() body: OffsetBody) {
+    await this.multichainConsumer.setOffset(body.offset);
   }
 }

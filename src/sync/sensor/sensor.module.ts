@@ -1,11 +1,12 @@
-import { SensorController } from './sensor.controller';
-import { MultiChainService } from './multichain/multichain.service';
-import { MultichainConsumer } from './multichain/multichain-consumer';
-import { MultichainProducer } from './multichain/multichain-producer';
 import { EventStoreListener } from './eventstore.listener';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { EventStoreController } from './eventstore.controller';
+import { MultichainController } from './multichain.controller';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
+import { MultiChainService } from './multichain/multichain.service';
 import { EventStoreModule } from '../eventstore/event-store.module';
+import { MultichainConsumer } from './multichain/multichain-consumer';
+import { MultichainProducer } from './multichain/multichain-producer';
 import { EventStoreService } from '../eventstore/event-store.service';
 import { MultichainConfiguration } from '../../multichain.configuration';
 
@@ -16,7 +17,8 @@ import { MultichainConfiguration } from '../../multichain.configuration';
     SensorQueryModule,
   ],
   controllers: [
-    SensorController,
+    EventStoreController,
+    MultichainController,
   ],
   providers: [
     EventStoreService,
