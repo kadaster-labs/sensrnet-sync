@@ -24,4 +24,8 @@ export class EventStoreService {
   async deleteStream(streamName: string, hardDelete?: boolean) {
     return await this.eventStore.deleteStream(streamName, hardDelete);
   }
+
+  async close() {
+    return this.eventStore.close();
+  }
 }

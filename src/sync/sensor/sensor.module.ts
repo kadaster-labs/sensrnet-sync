@@ -1,5 +1,7 @@
-import { MultichainConsumer } from './multichain-consumer';
-import { MultichainProducer } from './multichain-producer';
+import { SensorController } from './sensor.controller';
+import { MultiChainService } from './multichain/multichain.service';
+import { MultichainConsumer } from './multichain/multichain-consumer';
+import { MultichainProducer } from './multichain/multichain-producer';
 import { EventStoreListener } from './eventstore.listener';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
@@ -11,12 +13,18 @@ import { MultichainConfiguration } from '../../multichain.configuration';
   imports: [
     CheckpointModule,
     EventStoreModule,
+    SensorQueryModule,
+  ],
+  controllers: [
+    SensorController,
   ],
   providers: [
     EventStoreService,
+    MultiChainService,
     EventStoreListener,
     MultichainConsumer,
     MultichainProducer,
+    MultichainConfiguration,
     MultichainConfiguration,
   ],
 })
@@ -25,8 +33,8 @@ export class SensorQueryModule implements OnModuleInit {
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
-    private readonly multichainConsumer: MultichainConsumer,
     private readonly eventStoreService: EventStoreService,
+    private readonly multichainConsumer: MultichainConsumer,
   ) {}
 
   async eventListener(eventStoreService, eventMessage) {

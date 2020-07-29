@@ -1,8 +1,8 @@
 import { v4 } from 'uuid';
 import * as multichain from 'multichain-node';
 import { Injectable, Logger } from '@nestjs/common';
-import { DomainException } from './errors/domain-exception';
-import { MultichainConfiguration } from '../multichain.configuration';
+import { DomainException } from '../errors/domain-exception';
+import { MultichainConfiguration } from '../../../multichain.configuration';
 
 @Injectable()
 export class MultiChainService {

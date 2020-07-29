@@ -1,19 +1,21 @@
 import { GrantBody } from './models/body/grant-body';
 import { StreamBody } from './models/body/stream-body';
-import { MultiChainService } from './multichain.service';
+import { MultiChainService } from './multichain/multichain.service';
 import { TransactionBody } from './models/body/transaction-body';
 import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { UseFilters, Controller, Get, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {EventStoreListener} from "./eventstore.listener";
 
 @ApiBearerAuth()
 @ApiTags('MultiChain')
 @Controller('MultiChain')
 @UseFilters(new DomainExceptionFilter())
-export class QueryController {
+export class SensorController {
 
   constructor(
-      private readonly multiChainService: MultiChainService
+      private readonly multiChainService: MultiChainService,
+      private readonly eventStoreListener: EventStoreListener,
   ) {}
 
   @Get()
@@ -46,5 +48,21 @@ export class QueryController {
   @ApiResponse({ status: 400, description: 'Transaction creation failed' })
   async createTransaction(@Body() params: TransactionBody) {
     return this.multiChainService.createTransaction(params.stream, params.data);
+  }
+
+  @Post('subscription/es/open')
+  @ApiOperation({ summary: 'Open EventStore subscription' })
+  @ApiResponse({ status: 200, description: 'EventStore subscription opened' })
+  @ApiResponse({ status: 400, description: 'Failed to open EventStore subscription' })
+  async openEventStoreSubscription() {
+    this.eventStoreListener.openSubscription();
+  }
+
+  @Post('subscription/es/close')
+  @ApiOperation({ summary: 'Close EventStore subscription' })
+  @ApiResponse({ status: 200, description: 'EventStore subscription closed' })
+  @ApiResponse({ status: 400, description: 'Failed to close EventStore subscription' })
+  async closeEventStoreSubscription() {
+    this.eventStoreListener.closeSubscription();
   }
 }
