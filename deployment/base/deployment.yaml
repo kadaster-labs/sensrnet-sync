@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sync-bridge
+  name: sync-bridge
+spec:
+  selector:
+    matchLabels:
+      app: sync-bridge
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: sync-bridge
+    spec:
+      containers:
+      - name: sync-bridge
+        env:
+        - name: EVENT_STORE_HOST
+          value: eventstore-cluster
+        - name: EVENT_STORE_PORT
+          value: "1113"
+        - name: KAFKA_HOST
+          value: 51.124.90.210
+        - name: KAFKA_PORT
+          value: "9094"
+        - name: KAFKA_TOPIC
+          value: sync
+        - name: MONGO_DATABASE
+          value: sensrnet
+        - name: MONGO_HOST
+          value: mongo
+        - name: MONGO_PORT
+          value: "27017"
+        - name: PORT
+          value: "3500"
+        volumeMounts:
+        - name: kafka-secrets
+          mountPath: "/etc/kafka"
+          readOnly: true
+      volumes:
+      - name: kafka-secrets
+        secret:
+          secretName: kafka-ca
+      restartPolicy: Always

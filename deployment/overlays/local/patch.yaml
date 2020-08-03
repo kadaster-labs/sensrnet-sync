@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sync-bridge
+spec:
+  template:
+    spec:
+      containers:
+      - name: sync-bridge
+        image: sensrnetregistry.azurecr.io/sensrnet/sync-bridge:latest
+        imagePullPolicy: Never
+        resources: {}
