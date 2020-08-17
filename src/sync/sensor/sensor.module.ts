@@ -1,24 +1,33 @@
-import { KafkaConsumer } from './kafka-consumer';
-import { KafkaProducer } from './kafka-producer';
 import { EventStoreListener } from './eventstore.listener';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
-import { KafkaConfiguration } from '../../kafka.configuration';
+import { EventStoreController } from './eventstore.controller';
+import { MultichainController } from './multichain.controller';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
+import { MultiChainService } from './multichain/multichain.service';
 import { EventStoreModule } from '../eventstore/event-store.module';
+import { MultichainConsumer } from './multichain/multichain-consumer';
+import { MultichainProducer } from './multichain/multichain-producer';
 import { EventStoreService } from '../eventstore/event-store.service';
-
+import { MultichainConfiguration } from '../../multichain.configuration';
 
 @Module({
   imports: [
     CheckpointModule,
     EventStoreModule,
+    SensorQueryModule,
+  ],
+  controllers: [
+    EventStoreController,
+    MultichainController,
   ],
   providers: [
-    KafkaConsumer,
-    KafkaProducer,
     EventStoreService,
-    KafkaConfiguration,
+    MultiChainService,
     EventStoreListener,
+    MultichainConsumer,
+    MultichainProducer,
+    MultichainConfiguration,
+    MultichainConfiguration,
   ],
 })
 
@@ -26,8 +35,8 @@ export class SensorQueryModule implements OnModuleInit {
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
-    private readonly kafkaConsumer: KafkaConsumer,
     private readonly eventStoreService: EventStoreService,
+    private readonly multichainConsumer: MultichainConsumer,
   ) {}
 
   async eventListener(eventStoreService, eventMessage) {
@@ -43,6 +52,6 @@ export class SensorQueryModule implements OnModuleInit {
   }
 
   onModuleInit() {
-    this.kafkaConsumer.registerListener((message) => this.eventListener(this.eventStoreService, message));
+    this.multichainConsumer.listenerLoop((message) => this.eventListener(this.eventStoreService, message));
   }
 }
