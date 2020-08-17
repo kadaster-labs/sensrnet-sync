@@ -17,17 +17,21 @@ spec:
     spec:
       containers:
       - name: sync-bridge
+        ports:
+        - containerPort: 3500
         env:
         - name: EVENT_STORE_HOST
           value: eventstore-cluster
         - name: EVENT_STORE_PORT
           value: "1113"
-        - name: KAFKA_HOST
-          value: 51.124.90.210
-        - name: KAFKA_PORT
-          value: "9094"
-        - name: KAFKA_TOPIC
-          value: sync
+        - name: MULTICHAIN_HOST
+          value: multichain
+        - name: MULTICHAIN_USER
+          value: multichainrpc
+        - name: MULTICHAIN_PORT
+          value: "8002"
+        - name: MULTICHAIN_PASSWORD
+          value: password
         - name: MONGO_DATABASE
           value: sensrnet
         - name: MONGO_HOST
@@ -36,12 +40,4 @@ spec:
           value: "27017"
         - name: PORT
           value: "3500"
-        volumeMounts:
-        - name: kafka-secrets
-          mountPath: "/etc/kafka"
-          readOnly: true
-      volumes:
-      - name: kafka-secrets
-        secret:
-          secretName: kafka-ca
       restartPolicy: Always
