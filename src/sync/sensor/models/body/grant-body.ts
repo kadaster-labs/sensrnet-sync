@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty } from 'class-validator';
 
 export enum Permissions {
-  Mine = 'mine',
   Send = 'send',
+  Mine = 'mine',
   Issue = 'issue',
   Admin = 'admin',
   Create = 'create',
@@ -29,7 +29,7 @@ export class GrantBody {
     type: String,
     required: true,
     enum: Permissions,
-    description: 'The grant permissions.',
+    description: 'The permissions to grant.',
   })
   readonly permissions: string;
 

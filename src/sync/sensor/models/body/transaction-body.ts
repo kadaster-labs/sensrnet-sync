@@ -17,7 +17,7 @@ export class TransactionBody {
     @ApiProperty({
         type: String,
         required: true,
-        description: 'The data to create.',
+        description: 'The transaction data.',
     })
     readonly data: string;
 

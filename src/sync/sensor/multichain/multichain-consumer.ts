@@ -7,8 +7,10 @@ import { MultichainConfiguration } from '../../../multichain.configuration';
 export class MultichainConsumer implements OnModuleInit {
 
     private connection;
-    private retryCount = 0;
-    private maxRetryCount = 10;
+    private retryCount: number = 0;
+    private maxRetryCount: number = 10;
+    private loopInterval: number = 1000;
+    private streamName: string = 'sensors';
     private checkpointId: string = 'sync-sensor-multichain';
 
     protected logger: Logger = new Logger(this.constructor.name);
@@ -54,13 +56,12 @@ export class MultichainConsumer implements OnModuleInit {
     }
 
     async listenerLoop(callback) {
-        const stream = 'sensors';
         const offset = await this.getOffset();
 
         try {
             const items = await this.connection.listStreamItems({
                 start: offset,
-                stream: stream,
+                stream: this.streamName,
             });
 
             for (let i = 0; i < items.length; i++) {
@@ -79,14 +80,14 @@ export class MultichainConsumer implements OnModuleInit {
             }
         } catch (e){
             if (e.code === -703) {
-                await this.connection.subscribe({stream: stream});
+                await this.connection.subscribe({stream: this.streamName});
             } else if (e.code === 'ECONNREFUSED') {
                 this.incrementRetryCount();
                 await this.initConnection();
             }
         }
 
-        setTimeout(() => this.listenerLoop(callback), 1000);
+        setTimeout(() => this.listenerLoop(callback), this.loopInterval);
     }
 
     async onModuleInit() {

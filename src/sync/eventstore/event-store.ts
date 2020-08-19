@@ -6,8 +6,7 @@ import { EventStoreConfiguration } from './event-store.configuration';
 export class EventStore {
   private client!: TCPClient;
 
-  constructor(private configuration: EventStoreConfiguration) {
-  }
+  constructor(private configuration: EventStoreConfiguration) {}
 
   connect() {
     this.client = new TCPClient(this.configuration.config);
@@ -48,8 +47,8 @@ export class EventStore {
 
   async subscribeToStreamFrom(streamName: string, fromEventNumber: number, onEventAppeared, onLiveProcessingStarted, onDropped) {
     const settings = {
-      resolveLinkTos: true,
       readBatchSize: 1,
+      resolveLinkTos: true,
     };
 
     return await this.client.subscribeToStreamFrom(streamName, fromEventNumber, onEventAppeared, onLiveProcessingStarted, onDropped, settings);

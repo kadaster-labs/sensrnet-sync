@@ -1,4 +1,4 @@
-import { DomainException } from './domain-exception';
+import { DomainException } from '../../core/errors/domain-exception';
 
 export class NoSubscriptionException extends DomainException {
     constructor() {

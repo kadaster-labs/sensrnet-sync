@@ -4,8 +4,8 @@ import { OffsetBody } from './models/body/offset-body';
 import { TransactionBody } from './models/body/transaction-body';
 import { MultiChainService } from './multichain/multichain.service';
 import { MultichainConsumer } from './multichain/multichain-consumer';
-import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { UseFilters, Controller, Get, Post, Body } from '@nestjs/common';
+import { DomainExceptionFilter } from '../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()

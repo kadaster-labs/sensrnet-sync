@@ -1,7 +1,7 @@
 import { OffsetBody } from './models/body/offset-body';
 import { EventStoreListener } from './eventstore.listener';
-import { DomainExceptionFilter } from './errors/domain-exception.filter';
 import { UseFilters, Controller, Get, Post, Body } from '@nestjs/common';
+import { DomainExceptionFilter } from '../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()

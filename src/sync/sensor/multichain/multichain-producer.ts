@@ -7,6 +7,7 @@ import { MultichainConfiguration } from '../../../multichain.configuration';
 export class MultichainProducer implements OnModuleInit {
 
     private connection;
+    private streamName: string = 'sensors';
 
     protected logger: Logger = new Logger(this.constructor.name);
 
@@ -17,7 +18,7 @@ export class MultichainProducer implements OnModuleInit {
     writeEvent(event, callback) {
         this.connection.publish({
             key: v4(),
-            stream: 'sensors',
+            stream: this.streamName,
             data: Buffer.from(JSON.stringify(event)).toString('hex'),
         }).then(callback, (e) => this.logger.error(e));
     }
