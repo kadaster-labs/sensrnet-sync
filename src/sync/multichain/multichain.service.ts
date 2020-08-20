@@ -1,11 +1,11 @@
 import { v4 } from 'uuid';
 import * as multichain from 'multichain-node';
-import { Injectable, Logger } from '@nestjs/common';
-import { DomainException } from '../../core/errors/domain-exception';
-import { MultichainConfiguration } from '../../../multichain.configuration';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { DomainException } from '../core/errors/domain-exception';
+import { MultichainConfiguration } from '../../multichain.configuration';
 
 @Injectable()
-export class MultiChainService {
+export class MultiChainService implements OnModuleInit {
 
     private connection;
 
@@ -13,16 +13,7 @@ export class MultiChainService {
 
     constructor(
         private readonly multichainConfiguration: MultichainConfiguration,
-    ) {
-        const config = this.multichainConfiguration.config;
-
-        this.connection = multichain({
-            port: config.port,
-            host: config.hostname,
-            user: config.username,
-            pass: config.password,
-        });
-    }
+    ) {}
 
     async getAddress() {
         try {
@@ -65,5 +56,28 @@ export class MultiChainService {
         } catch (e) {
             throw new DomainException(e.message);
         }
+    }
+
+    async listStreamItems(settings) {
+        return await this.connection.listStreamItems(settings);
+    }
+
+    async subscribe(settings) {
+        return await this.connection.subscribe(settings);
+    }
+
+    async initConnection() {
+        const config = this.multichainConfiguration.config;
+
+        this.connection = multichain({
+            port: config.port,
+            host: config.hostname,
+            user: config.username,
+            pass: config.password,
+        });
+    }
+
+    async onModuleInit() {
+        await this.initConnection();
     }
 }

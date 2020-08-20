@@ -1,7 +1,7 @@
+import { SensorMultiChainProducer } from './sensormc.producer';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../checkpoint/checkpoint.service';
 import { EventStoreService } from '../eventstore/event-store.service';
-import { MultichainProducer } from './multichain/multichain-producer';
 import { NoSubscriptionException } from './errors/no-subscription-exception';
 import { SubscriptionExistsException } from './errors/subscription-exists-exception';
 
@@ -16,7 +16,7 @@ export class EventStoreListener implements OnModuleInit{
     constructor(
         private readonly eventStoreService: EventStoreService,
         private readonly checkpointService: CheckpointService,
-        private readonly multichainProducer: MultichainProducer,
+        private readonly multichainProducer: SensorMultiChainProducer,
     ) {}
 
     getSubscription() {
@@ -40,9 +40,9 @@ export class EventStoreListener implements OnModuleInit{
         }
     }
 
-    openSubscription() {
+    async openSubscription() {
         if (!this.subscriptionExists()) {
-            const onEvent = (_, eventMessage) => {
+            const onEvent = async (_, eventMessage) => {
                 const offset = eventMessage.positionEventNumber;
                 const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
 
@@ -52,13 +52,13 @@ export class EventStoreListener implements OnModuleInit{
                         eventType: eventMessage.eventType,
                     }
 
-                    this.multichainProducer.writeEvent(eventMessageFormatted, callback);
+                    await this.multichainProducer.writeEvent(eventMessageFormatted, callback);
                 } else {
-                    callback();
+                    await callback();
                 }
             };
 
-            this.subscribeToStreamFrom('$ce-sensor', this.checkpointId, onEvent);
+            await this.subscribeToStreamFrom('$ce-sensor', this.checkpointId, onEvent);
         } else {
             throw new SubscriptionExistsException();
         }
@@ -108,7 +108,7 @@ export class EventStoreListener implements OnModuleInit{
         }
     }
 
-    onModuleInit() {
-        this.openSubscription();
+    async onModuleInit() {
+        await this.openSubscription();
     }
 }

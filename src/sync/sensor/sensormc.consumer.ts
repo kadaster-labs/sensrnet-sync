@@ -1,12 +1,11 @@
-import * as multichain from 'multichain-node';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CheckpointService } from '../../checkpoint/checkpoint.service';
-import { MultichainConfiguration } from '../../../multichain.configuration';
+import { Injectable, Logger } from '@nestjs/common';
+import { MultiChainService } from '../multichain/multichain.service';
+import { CheckpointService } from '../checkpoint/checkpoint.service';
+
 
 @Injectable()
-export class MultichainConsumer implements OnModuleInit {
+export class SensorMultiChainConsumer {
 
-    private connection;
     private retryCount: number = 0;
     private maxRetryCount: number = 10;
     private loopInterval: number = 1000;
@@ -17,19 +16,8 @@ export class MultichainConsumer implements OnModuleInit {
 
     constructor(
         private readonly checkpointService: CheckpointService,
-        private readonly multichainConfiguration: MultichainConfiguration,
+        private readonly multichainService: MultiChainService,
     ){};
-
-    async initConnection() {
-        const config = this.multichainConfiguration.config;
-
-        this.connection = multichain({
-            port: config.port,
-            host: config.hostname,
-            user: config.username,
-            pass: config.password,
-        });
-    }
 
     incrementRetryCount() {
         this.retryCount += 1;
@@ -59,7 +47,7 @@ export class MultichainConsumer implements OnModuleInit {
         const offset = await this.getOffset();
 
         try {
-            const items = await this.connection.listStreamItems({
+            const items = await this.multichainService.listStreamItems({
                 start: offset,
                 stream: this.streamName,
             });
@@ -80,17 +68,13 @@ export class MultichainConsumer implements OnModuleInit {
             }
         } catch (e){
             if (e.code === -703) {
-                await this.connection.subscribe({stream: this.streamName});
+                await this.multichainService.subscribe({stream: this.streamName});
             } else if (e.code === 'ECONNREFUSED') {
                 this.incrementRetryCount();
-                await this.initConnection();
+                await this.multichainService.initConnection();
             }
         }
 
         setTimeout(() => this.listenerLoop(callback), this.loopInterval);
-    }
-
-    async onModuleInit() {
-        await this.initConnection();
     }
 }

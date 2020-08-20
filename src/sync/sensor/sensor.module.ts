@@ -1,42 +1,43 @@
 import { EventStoreListener } from './eventstore.listener';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventStoreController } from './eventstore.controller';
-import { MultichainController } from './multichain.controller';
+import { SensorMultiChainConsumer } from './sensormc.consumer';
+import { SensorMultiChainProducer } from './sensormc.producer';
+import { MultiChainModule } from '../multichain/multichain.module';
+import { SensorMultiChainController } from './sensormc.controller';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
-import { MultiChainService } from './multichain/multichain.service';
 import { EventStoreModule } from '../eventstore/event-store.module';
-import { MultichainConsumer } from './multichain/multichain-consumer';
-import { MultichainProducer } from './multichain/multichain-producer';
 import { EventStoreService } from '../eventstore/event-store.service';
 import { MultichainConfiguration } from '../../multichain.configuration';
+
 
 @Module({
   imports: [
     CheckpointModule,
     EventStoreModule,
+    MultiChainModule,
     SensorQueryModule,
   ],
   controllers: [
     EventStoreController,
-    MultichainController,
+    SensorMultiChainController,
   ],
   providers: [
     EventStoreService,
-    MultiChainService,
     EventStoreListener,
-    MultichainConsumer,
-    MultichainProducer,
     MultichainConfiguration,
-    MultichainConfiguration,
+    SensorMultiChainConsumer,
+    SensorMultiChainProducer,
   ],
 })
 
 export class SensorQueryModule implements OnModuleInit {
+
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
     private readonly eventStoreService: EventStoreService,
-    private readonly multichainConsumer: MultichainConsumer,
+    private readonly multichainConsumer: SensorMultiChainConsumer,
   ) {}
 
   async eventListener(eventStoreService, eventMessage) {
@@ -51,7 +52,7 @@ export class SensorQueryModule implements OnModuleInit {
     await eventStoreService.createEvent(event);
   }
 
-  onModuleInit() {
-    this.multichainConsumer.listenerLoop((message) => this.eventListener(this.eventStoreService, message));
+  async onModuleInit() {
+    await this.multichainConsumer.listenerLoop((message) => this.eventListener(this.eventStoreService, message));
   }
 }

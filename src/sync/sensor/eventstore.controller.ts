@@ -5,8 +5,8 @@ import { DomainExceptionFilter } from '../core/errors/domain-exception.filter';
 import { ApiTags, ApiResponse, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
-@ApiTags('EventStore')
-@Controller('EventStore')
+@ApiTags('SensorES')
+@Controller('SensorES')
 @UseFilters(new DomainExceptionFilter())
 export class EventStoreController {
 
