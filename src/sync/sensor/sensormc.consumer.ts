@@ -17,7 +17,7 @@ export class SensorMultiChainConsumer {
     constructor(
         private readonly checkpointService: CheckpointService,
         private readonly multichainService: MultiChainService,
-    ){};
+    ){}
 
     incrementRetryCount() {
         this.retryCount += 1;

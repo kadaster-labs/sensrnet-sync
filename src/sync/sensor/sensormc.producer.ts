@@ -10,7 +10,7 @@ export class SensorMultiChainProducer {
 
     constructor(
         private readonly multichainService: MultiChainService,
-    ){};
+    ){}
 
     async writeEvent(event, callback) {
         try {
