@@ -4,8 +4,8 @@ import { EventStoreController } from './eventstore.controller';
 import { SensorMultiChainConsumer } from './sensormc.consumer';
 import { SensorMultiChainProducer } from './sensormc.producer';
 import { MultiChainModule } from '../multichain/multichain.module';
-import { SensorMultiChainController } from './sensormc.controller';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
+import { SensorMultiChainController } from './sensormc.controller';
 import { EventStoreModule } from '../eventstore/event-store.module';
 import { EventStoreService } from '../eventstore/event-store.service';
 import { MultichainConfiguration } from '../../multichain.configuration';
@@ -32,7 +32,6 @@ import { MultichainConfiguration } from '../../multichain.configuration';
 })
 
 export class SensorQueryModule implements OnModuleInit {
-
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
@@ -45,14 +44,17 @@ export class SensorQueryModule implements OnModuleInit {
     const streamId = `sensor-${eventMessage.aggregateId}`;
 
     const event = {
-      streamId, eventType: eventMessage.eventType,
-      data: eventMessage, metadata: metaData,
+      streamId,
+      metadata: metaData,
+      data: eventMessage,
+      eventType: eventMessage.eventType,
     }
 
     await eventStoreService.createEvent(event);
   }
 
   async onModuleInit() {
-    await this.multichainConsumer.listenerLoop((message) => this.eventListener(this.eventStoreService, message));
+    const callback = (message) => this.eventListener(this.eventStoreService, message);
+    await this.multichainConsumer.listenerLoop(callback);
   }
 }

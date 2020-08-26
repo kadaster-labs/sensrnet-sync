@@ -3,7 +3,6 @@ import { MultiChainService } from '../multichain/multichain.service';
 
 @Injectable()
 export class SensorMultiChainProducer {
-
     private streamName: string = 'sensors';
 
     protected logger: Logger = new Logger(this.constructor.name);
@@ -14,7 +13,7 @@ export class SensorMultiChainProducer {
 
     async writeEvent(event, callback) {
         try {
-            await this.multichainService.createTransaction(this.streamName, JSON.stringify(event));
+            await this.multichainService.createTransaction(this.streamName, event.aggregateId, JSON.stringify(event));
             await callback();
         } catch (e) {
             this.logger.error(e);

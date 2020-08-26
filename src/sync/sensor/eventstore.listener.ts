@@ -7,7 +7,6 @@ import { SubscriptionExistsException } from './errors/subscription-exists-except
 
 @Injectable()
 export class EventStoreListener implements OnModuleInit{
-
     private subscription;
     private checkpointId: string = 'sync-sensor-es';
 
@@ -43,8 +42,9 @@ export class EventStoreListener implements OnModuleInit{
     async openSubscription() {
         if (!this.subscriptionExists()) {
             const onEvent = async (_, eventMessage) => {
-                const offset = eventMessage.positionEventNumber;
-                const callback = () => this.checkpointService.updateOne({_id: this.checkpointId}, {offset});
+                const conditions = {_id: this.checkpointId};
+                const update = {offset: eventMessage.positionEventNumber};
+                const callback = () => this.checkpointService.updateOne(conditions, update);
 
                 if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
                     const eventMessageFormatted = {
@@ -97,9 +97,10 @@ export class EventStoreListener implements OnModuleInit{
             this.logger.log(`Subscribing to ES stream ${streamName} from offset ${offset}.`);
 
             try {
-                const s = await this.eventStoreService.subscribeToStreamFrom(streamName, offset, onEvent, null, droppedCallback);
+                const subscription = await this.eventStoreService.subscribeToStreamFrom(streamName, offset, onEvent,
+                    null, droppedCallback);
                 clearTimeout(timeout);
-                this.setSubscription(s);
+                this.setSubscription(subscription);
             } catch {
                 this.logger.error(`Failed to subscribe to stream ${streamName}.`);
             }

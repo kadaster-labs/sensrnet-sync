@@ -5,7 +5,6 @@ import { CheckpointService } from '../checkpoint/checkpoint.service';
 
 @Injectable()
 export class SensorMultiChainConsumer {
-
     private retryCount: number = 0;
     private maxRetryCount: number = 10;
     private loopInterval: number = 1000;

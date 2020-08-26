@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import { GrantBody } from './models/body/grant-body';
 import { StreamBody } from './models/body/stream-body';
 import { MultiChainService } from './multichain.service';
@@ -25,9 +26,9 @@ export class MultichainController {
     }
 
     @Post('grant')
-    @ApiOperation({ summary: 'Grant Permissions' })
-    @ApiResponse({ status: 200, description: 'Permissions granted' })
-    @ApiResponse({ status: 400, description: 'Permissions grant failed' })
+    @ApiOperation({ summary: 'Grant Permission' })
+    @ApiResponse({ status: 200, description: 'Permission granted' })
+    @ApiResponse({ status: 400, description: 'Permission grant failed' })
     async grant(@Body() body: GrantBody) {
         return this.multiChainService.grant(body.address, body.permissions);
     }
@@ -45,6 +46,6 @@ export class MultichainController {
     @ApiResponse({ status: 200, description: 'Transaction created' })
     @ApiResponse({ status: 400, description: 'Transaction creation failed' })
     async createTransaction(@Body() body: TransactionBody) {
-        return this.multiChainService.createTransaction(body.stream, body.data);
+        return this.multiChainService.createTransaction(body.stream, v4(), body.data);
     }
 }

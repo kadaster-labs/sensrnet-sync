@@ -19,7 +19,7 @@ export class EventStoreController {
   @ApiResponse({ status: 200, description: 'Subscription opened' })
   @ApiResponse({ status: 400, description: 'Failed to open subscription' })
   async openEventStoreSubscription() {
-    this.eventStoreListener.openSubscription();
+    await this.eventStoreListener.openSubscription();
   }
 
   @Post('subscription/close')

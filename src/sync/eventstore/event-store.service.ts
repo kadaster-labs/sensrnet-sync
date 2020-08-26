@@ -16,16 +16,4 @@ export class EventStoreService {
   async subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped) {
     return this.eventStore.subscribeToStreamFrom(streamName, fromEventNumber, onEvent, onLiveProcessingStarted, onDropped);
   }
-
-  async checkStreamExists(streamName) {
-    return this.eventStore.checkStreamExists(streamName);
-  }
-
-  async deleteStream(streamName: string, hardDelete?: boolean) {
-    return await this.eventStore.deleteStream(streamName, hardDelete);
-  }
-
-  async close() {
-    return this.eventStore.close();
-  }
 }

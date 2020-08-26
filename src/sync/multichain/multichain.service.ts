@@ -1,12 +1,10 @@
-import { v4 } from 'uuid';
 import * as multichain from 'multichain-node';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DomainException } from '../core/errors/domain-exception';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { MultichainConfiguration } from '../../multichain.configuration';
 
 @Injectable()
 export class MultiChainService implements OnModuleInit {
-
     private connection;
 
     protected logger: Logger = new Logger(this.constructor.name);
@@ -27,7 +25,7 @@ export class MultiChainService implements OnModuleInit {
         try {
             return await this.connection.grant({
                 addresses: address,
-                permissions: permissions
+                permissions: permissions,
             });
         } catch (e) {
             throw new DomainException(e.message);
@@ -37,8 +35,8 @@ export class MultiChainService implements OnModuleInit {
     async createStream(name) {
         try {
             return await this.connection.create({
-                name: name,
                 open: true,
+                name: name,
                 type: 'stream',
             });
         } catch (e) {
@@ -46,10 +44,10 @@ export class MultiChainService implements OnModuleInit {
         }
     }
 
-    async createTransaction(stream, data) {
+    async createTransaction(stream, key, data) {
         try {
             return await this.connection.publish({
-                key: v4(),
+                key: key,
                 stream: stream,
                 data: Buffer.from(data).toString('hex'),
             });
