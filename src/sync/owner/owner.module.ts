@@ -1,3 +1,6 @@
+import { Event } from '../events/event';
+import { plainToClass } from 'class-transformer';
+import { ownerEventType } from '../events/owner';
 import { EventStoreListener } from './eventstore.listener';
 import { OwnerMultiChainConsumer } from './ownermc.consumer';
 import { OwnerMultiChainProducer } from './ownermc.producer';
@@ -40,17 +43,8 @@ export class OwnerQueryModule implements OnModuleInit {
   ) {}
 
   async eventListener(eventStoreService, eventMessage) {
-    const metaData = { originSync: true };
-    const streamId = `owner-${eventMessage.aggregateId}`;
-
-    const event = {
-      streamId,
-      metadata: metaData,
-      data: eventMessage,
-      eventType: eventMessage.eventType,
-    }
-
-    await eventStoreService.createEvent(event);
+    const event: Event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage as Event);
+    await eventStoreService.createEvent(event.toEventMessage());
   }
 
   async onModuleInit() {
