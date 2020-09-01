@@ -1,3 +1,6 @@
+import { Event } from '../events/event';
+import { plainToClass } from 'class-transformer';
+import { sensorEventType } from '../events/sensor';
 import { SensorMultiChainProducer } from './sensormc.producer';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CheckpointService } from '../checkpoint/checkpoint.service';
@@ -52,7 +55,9 @@ export class EventStoreListener implements OnModuleInit{
                         eventType: eventMessage.eventType,
                     }
 
-                    await this.multichainProducer.writeEvent(eventMessageFormatted, callback);
+                    const event: Event = plainToClass(sensorEventType.getType(eventMessage.eventType),
+                        eventMessageFormatted as Event);
+                    await this.multichainProducer.writeEvent(event, callback);
                 } else {
                     await callback();
                 }

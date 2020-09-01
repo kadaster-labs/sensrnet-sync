@@ -16,5 +16,4 @@ export abstract class OwnerEvent extends Event {
   streamRoot(): string {
     return 'owner';
   }
-
 }

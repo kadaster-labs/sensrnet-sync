@@ -1,3 +1,6 @@
+import { Event } from '../events/event';
+import { plainToClass } from 'class-transformer';
+import { sensorEventType } from '../events/sensor';
 import { EventStoreListener } from './eventstore.listener';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { EventStoreController } from './eventstore.controller';
@@ -9,7 +12,6 @@ import { SensorMultiChainController } from './sensormc.controller';
 import { EventStoreModule } from '../eventstore/event-store.module';
 import { EventStoreService } from '../eventstore/event-store.service';
 import { MultichainConfiguration } from '../../multichain.configuration';
-
 
 @Module({
   imports: [
@@ -40,17 +42,8 @@ export class SensorQueryModule implements OnModuleInit {
   ) {}
 
   async eventListener(eventStoreService, eventMessage) {
-    const metaData = { originSync: true };
-    const streamId = `sensor-${eventMessage.aggregateId}`;
-
-    const event = {
-      streamId,
-      metadata: metaData,
-      data: eventMessage,
-      eventType: eventMessage.eventType,
-    }
-
-    await eventStoreService.createEvent(event);
+    const event: Event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage as Event);
+    await eventStoreService.createEvent(event.toEventMessage());
   }
 
   async onModuleInit() {
