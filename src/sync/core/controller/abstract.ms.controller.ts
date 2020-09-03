@@ -22,7 +22,7 @@ export class AbstractMultiChainController {
   @ApiOperation({ summary: 'Set checkpoint offset' })
   @ApiResponse({ status: 200, description: 'Checkpoint offset set' })
   @ApiResponse({ status: 400, description: 'Failed to set Checkpoint offset' })
-  async setMultichainOffset(@Body() body: OffsetBody) {
+  async setMultichainOffset(@Body() body: OffsetBody): Promise<void> {
     await this.multichainConsumer.setOffset(body.offset);
   }
 
