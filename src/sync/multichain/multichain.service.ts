@@ -1,5 +1,7 @@
-import * as multichain from 'multichain-node';
+/// <reference types="./multichain" />
 import { Connection, Item, Settings } from 'multichain';
+
+import * as multichain from 'multichain-node';
 import { DomainException } from '../core/errors/domain-exception';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { MultichainConfig } from '../../multichain.config';

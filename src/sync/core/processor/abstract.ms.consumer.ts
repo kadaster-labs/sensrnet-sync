@@ -44,7 +44,9 @@ export abstract class AbstractMsConsumer {
     await this.checkpointService.updateOne({ _id: this.checkpointId }, { offset });
   }
 
-  async listenerLoop(callback: (event: Event) => Promise<void>): Promise<void> {
+  abstract async publishToEventStore(eventMessage: Event): Promise<void> ;
+
+  async listenerLoop(): Promise<void> {
     const offset = await this.getOffset();
 
     try {
@@ -57,9 +59,9 @@ export abstract class AbstractMsConsumer {
         const streamData = Buffer.from(items[i].data, 'hex').toString();
         try {
           const event = JSON.parse(streamData);
-          await callback(event);
-        } catch {
-          this.logger.warn(`Failed to parse stream message '${streamData}' as event.`);
+          await this.publishToEventStore(event);
+        } catch(e) {
+          this.logger.warn(`Failed to parse stream message '${streamData}' as event; error: ${e}`);
         }
 
         const newOffset = offset + i + 1;
@@ -78,7 +80,7 @@ export abstract class AbstractMsConsumer {
       }
     }
 
-    setTimeout(() => this.listenerLoop(callback), this.loopInterval);
+    setTimeout(() => this.listenerLoop(), this.loopInterval);
   }
 
 }

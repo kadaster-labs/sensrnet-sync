@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { MappedEventAppearedCallback, TCPClient } from 'geteventstore-promise';
 import { EventStoreConfiguration } from './event-store.configuration';
 import {
@@ -9,7 +9,7 @@ import {
 import { EventMessage } from '../core/events/event-message';
 
 @Injectable()
-export class EventStore {
+export class EventStore implements OnModuleInit {
   private client!: TCPClient;
 
   constructor(private configuration: EventStoreConfiguration) {
@@ -44,4 +44,9 @@ export class EventStore {
     return await this.client.subscribeToStreamFrom(streamName, fromEventNumber, onEventAppeared,
       onLiveProcessingStarted, onDropped, settings);
   }
+
+  async onModuleInit(): Promise<void> {
+    await this.connect();
+  }
+
 }

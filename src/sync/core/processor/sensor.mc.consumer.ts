@@ -25,7 +25,7 @@ export class SensorMultiChainConsumer extends AbstractMsConsumer implements OnMo
   };
 
   async onModuleInit(): Promise<void> {
-    await this.listenerLoop(this.publishToEventStore);
+    await this.listenerLoop();
   }
 
 }
