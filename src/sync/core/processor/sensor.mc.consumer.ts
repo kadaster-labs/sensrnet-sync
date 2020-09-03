@@ -5,7 +5,7 @@ import { Event } from '../events/event';
 import { plainToClass } from 'class-transformer';
 import { sensorEventType } from '../events/sensor';
 import { EventStore } from '../../eventstore/event-store';
-import { AbstractMsConsumer } from './abstract.ms.consumer';
+import { AbstractMsConsumer } from './abstract.mc.consumer';
 
 @Injectable()
 export class SensorMultiChainConsumer extends AbstractMsConsumer implements OnModuleInit {
