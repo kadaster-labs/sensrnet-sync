@@ -1,34 +1,47 @@
 import { Injectable } from '@nestjs/common';
-import { TCPClient} from 'geteventstore-promise';
+import { MappedEventAppearedCallback, TCPClient } from 'geteventstore-promise';
 import { EventStoreConfiguration } from './event-store.configuration';
+import {
+  EventStoreCatchUpSubscription,
+  LiveProcessingStartedCallback,
+  SubscriptionDroppedCallback,
+} from 'node-eventstore-client';
+import { EventMessage } from '../core/events/event-message';
 
 @Injectable()
 export class EventStore {
   private client!: TCPClient;
 
-  constructor(private configuration: EventStoreConfiguration) {}
+  constructor(private configuration: EventStoreConfiguration) {
+  }
 
-  connect() {
+  connect(): void {
     this.client = new TCPClient(this.configuration.config);
   }
 
-  async createEvent(event) {
+  async createEvent(event: EventMessage): Promise<void> {
     await this.client.writeEvent(
-        event.streamId,
-        event.eventType,
-        event.data,
-        event.metadata,
+      event.streamId,
+      event.eventType,
+      event.data,
+      event.metadata,
     );
   }
 
-  async subscribeToStreamFrom(streamName: string, fromEventNumber: number, onEventAppeared, onLiveProcessingStarted,
-                              onDropped) {
+  async subscribeToStreamFrom(
+    streamName: string,
+    fromEventNumber: number,
+    onEventAppeared?: MappedEventAppearedCallback<EventStoreCatchUpSubscription>,
+    onLiveProcessingStarted?: LiveProcessingStartedCallback,
+    onDropped?: SubscriptionDroppedCallback<EventStoreCatchUpSubscription>,
+  ): Promise<EventStoreCatchUpSubscription> {
+
     const settings = {
       readBatchSize: 1,
       resolveLinkTos: true,
     };
 
     return await this.client.subscribeToStreamFrom(streamName, fromEventNumber, onEventAppeared,
-        onLiveProcessingStarted, onDropped, settings);
+      onLiveProcessingStarted, onDropped, settings);
   }
 }

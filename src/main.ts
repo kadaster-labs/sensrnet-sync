@@ -9,10 +9,10 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const documentOptions = new DocumentBuilder()
-      .setTitle('Sensrnet Sync API')
-      .setVersion('1.0')
-      .addBearerAuth()
-      .build();
+    .setTitle('Sensrnet Sync API')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
   const document = SwaggerModule.createDocument(app, documentOptions);
   SwaggerModule.setup('/api', app, document);
 

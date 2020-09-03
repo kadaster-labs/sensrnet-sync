@@ -1,81 +1,84 @@
 import * as multichain from 'multichain-node';
+import { Connection, Item, Settings } from 'multichain';
 import { DomainException } from '../core/errors/domain-exception';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { MultichainConfiguration } from '../../multichain.configuration';
+import { MultichainConfig } from '../../multichain.config';
 
 @Injectable()
 export class MultiChainService implements OnModuleInit {
-    private connection;
+  private connection: Connection;
 
-    protected logger: Logger = new Logger(this.constructor.name);
+  protected logger: Logger = new Logger(this.constructor.name);
 
-    constructor(
-        private readonly multichainConfiguration: MultichainConfiguration,
-    ) {}
+  constructor(
+    private readonly multichainConfig: MultichainConfig,
+  ) {
+  }
 
-    async getAddress() {
-        try {
-            return await this.connection.getAddresses();
-        } catch (e) {
-            throw new DomainException(e.message);
-        }
+  async getAddress(): Promise<string> {
+    try {
+      return await this.connection.getAddresses();
+    } catch (e) {
+      throw new DomainException(e.message);
     }
+  }
 
-    async grant(address, permissions) {
-        try {
-            return await this.connection.grant({
-                addresses: address,
-                permissions: permissions,
-            });
-        } catch (e) {
-            throw new DomainException(e.message);
-        }
+  async grant(address: string, permissions: string): Promise<void> {
+    try {
+      return await this.connection.grant({
+        addresses: address,
+        permissions: permissions,
+      });
+    } catch (e) {
+      throw new DomainException(e.message);
     }
+  }
 
-    async createStream(name) {
-        try {
-            return await this.connection.create({
-                open: true,
-                name: name,
-                type: 'stream',
-            });
-        } catch (e) {
-            throw new DomainException(e.message);
-        }
+  async createStream(streamName: string): Promise<void> {
+    try {
+      return await this.connection.create({
+        open: true,
+        name: streamName,
+        type: 'stream',
+      });
+    } catch (e) {
+      throw new DomainException(e.message);
     }
+  }
 
-    async createTransaction(stream, key, data) {
-        try {
-            return await this.connection.publish({
-                key: key,
-                stream: stream,
-                data: Buffer.from(data).toString('hex'),
-            });
-        } catch (e) {
-            throw new DomainException(e.message);
-        }
+  async createTransaction(streamName: string, key: string, data: string): Promise<void> {
+    try {
+      return await this.connection.publish({
+        key: key,
+        stream: streamName,
+        data: Buffer.from(data).toString('hex'),
+      });
+    } catch (e) {
+      throw new DomainException(e.message);
     }
+  }
 
-    async listStreamItems(settings) {
-        return await this.connection.listStreamItems(settings);
-    }
+  async listStreamItems(settings: Settings): Promise<Item[]> {
+    return this.connection.listStreamItems(settings);
+  }
 
-    async subscribe(settings) {
-        return await this.connection.subscribe(settings);
-    }
+  async subscribe(settings: Settings): Promise<void> {
+    return this.connection.subscribe(settings);
+  }
 
-    async initConnection() {
-        const config = this.multichainConfiguration.config;
+  async initConnection(): Promise<void> {
+    const config = this.multichainConfig.config;
 
-        this.connection = multichain({
-            port: config.port,
-            host: config.hostname,
-            user: config.username,
-            pass: config.password,
-        });
-    }
+    this.connection = multichain({
+      port: config.port,
+      host: config.hostname,
+      user: config.username,
+      pass: config.password,
+    });
+  }
 
-    async onModuleInit() {
-        await this.initConnection();
-    }
+  async onModuleInit(): Promise<void> {
+    await this.initConnection();
+  }
+
 }

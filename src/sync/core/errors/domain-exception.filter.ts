@@ -1,10 +1,11 @@
 import { Response } from 'express';
 import { DomainException } from './domain-exception';
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
 @Catch(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter {
-  catch(exception: DomainException, host: ArgumentsHost) {
+
+  catch(exception: DomainException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
@@ -12,4 +13,5 @@ export class DomainExceptionFilter implements ExceptionFilter {
       error: exception.message,
     });
   }
+
 }
