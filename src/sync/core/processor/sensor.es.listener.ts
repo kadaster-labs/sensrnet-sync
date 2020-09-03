@@ -32,7 +32,7 @@ export class SensorESListener extends AbstractESListener {
           };
           const event: Event = plainToClass(sensorEventType.getType(eventMessage.eventType),
             eventMessageFormatted as Event);
-          await this.multichainProducer.writeEvent(event, callback);
+          await this.multichainProducer.publishEvent(event, callback);
         } else {
           await callback();
         }

@@ -22,7 +22,7 @@ export class OwnerMultiChainConsumer extends AbstractMsConsumer implements OnMod
   async publishToEventStore(eventMessage: Event): Promise<void> {
     const event: Event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessage);
     return await this.eventStoreService.createEvent(event.toEventMessage());
-  };
+  }
 
   async onModuleInit(): Promise<void> {
     await this.listenerLoop();

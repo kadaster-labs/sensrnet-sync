@@ -20,9 +20,9 @@ export class SensorMultiChainConsumer extends AbstractMsConsumer implements OnMo
   }
 
   async publishToEventStore(eventMessage: Event): Promise<void> {
-    const event: Event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage as Event);
+    const event: Event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage);
     await this.eventStoreService.createEvent(event.toEventMessage());
-  };
+  }
 
   async onModuleInit(): Promise<void> {
     await this.listenerLoop();

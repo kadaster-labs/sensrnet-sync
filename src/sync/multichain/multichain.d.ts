@@ -8,17 +8,17 @@ declare module 'multichain' {
   }
 
   export interface Connection {
-    getAddresses(): string
+    getAddresses(): Promise<string>
 
-    publish(transaction: Transaction): void
+    publish(transaction: Transaction): Promise<void>
 
-    subscribe(settings: Settings): void
+    subscribe(settings: Settings): Promise<void>
 
-    listStreamItems(settings: Settings): Item[]
+    listStreamItems(settings: Settings): Promise<Item[]>
 
-    grant(grant: Grant): void
+    grant(grant: Grant): Promise<void>
 
-    create(stream: Stream): void
+    create(stream: Stream): Promise<void>
   }
 
   export interface Settings {

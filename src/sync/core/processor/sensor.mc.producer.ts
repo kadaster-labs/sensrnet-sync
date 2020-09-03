@@ -13,7 +13,7 @@ export class SensorMultiChainProducer {
   ) {
   }
 
-  async writeEvent(event: Event, callback: () => void): Promise<void> {
+  async publishEvent(event: Event, callback: () => Promise<void>): Promise<void> {
     try {
       await this.multichainService.createTransaction(this.streamName, event.aggregateId, JSON.stringify(event));
       await callback();

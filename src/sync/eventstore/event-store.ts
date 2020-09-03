@@ -46,7 +46,7 @@ export class EventStore implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    await this.connect();
+    this.connect();
   }
 
 }
