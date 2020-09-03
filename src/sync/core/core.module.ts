@@ -14,7 +14,6 @@ import { SensorMultiChainProducer } from './processor/sensor.mc.producer';
 import { OwnerESListener } from './processor/owner.es.listener';
 import { OwnerMultiChainConsumer } from './processor/owner.mc.consumer';
 import { OwnerMultiChainProducer } from './processor/owner.mc.producer';
-import { EventStoreConfiguration } from '../eventstore/event-store.configuration';
 
 @Module({
   imports: [

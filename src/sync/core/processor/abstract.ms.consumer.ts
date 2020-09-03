@@ -60,7 +60,7 @@ export abstract class AbstractMsConsumer {
         try {
           const event = JSON.parse(streamData);
           await this.publishToEventStore(event);
-        } catch(e) {
+        } catch (e) {
           this.logger.warn(`Failed to parse stream message '${streamData}' as event; error: ${e}`);
         }
 
