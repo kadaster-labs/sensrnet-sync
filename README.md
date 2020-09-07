@@ -7,9 +7,7 @@ For more information see our [documentation](https://github.com/kadaster-labs/se
 
 ## Architecture
 
-Modules:
-
-- **bridge** > the synchronization API to communicate with the eventstore.
+The application features components to listen and write to the EventStore and MultiChain.
 
 ## Getting Started
 
@@ -29,13 +27,13 @@ Start up:
 Edit the multichain details in docker-compose.yml.
 
 ```bash
-$ ./sync.sh up
+$ docker-compose up
 ```
 
 Bringing down:
 
 ```bash
-$ ./sync.sh down
+$ docker-compose stop
 ```
 
 ## Find Us
