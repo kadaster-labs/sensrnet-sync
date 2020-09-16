@@ -56,7 +56,7 @@ export abstract class AbstractMsConsumer {
         await this.multichainService.subscribe({ stream: this.streamName });
       } else if (e.code === 'ECONNREFUSED' || e.code == 'ECONNRESET') {
         this.retryMechanism.incrementRetryCount();
-        await this.multichainService.initConnection();
+        this.multichainService.initConnection();
       } else {
         this.logger.error(`Error occurred processing event from multichain: ${e.message}`);
       }

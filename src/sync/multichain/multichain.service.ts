@@ -17,20 +17,20 @@ export class MultiChainService {
   ) {
   }
 
-  initConnection(): Connection {
+  initConnection(): void {
     const config = this.multichainConfig.config;
 
-    return multichain({
+    this.setConnection(multichain({
       port: config.port,
       host: config.hostname,
       user: config.username,
       pass: config.password,
-    });
+    }));
   }
 
   getConnection(): Connection {
     if (!this.connection) {
-      this.setConnection(this.initConnection());
+      this.initConnection();
     }
     return this.connection;
   }
