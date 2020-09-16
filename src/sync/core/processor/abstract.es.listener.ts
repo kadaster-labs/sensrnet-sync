@@ -58,7 +58,6 @@ export abstract class AbstractESListener implements OnModuleInit {
     checkpointId: string,
     onEvent: (_: any, eventMessage: any) => Promise<void>
   ): Promise<void> {
-
     const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
     const exitCallback = () => {
@@ -81,6 +80,7 @@ export abstract class AbstractESListener implements OnModuleInit {
         const subscription = await this.eventStoreService.subscribeToStreamFrom(streamName, offset, onEvent,
           null, droppedCallback);
         clearTimeout(timeout);
+
         this.setSubscription(subscription);
       } catch {
         this.logger.error(`Failed to subscribe to stream ${streamName}.`);

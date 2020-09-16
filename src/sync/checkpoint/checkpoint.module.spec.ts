@@ -9,10 +9,10 @@ const testCheckpoints = [
 
 const mockRepository = {
   findOne: (conditions) => {
-    const filteredTestObjects = testCheckpoints.filter((elem) => elem._id == conditions._id);
+    const filteredTestObjects = testCheckpoints.filter((elem) => elem._id === conditions._id);
     return filteredTestObjects.length ? filteredTestObjects[0] : undefined;
   },
-  updateOne: () => true,
+  updateOne: () => void 0,
 };
 
 describe('Checkpoint (integration)', () => {
