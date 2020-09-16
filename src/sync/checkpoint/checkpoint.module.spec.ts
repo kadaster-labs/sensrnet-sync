@@ -21,11 +21,11 @@ describe('Checkpoint (integration)', () => {
   beforeAll(async () => {
     moduleRef = await Test.createTestingModule({
       providers: [
-        CheckpointService,
         {
           provide: getModelToken('Checkpoint'),
           useValue: mockRepository,
-        }
+        },
+        CheckpointService,
       ],
     }).compile();
   });

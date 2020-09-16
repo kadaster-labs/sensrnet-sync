@@ -26,8 +26,7 @@ const mockCheckpointService = {
   updateOne: async () => true,
 }
 
-const mockMultiChainService = {
-}
+const mockMultiChainService = {}
 
 describe('Core (integration)', () => {
   let moduleRef;
