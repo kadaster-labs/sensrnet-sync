@@ -8,7 +8,7 @@ import { OwnerMultiChainController } from './controller/owner.mc.controller';
 import { SensorMultiChainController } from './controller/sensor.mc.controller';
 import { EventStore } from '../eventstore/event-store';
 import { SensorESListener } from './processor/sensor.es.listener';
-import { MultichainConfig } from '../../multichain.config';
+import { MultiChainConfig } from '../../multichain.config';
 import { SensorMultiChainConsumer } from './processor/sensor.mc.consumer';
 import { SensorMultiChainProducer } from './processor/sensor.mc.producer';
 import { OwnerESListener } from './processor/owner.es.listener';
@@ -30,7 +30,7 @@ import { OwnerMultiChainProducer } from './processor/owner.mc.producer';
   ],
   providers: [
     EventStore,
-    MultichainConfig,
+    MultiChainConfig,
     OwnerESListener,
     SensorESListener,
     OwnerMultiChainConsumer,

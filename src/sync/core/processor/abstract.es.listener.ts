@@ -1,11 +1,12 @@
 import { Logger, OnModuleInit } from '@nestjs/common';
-import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { EventStore } from '../../eventstore/event-store';
+import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { NoSubscriptionException } from '../errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
 
 export abstract class AbstractESListener implements OnModuleInit {
+
   private subscription: EventStoreCatchUpSubscription;
 
   protected logger: Logger = new Logger(this.constructor.name);
@@ -52,7 +53,12 @@ export abstract class AbstractESListener implements OnModuleInit {
     }
   }
 
-  async subscribeToStreamFrom(streamName: string, checkpointId: string, onEvent: (_: any, eventMessage: any) => Promise<void>): Promise<void> {
+  async subscribeToStreamFrom(
+    streamName: string,
+    checkpointId: string,
+    onEvent: (_: any, eventMessage: any) => Promise<void>
+  ): Promise<void> {
+
     const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
     const exitCallback = () => {

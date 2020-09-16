@@ -1,6 +1,6 @@
 import { Body, Get, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { OffsetBody } from './model/offset-body';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AbstractMsConsumer } from '../processor/abstract.mc.consumer';
 
 export class AbstractMultiChainController {

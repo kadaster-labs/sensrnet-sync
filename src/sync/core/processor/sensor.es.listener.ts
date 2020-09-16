@@ -22,16 +22,16 @@ export class SensorESListener extends AbstractESListener {
   async openSubscription(): Promise<void> {
     if (!this.subscriptionExists()) {
       const onEvent = async (_, eventMessage) => {
-        const conditions = { _id: super.checkpointId };
+        const conditions = { _id: this.checkpointId };
         const update = { offset: eventMessage.positionEventNumber };
-        const callback = () => this.checkpointService.updateOne(conditions, update);
+        const callback = async () => this.checkpointService.updateOne(conditions, update);
+
         if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
-          const eventMessageFormatted = {
-            ...eventMessage.data,
-            eventType: eventMessage.eventType,
-          };
-          const event: Event = plainToClass(sensorEventType.getType(eventMessage.eventType),
-            eventMessageFormatted as Event);
+          const eventMessageFormatted = {...eventMessage.data, eventType: eventMessage.eventType };
+
+          const eventType = sensorEventType.getType(eventMessage.eventType);
+          const event: Event = plainToClass(eventType, eventMessageFormatted as Event);
+
           await this.multichainProducer.publishEvent(event, callback);
         } else {
           await callback();

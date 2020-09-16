@@ -29,7 +29,6 @@ declare module 'multichain' {
   interface Grant {
     addresses: string;
     permissions: string;
-
   }
 
   interface Stream {

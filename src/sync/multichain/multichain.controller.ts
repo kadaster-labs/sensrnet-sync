@@ -11,7 +11,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagg
 @ApiTags('Multichain')
 @Controller('Multichain')
 @UseFilters(new DomainExceptionFilter())
-export class MultichainController {
+export class MultiChainController {
 
   constructor(
     private readonly multiChainService: MultiChainService,

@@ -15,5 +15,4 @@ import { CheckpointSchema } from './models/checkpoint.model';
   ],
 })
 
-export class CheckpointModule {
-}
+export class CheckpointModule {}
