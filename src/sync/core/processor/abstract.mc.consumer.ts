@@ -58,6 +58,7 @@ export abstract class AbstractMsConsumer {
         this.retryMechanism.incrementRetryCount();
         this.multichainService.initConnection();
       } else {
+        this.retryMechanism.incrementRetryCount();
         this.logger.error(`Error occurred processing event from multichain: ${e.message}`);
       }
     }
