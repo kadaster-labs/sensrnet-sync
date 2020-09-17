@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MultiChainService } from './multichain.service';
-import { MultichainController } from './multichain.controller';
-import { MultichainConfig } from '../../multichain.config';
+import { MultiChainConfig } from '../../multichain.config';
+import { MultiChainController } from './multichain.controller';
 
 @Module({
   imports: [
     MultiChainModule,
   ],
   controllers: [
-    MultichainController,
+    MultiChainController,
   ],
   providers: [
     MultiChainService,
-    MultichainConfig,
+    MultiChainConfig,
   ],
   exports: [
     MultiChainService,

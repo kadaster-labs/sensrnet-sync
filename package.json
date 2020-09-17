@@ -15,11 +15,11 @@
     "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \\\"node --inspect-brk dist/main.js\\\"",
     "start:prod": "node dist/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "test": "../node_modules/.bin/jest",
-    "test:watch": "../node_modules/.bin/jest --watch",
-    "test:cov": "../node_modules/.bin/jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../node_modules/.bin/jest --runInBand",
-    "test:e2e": "../node_modules/.bin/jest --config ./test/jest-e2e.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json --forceExit",
     "uml": "tplant -C --input src/events/**/*.ts --output docs/images/events-uml.svg"
   },
   "dependencies": {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MultichainConfiguration } from 'multichain';
 
 @Injectable()
-export class MultichainConfig {
+export class MultiChainConfig {
   get config(): MultichainConfiguration {
     const port = parseInt(process.env.MULTICHAIN_PORT) || 8002;
     const hostname = process.env.MULTICHAIN_HOST || '127.0.0.1';

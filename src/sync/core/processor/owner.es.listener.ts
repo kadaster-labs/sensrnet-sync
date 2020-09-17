@@ -24,20 +24,14 @@ export class OwnerESListener extends AbstractESListener {
       const onEvent = async (_, eventMessage) => {
         const conditions = { _id: this.checkpointId };
         const update = { offset: eventMessage.positionEventNumber };
-        const callback = () => this.checkpointService.updateOne(conditions, update);
+        const callback = async () => this.checkpointService.updateOne(conditions, update);
 
         if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
           const { nodeId, ownerId, aggregateId, contactPhone, contactEmail } = eventMessage.data;
-          const eventMessageFormatted = {
-            nodeId,
-            ownerId,
-            aggregateId,
-            contactEmail,
-            contactPhone,
-            eventType: eventMessage.eventType,
-          };
-          const event: Event = plainToClass(ownerEventType.getType(eventMessage.eventType),
-            eventMessageFormatted);
+          const eventMessageFormatted = { nodeId, ownerId, aggregateId, contactEmail,
+            contactPhone, eventType: eventMessage.eventType };
+          const event: Event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessageFormatted);
+
           await this.multichainProducer.publishEvent(event, callback);
         } else {
           await callback();

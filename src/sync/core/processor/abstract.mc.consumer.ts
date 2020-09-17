@@ -1,13 +1,14 @@
+import { Event } from '../events/event';
 import { Logger } from '@nestjs/common';
+import { Retry } from './retry';
 import { EventStore } from '../../eventstore/event-store';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { MultiChainService } from '../../multichain/multichain.service';
-import { Event } from '../events/event';
 
 export abstract class AbstractMsConsumer {
-  private retryCount = 0;
-  private maxRetryCount = 10;
+
   private loopInterval = 1000;
+  private retryMechanism: Retry;
 
   protected logger: Logger = new Logger(this.constructor.name);
 
@@ -18,21 +19,7 @@ export abstract class AbstractMsConsumer {
     private readonly checkpointService: CheckpointService,
     private readonly multichainService: MultiChainService,
   ) {
-  }
-
-  incrementRetryCount(): void {
-    this.retryCount += 1;
-
-    if (this.retryCount < this.maxRetryCount) {
-      this.logger.error(`Failed to connect to multichain ${this.retryCount} times. Retrying.`);
-    } else {
-      this.logger.error(`Failed to connect to multichain ${this.retryCount} times. Exiting.`);
-      process.exit(0);
-    }
-  }
-
-  resetRetryCount(): void {
-    this.retryCount = 0;
+    this.retryMechanism = new Retry(10);
   }
 
   async getOffset(): Promise<number> {
@@ -50,33 +37,29 @@ export abstract class AbstractMsConsumer {
     const offset = await this.getOffset();
 
     try {
-      const items = await this.multichainService.listStreamItems({
-        start: offset,
-        stream: this.streamName,
-      });
+      const retrieveOptions = { start: offset, stream: this.streamName };
+      const items = await this.multichainService.listStreamItems(retrieveOptions);
 
       for (let i = 0; i < items.length; i++) {
         const streamData = Buffer.from(items[i].data, 'hex').toString();
         try {
-          const event = JSON.parse(streamData);
-          await this.publishToEventStore(event);
+          await this.publishToEventStore(JSON.parse(streamData));
         } catch (e) {
-          this.logger.warn(`Failed to parse stream message '${streamData}' as event; error: ${e}`);
+          this.logger.warn(`Failed to parse stream message '${streamData}' as event; error: ${e.message}`);
         }
 
-        const newOffset = offset + i + 1;
-        await this.setOffset(newOffset);
-
-        this.resetRetryCount();
+        await this.setOffset(offset + i + 1);
+        this.retryMechanism.resetRetryCount();
       }
     } catch (e) {
       if (e.code === -703) {
         await this.multichainService.subscribe({ stream: this.streamName });
-      } else if (e.code === 'ECONNREFUSED') {
-        this.incrementRetryCount();
-        await this.multichainService.initConnection();
+      } else if (e.code === 'ECONNREFUSED' || e.code == 'ECONNRESET') {
+        this.retryMechanism.incrementRetryCount();
+        this.multichainService.initConnection();
       } else {
-        this.logger.warn(`Error occurred processing event from multichain: ${e}`);
+        this.retryMechanism.incrementRetryCount();
+        this.logger.error(`Error occurred processing event from multichain: ${e.message}`);
       }
     }
 

@@ -1,16 +1,30 @@
-FROM node:12
+FROM node:12 AS builder
 
 WORKDIR /app
+
+COPY ./package*.json ./
+RUN npm install
+
+COPY src src
+COPY tsconfig*.json ./
+
+RUN npm run build && \
+    npm prune --production
+
+
+FROM node:12-slim
+
+WORKDIR /app
+
+ADD VERSION .
 
 COPY entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
 
-COPY package*.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 
-RUN npm install
-
-COPY src src
-COPY tsconfig.json tsconfig.json
+EXPOSE 3500
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 

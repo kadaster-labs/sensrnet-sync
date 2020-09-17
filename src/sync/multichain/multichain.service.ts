@@ -1,25 +1,47 @@
 /// <reference types="./multichain" />
 import { Connection, Item, Settings } from 'multichain';
-
 import * as multichain from 'multichain-node';
+import { Injectable, Logger } from '@nestjs/common';
+import { MultiChainConfig } from '../../multichain.config';
 import { DomainException } from '../core/errors/domain-exception';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { MultichainConfig } from '../../multichain.config';
 
 @Injectable()
-export class MultiChainService implements OnModuleInit {
+export class MultiChainService {
+
   private connection: Connection;
 
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
-    private readonly multichainConfig: MultichainConfig,
+    private readonly multichainConfig: MultiChainConfig,
   ) {
+  }
+
+  initConnection(): void {
+    const config = this.multichainConfig.config;
+
+    this.setConnection(multichain({
+      port: config.port,
+      host: config.hostname,
+      user: config.username,
+      pass: config.password,
+    }));
+  }
+
+  getConnection(): Connection {
+    if (!this.connection) {
+      this.initConnection();
+    }
+    return this.connection;
+  }
+
+  setConnection(connection: Connection): void {
+    this.connection = connection;
   }
 
   async getAddress(): Promise<string> {
     try {
-      return await this.connection.getAddresses();
+      return await this.getConnection().getAddresses();
     } catch (e) {
       throw new DomainException(e.message);
     }
@@ -27,7 +49,7 @@ export class MultiChainService implements OnModuleInit {
 
   async grant(address: string, permissions: string): Promise<void> {
     try {
-      return await this.connection.grant({
+      return await this.getConnection().grant({
         addresses: address,
         permissions: permissions,
       });
@@ -38,7 +60,7 @@ export class MultiChainService implements OnModuleInit {
 
   async createStream(streamName: string): Promise<void> {
     try {
-      return await this.connection.create({
+      return await this.getConnection().create({
         open: true,
         name: streamName,
         type: 'stream',
@@ -50,7 +72,7 @@ export class MultiChainService implements OnModuleInit {
 
   async createTransaction(streamName: string, key: string, data: string): Promise<void> {
     try {
-      return await this.connection.publish({
+      return await this.getConnection().publish({
         key: key,
         stream: streamName,
         data: Buffer.from(data).toString('hex'),
@@ -61,26 +83,11 @@ export class MultiChainService implements OnModuleInit {
   }
 
   async listStreamItems(settings: Settings): Promise<Item[]> {
-    return this.connection.listStreamItems(settings);
+    return this.getConnection().listStreamItems(settings);
   }
 
   async subscribe(settings: Settings): Promise<void> {
-    return this.connection.subscribe(settings);
-  }
-
-  async initConnection(): Promise<void> {
-    const config = this.multichainConfig.config;
-
-    this.connection = multichain({
-      port: config.port,
-      host: config.hostname,
-      user: config.username,
-      pass: config.password,
-    });
-  }
-
-  async onModuleInit(): Promise<void> {
-    await this.initConnection();
+    return this.getConnection().subscribe(settings);
   }
 
 }
