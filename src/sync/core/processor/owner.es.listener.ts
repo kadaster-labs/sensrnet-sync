@@ -7,6 +7,7 @@ import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { EventStore } from '../../eventstore/event-store';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
 import { AbstractESListener } from './abstract.es.listener';
+import { sensorEventType } from '../events/sensor';
 
 @Injectable()
 export class OwnerESListener extends AbstractESListener {
@@ -30,12 +31,14 @@ export class OwnerESListener extends AbstractESListener {
           const { nodeId, ownerId, aggregateId, contactPhone, contactEmail } = eventMessage.data;
           const eventMessageFormatted = { nodeId, ownerId, aggregateId, contactEmail,
             contactPhone, eventType: eventMessage.eventType };
-          const event: Event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessageFormatted);
+          const eventType = ownerEventType.getType(eventMessage.eventType);
 
-          await this.multichainProducer.publishEvent(event, callback);
-        } else {
-          await callback();
+          if (eventType) {
+            const event: Event = plainToClass(eventType, eventMessageFormatted);
+            await this.multichainProducer.publishEvent(event);
+          }
         }
+        await callback();
       };
 
       await this.subscribeToStreamFrom('$ce-owner', this.checkpointId, onEvent);

@@ -1,15 +1,13 @@
 import { Logger } from '@nestjs/common';
 
 export class Retry {
-
   private retryCount = 0;
 
   protected logger: Logger = new Logger(this.constructor.name);
 
   constructor(
     private readonly maxRetryCount: number,
-  ) {
-  }
+  ) {}
 
   incrementRetryCount(): void {
     this.retryCount += 1;
