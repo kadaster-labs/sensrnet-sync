@@ -7,7 +7,6 @@ import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { EventStore } from '../../eventstore/event-store';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
 import { AbstractESListener } from './abstract.es.listener';
-import { sensorEventType } from '../events/sensor';
 
 @Injectable()
 export class OwnerESListener extends AbstractESListener {
