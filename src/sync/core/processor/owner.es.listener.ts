@@ -30,12 +30,14 @@ export class OwnerESListener extends AbstractESListener {
           const { nodeId, ownerId, aggregateId, contactPhone, contactEmail } = eventMessage.data;
           const eventMessageFormatted = { nodeId, ownerId, aggregateId, contactEmail,
             contactPhone, eventType: eventMessage.eventType };
-          const event: Event = plainToClass(ownerEventType.getType(eventMessage.eventType), eventMessageFormatted);
+          const eventType = ownerEventType.getType(eventMessage.eventType);
 
-          await this.multichainProducer.publishEvent(event, callback);
-        } else {
-          await callback();
+          if (eventType) {
+            const event: Event = plainToClass(eventType, eventMessageFormatted);
+            await this.multichainProducer.publishEvent(event);
+          }
         }
+        await callback();
       };
 
       await this.subscribeToStreamFrom('$ce-owner', this.checkpointId, onEvent);

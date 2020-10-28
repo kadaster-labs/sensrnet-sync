@@ -28,14 +28,14 @@ export class SensorESListener extends AbstractESListener {
 
         if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
           const eventMessageFormatted = {...eventMessage.data, eventType: eventMessage.eventType };
-
           const eventType = sensorEventType.getType(eventMessage.eventType);
-          const event: Event = plainToClass(eventType, eventMessageFormatted as Event);
 
-          await this.multichainProducer.publishEvent(event, callback);
-        } else {
-          await callback();
+          if (eventType) {
+            const event: Event = plainToClass(eventType, eventMessageFormatted as Event);
+            await this.multichainProducer.publishEvent(event);
+          }
         }
+        await callback();
       };
       await this.subscribeToStreamFrom('$ce-sensor', this.checkpointId, onEvent);
     } else {

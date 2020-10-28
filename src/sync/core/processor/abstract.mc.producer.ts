@@ -15,20 +15,29 @@ export class AbstractMultiChainProducer {
     this.retryMechanism = new Retry(10);
   }
 
-  async publishEvent(event: Event, callback: () => Promise<void>): Promise<void> {
-    let published;
-    while (!published) {
-      try {
-        await this.multichainService.createTransaction(this.streamName, event.aggregateId, JSON.stringify(event));
-        published = true;
-      } catch (e) {
-        this.retryMechanism.incrementRetryCount();
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        this.logger.error(`Failed to publish transaction: ${e.message}. Retrying.`);
+  async publishEvent(event: Event): Promise<void> {
+    let processed, eventMessage;
+    try {
+      eventMessage = JSON.stringify(event);
+      processed = false;
+    } catch {
+      processed = true;
+    }
+
+    if (event.aggregateId) {
+      while (!processed) {
+        try {
+          await this.multichainService.createTransaction(this.streamName, event.aggregateId, eventMessage);
+          processed = true;
+        } catch (e) {
+          this.logger.error(`Failed to publish transaction: ${e.message}.`);
+
+          this.retryMechanism.incrementRetryCount();
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
       }
     }
 
-    await callback();
     this.retryMechanism.resetRetryCount();
   }
 }
