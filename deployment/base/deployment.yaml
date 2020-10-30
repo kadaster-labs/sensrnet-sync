@@ -25,11 +25,11 @@ spec:
         - name: EVENT_STORE_PORT
           value: "1113"
         - name: MULTICHAIN_HOST
-          value: multichain
+          value: multichain-service.multichain.svc.cluster.local
         - name: MULTICHAIN_USER
           value: multichainrpc
         - name: MULTICHAIN_PORT
-          value: "8002"
+          value: "8570"
         - name: MULTICHAIN_PASSWORD
           value: password
         - name: MONGO_DATABASE
