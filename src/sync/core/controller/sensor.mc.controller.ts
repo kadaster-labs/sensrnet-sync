@@ -9,11 +9,9 @@ import { AbstractMultiChainController } from './abstract.ms.controller';
 @Controller('SensorMC')
 @UseFilters(new DomainExceptionFilter())
 export class SensorMultiChainController extends AbstractMultiChainController {
-
   constructor(
     multichainConsumer: SensorMultiChainConsumer,
   ) {
     super(multichainConsumer);
   }
-
 }

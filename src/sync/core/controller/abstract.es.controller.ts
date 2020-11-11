@@ -7,8 +7,7 @@ export abstract class AbstractESController {
 
   protected constructor(
     private readonly eventStoreListener: AbstractESListener,
-  ) {
-  }
+  ) {}
 
   @Post('subscription/open')
   @ApiOperation({ summary: 'Open subscription' })

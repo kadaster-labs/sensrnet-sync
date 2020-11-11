@@ -5,5 +5,4 @@ export class NoSubscriptionException extends DomainException {
   constructor() {
     super(`No open subscription exists.`);
   }
-
 }
