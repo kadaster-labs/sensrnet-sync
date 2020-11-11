@@ -4,18 +4,23 @@ import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { NoSubscriptionException } from '../errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
+import { Event } from '../events/event';
+import { plainToClass } from 'class-transformer';
+import { AbstractMultiChainProducer } from './abstract.mc.producer';
 
 export abstract class AbstractESListener implements OnModuleInit {
-
   private subscription: EventStoreCatchUpSubscription;
 
   protected logger: Logger = new Logger(this.constructor.name);
 
   protected constructor(
-    protected checkpointId: string,
+    protected readonly streamName: string,
+    protected readonly checkpointId: string,
+    protected readonly eventType: Record<any, any>,
     protected readonly eventStoreService: EventStore,
-    protected readonly checkpointService: CheckpointService) {
-  }
+    protected readonly checkpointService: CheckpointService,
+    protected readonly multichainProducer: AbstractMultiChainProducer,
+  ) {}
 
   getSubscription(): EventStoreCatchUpSubscription {
     return this.subscription;
@@ -38,7 +43,30 @@ export abstract class AbstractESListener implements OnModuleInit {
     }
   }
 
-  abstract openSubscription(): Promise<void>;
+  async openSubscription(): Promise<void> {
+    if (!this.subscriptionExists()) {
+      const onEvent = async (_, eventMessage) => {
+        const conditions = { _id: this.checkpointId };
+        const update = { offset: eventMessage.positionEventNumber };
+        const callback = async () => this.checkpointService.updateOne(conditions, update);
+
+        if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
+          const eventType = this.eventType.getType(eventMessage.eventType);
+
+          if (eventType) {
+            const eventMessageFormatted = {...eventMessage.data, eventType: eventMessage.eventType };
+            const event: Event = plainToClass(eventType, eventMessageFormatted as Event);
+            await this.multichainProducer.publishEvent(event);
+          }
+        }
+        await callback();
+      };
+
+      await this.subscribeToStreamFrom(this.streamName, this.checkpointId, onEvent);
+    } else {
+      throw new SubscriptionExistsException();
+    }
+  }
 
   async getOffset(): Promise<number> {
     const checkpoint = await this.checkpointService.findOne({ _id: this.checkpointId });
