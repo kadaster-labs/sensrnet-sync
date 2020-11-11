@@ -27,10 +27,10 @@ export class OrganizationEsListener extends AbstractESListener {
         const callback = async () => this.checkpointService.updateOne(conditions, update);
 
         if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
-          const eventMessageFormatted = {...eventMessage.data, eventType: eventMessage.eventType };
           const eventType = organizationEventType.getType(eventMessage.eventType);
 
           if (eventType) {
+            const eventMessageFormatted = {...eventMessage.data, eventType: eventMessage.eventType };
             const event: Event = plainToClass(eventType, eventMessageFormatted as Event);
             await this.multichainProducer.publishEvent(event);
           }
