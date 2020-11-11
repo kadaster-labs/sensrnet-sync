@@ -3,7 +3,6 @@ import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class DatastreamDeleted extends SensorEvent {
-
   @Expose()
   readonly dataStreamId: string;
 

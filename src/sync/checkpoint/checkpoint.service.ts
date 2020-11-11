@@ -7,8 +7,7 @@ import { FilterQuery, Model, UpdateQuery } from 'mongoose';
 export class CheckpointService {
   constructor(
     @InjectModel('Checkpoint') private checkpointModel: Model<Checkpoint>,
-  ) {
-  }
+  ) {}
 
   async findOne(conditions: FilterQuery<any>): Promise<Checkpoint> {
     return this.checkpointModel.findOne(conditions);
