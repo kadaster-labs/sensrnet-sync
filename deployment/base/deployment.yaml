@@ -1,29 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: sync-bridge
   name: sync-bridge
 spec:
-  selector:
-    matchLabels:
-      app: sync-bridge
   replicas: 1
-  strategy: {}
   template:
-    metadata:
-      labels:
-        app: sync-bridge
     spec:
       containers:
       - name: sync-bridge
         ports:
-        - containerPort: 3500
+        - name: http
+          containerPort: 3500
         env:
         - name: EVENT_STORE_HOST
           value: eventstore-cluster
         - name: EVENT_STORE_PORT
-          value: "1113"
+          value: eventstore-tcp
         - name: MULTICHAIN_HOST
           value: multichain-service.multichain.svc.cluster.local
         - name: MULTICHAIN_USER
@@ -37,7 +29,23 @@ spec:
         - name: MONGO_HOST
           value: mongo
         - name: MONGO_PORT
-          value: "27017"
-        - name: PORT
-          value: "3500"
-      restartPolicy: Always
+          value: mongo
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "256Mi"
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
