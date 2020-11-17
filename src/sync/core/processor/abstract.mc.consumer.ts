@@ -1,12 +1,12 @@
 import { Event } from '../events/event';
-import { Logger } from '@nestjs/common';
+import { Logger, OnModuleInit } from '@nestjs/common';
 import { Retry } from './retry';
 import { EventStore } from '../../eventstore/event-store';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { MultiChainService } from '../../multichain/multichain.service';
 
-export abstract class AbstractMsConsumer {
-
+export abstract class AbstractMsConsumer implements OnModuleInit {
+  private address: string;
   private loopInterval = 1000;
   private retryMechanism: Retry;
 
@@ -43,7 +43,11 @@ export abstract class AbstractMsConsumer {
       for (let i = 0; i < items.length; i++) {
         const streamData = Buffer.from(items[i].data, 'hex').toString();
         try {
-          await this.publishToEventStore(JSON.parse(streamData));
+          const parsedMessage = JSON.parse(streamData);
+          this.logger.log(!parsedMessage.source || !(parsedMessage.source === this.address));
+          if (!parsedMessage.source || !(parsedMessage.source === this.address)) {
+            await this.publishToEventStore(JSON.parse(streamData));
+          }
         } catch (e) {
           this.logger.warn(`Failed to parse stream message '${streamData}' as event; error: ${e.message}`);
         }
@@ -66,4 +70,9 @@ export abstract class AbstractMsConsumer {
     setTimeout(() => this.listenerLoop(), this.loopInterval);
   }
 
+  async onModuleInit(): Promise<void> {
+    const addresses = await this.multichainService.getAddresses();
+    this.address = addresses[0];
+    await this.listenerLoop();
+  }
 }

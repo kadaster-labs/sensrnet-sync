@@ -1,10 +1,10 @@
 import { Retry } from './retry';
-import { Logger } from '@nestjs/common';
+import { Logger, OnModuleInit } from '@nestjs/common';
 import { Event } from '../events/event';
 import { MultiChainService } from '../../multichain/multichain.service';
 
-export class AbstractMultiChainProducer {
-
+export class AbstractMultiChainProducer implements OnModuleInit {
+  private address: string;
   private retryMechanism: Retry;
   protected logger: Logger = new Logger(this.constructor.name);
 
@@ -18,7 +18,7 @@ export class AbstractMultiChainProducer {
   async publishEvent(event: Event): Promise<void> {
     let processed, eventMessage;
     try {
-      eventMessage = JSON.stringify(event);
+      eventMessage = JSON.stringify({source: this.address, ...event});
       processed = false;
     } catch {
       processed = true;
@@ -39,5 +39,10 @@ export class AbstractMultiChainProducer {
     }
 
     this.retryMechanism.resetRetryCount();
+  }
+
+  async onModuleInit(): Promise<void> {
+    const addresses = await this.multichainService.getAddresses();
+    this.address = addresses[0];
   }
 }

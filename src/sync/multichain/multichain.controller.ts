@@ -15,15 +15,14 @@ export class MultiChainController {
 
   constructor(
     private readonly multiChainService: MultiChainService,
-  ) {
-  }
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Retrieve Addresses' })
   @ApiResponse({ status: 200, description: 'Addresses retrieved' })
   @ApiResponse({ status: 400, description: 'Addresses retrieval failed' })
   async retrieveAddresses(): Promise<string> {
-    return this.multiChainService.getAddress();
+    return this.multiChainService.getAddresses();
   }
 
   @Post('grant')
