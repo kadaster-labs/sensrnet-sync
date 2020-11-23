@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { MultiChainService } from '../../multichain/multichain.service';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { Event } from '../events/event';
@@ -8,7 +8,7 @@ import { EventStore } from '../../eventstore/event-store';
 import { AbstractMsConsumer } from './abstract.mc.consumer';
 
 @Injectable()
-export class SensorMultiChainConsumer extends AbstractMsConsumer {
+export class SensorMultiChainConsumer extends AbstractMsConsumer implements OnModuleInit {
 
   constructor(
     eventStoreService: EventStore,
@@ -23,4 +23,9 @@ export class SensorMultiChainConsumer extends AbstractMsConsumer {
     const event: Event = plainToClass(sensorEventType.getType(eventMessage.eventType), eventMessage);
     await this.eventStoreService.createEvent(event.toEventMessage());
   }
+
+  async onModuleInit(): Promise<void> {
+    await this.listenerLoop();
+  }
+
 }

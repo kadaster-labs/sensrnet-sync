@@ -7,6 +7,7 @@ import { DomainException } from '../core/errors/domain-exception';
 
 @Injectable()
 export class MultiChainService {
+
   private connection: Connection;
 
   protected logger: Logger = new Logger(this.constructor.name);
@@ -38,7 +39,7 @@ export class MultiChainService {
     this.connection = connection;
   }
 
-  async getAddresses(): Promise<string> {
+  async getAddress(): Promise<string> {
     try {
       return await this.getConnection().getAddresses();
     } catch (e) {
