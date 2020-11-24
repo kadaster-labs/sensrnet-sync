@@ -44,7 +44,6 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
         const streamData = Buffer.from(items[i].data, 'hex').toString();
         try {
           const parsedMessage = JSON.parse(streamData);
-          this.logger.log(!parsedMessage.source || !(parsedMessage.source === this.address));
           if (!parsedMessage.source || !(parsedMessage.source === this.address)) {
             await this.publishToEventStore(JSON.parse(streamData));
           }
