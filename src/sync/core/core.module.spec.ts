@@ -1,17 +1,17 @@
 import { Test } from '@nestjs/testing';
 import { EventStore } from '../eventstore/event-store';
 import { MultiChainConfig } from '../../multichain.config';
-import { OwnerESListener } from './processor/owner.es.listener';
+import { OrganizationEsListener } from './processor/organization.es.listener';
 import { SensorESListener } from './processor/sensor.es.listener';
 import { CheckpointService } from '../checkpoint/checkpoint.service';
 import { MultiChainService } from '../multichain/multichain.service';
-import { OwnerESController } from './controller/owner.es.controller';
+import { OrganizationEsController } from './controller/organization.es.controller';
 import { SensorESController } from './controller/sensor.es.controller';
-import { OwnerMultiChainConsumer } from './processor/owner.mc.consumer';
-import { OwnerMultiChainProducer } from './processor/owner.mc.producer';
+import { OrganizationMultiChainConsumer } from './processor/organization.mc.consumer';
+import { OrganizationMultiChainProducer } from './processor/organization.mc.producer';
 import { SensorMultiChainConsumer } from './processor/sensor.mc.consumer';
 import { SensorMultiChainProducer } from './processor/sensor.mc.producer';
-import { OwnerMultiChainController } from './controller/owner.mc.controller';
+import { OrganizationMultiChainController } from './controller/organization.mc.controller';
 import { SensorMultiChainController } from './controller/sensor.mc.controller';
 
 const mockEventStore = {
@@ -34,8 +34,8 @@ describe('Core (integration)', () => {
   beforeAll(async () => {
     moduleRef = await Test.createTestingModule({
       controllers: [
-        OwnerESController,
-        OwnerMultiChainController,
+        OrganizationEsController,
+        OrganizationMultiChainController,
         SensorESController,
         SensorMultiChainController,
       ], providers: [
@@ -52,10 +52,10 @@ describe('Core (integration)', () => {
           useValue: mockMultiChainService,
         },
         MultiChainConfig,
-        OwnerESListener,
+        OrganizationEsListener,
         SensorESListener,
-        OwnerMultiChainConsumer,
-        OwnerMultiChainProducer,
+        OrganizationMultiChainConsumer,
+        OrganizationMultiChainProducer,
         SensorMultiChainConsumer,
         SensorMultiChainProducer,
       ],
@@ -63,11 +63,11 @@ describe('Core (integration)', () => {
   });
 
   it(`Should open an es subscription`, async () => {
-    const ownerController: OwnerESController = moduleRef.get(OwnerESController);
+    const organizationController: OrganizationEsController = moduleRef.get(OrganizationEsController);
 
     let success;
     try {
-      await ownerController.openEventStoreSubscription();
+      await organizationController.openEventStoreSubscription();
       success = true;
     } catch {
       success = false;
@@ -77,12 +77,12 @@ describe('Core (integration)', () => {
   });
 
   it(`Should not open an es subscription again`, async () => {
-    const ownerController: OwnerESController = moduleRef.get(OwnerESController);
+    const organizationController: OrganizationEsController = moduleRef.get(OrganizationEsController);
 
     let success;
     try {
-      await ownerController.openEventStoreSubscription();
-      await ownerController.openEventStoreSubscription();
+      await organizationController.openEventStoreSubscription();
+      await organizationController.openEventStoreSubscription();
       success = true;
     } catch {
       success = false;

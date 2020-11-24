@@ -3,7 +3,6 @@ import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class SensorUpdated extends SensorEvent {
-
   @Expose()
   readonly name: string;
 
@@ -26,6 +25,9 @@ export class SensorUpdated extends SensorEvent {
   readonly theme: string[];
 
   @Expose()
+  readonly category: string;
+
+  @Expose()
   readonly typeName: string;
 
   @Expose()
@@ -33,7 +35,7 @@ export class SensorUpdated extends SensorEvent {
 
   constructor(sensorId: string, name: string, aim: string, description: string, manufacturer: string,
               observationArea: Record<string, any>,
-              documentationUrl: string, theme: string[], typeName: string,
+              documentationUrl: string, theme: string[], category: string, typeName: string,
               typeDetails: Record<string, any>) {
     super(sensorId);
     this.name = name;
@@ -43,6 +45,7 @@ export class SensorUpdated extends SensorEvent {
     this.observationArea = observationArea;
     this.documentationUrl = documentationUrl;
     this.theme = theme;
+    this.category = category;
     this.typeName = typeName;
     this.typeDetails = typeDetails;
   }

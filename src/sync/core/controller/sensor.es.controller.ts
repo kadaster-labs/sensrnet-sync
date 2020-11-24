@@ -9,11 +9,9 @@ import { AbstractESController } from './abstract.es.controller';
 @Controller('SensorES')
 @UseFilters(new DomainExceptionFilter())
 export class SensorESController extends AbstractESController {
-
   constructor(
     eventStoreListener: SensorESListener,
   ) {
     super(eventStoreListener);
   }
-
 }

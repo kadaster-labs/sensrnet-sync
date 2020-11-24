@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class OffsetBody {
-
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({
@@ -11,5 +10,4 @@ export class OffsetBody {
     description: 'The new offset.',
   })
   readonly offset: number;
-
 }

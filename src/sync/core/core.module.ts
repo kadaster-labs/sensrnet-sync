@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
-import { OwnerESController } from './controller/owner.es.controller';
+import { OrganizationEsController } from './controller/organization.es.controller';
 import { CheckpointModule } from '../checkpoint/checkpoint.module';
 import { EventStoreModule } from '../eventstore/event-store.module';
 import { MultiChainModule } from '../multichain/multichain.module';
 import { SensorESController } from './controller/sensor.es.controller';
-import { OwnerMultiChainController } from './controller/owner.mc.controller';
+import { OrganizationMultiChainController } from './controller/organization.mc.controller';
 import { SensorMultiChainController } from './controller/sensor.mc.controller';
 import { EventStore } from '../eventstore/event-store';
 import { SensorESListener } from './processor/sensor.es.listener';
 import { MultiChainConfig } from '../../multichain.config';
 import { SensorMultiChainConsumer } from './processor/sensor.mc.consumer';
 import { SensorMultiChainProducer } from './processor/sensor.mc.producer';
-import { OwnerESListener } from './processor/owner.es.listener';
-import { OwnerMultiChainConsumer } from './processor/owner.mc.consumer';
-import { OwnerMultiChainProducer } from './processor/owner.mc.producer';
+import { OrganizationEsListener } from './processor/organization.es.listener';
+import { OrganizationMultiChainConsumer } from './processor/organization.mc.consumer';
+import { OrganizationMultiChainProducer } from './processor/organization.mc.producer';
 
 @Module({
   imports: [
@@ -23,18 +23,18 @@ import { OwnerMultiChainProducer } from './processor/owner.mc.producer';
     CoreModule,
   ],
   controllers: [
-    OwnerESController,
-    OwnerMultiChainController,
+    OrganizationEsController,
+    OrganizationMultiChainController,
     SensorESController,
     SensorMultiChainController,
   ],
   providers: [
     EventStore,
     MultiChainConfig,
-    OwnerESListener,
+    OrganizationEsListener,
     SensorESListener,
-    OwnerMultiChainConsumer,
-    OwnerMultiChainProducer,
+    OrganizationMultiChainConsumer,
+    OrganizationMultiChainProducer,
     SensorMultiChainConsumer,
     SensorMultiChainProducer,
   ],
