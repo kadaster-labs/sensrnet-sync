@@ -13,7 +13,6 @@ import { DomainException } from '../core/errors/domain-exception';
 @Controller('Multichain')
 @UseFilters(new DomainExceptionFilter())
 export class MultiChainController {
-
   constructor(
     private readonly multiChainService: MultiChainService,
   ) {}
@@ -24,7 +23,7 @@ export class MultiChainController {
   @ApiResponse({ status: 400, description: 'Addresses retrieval failed' })
   async retrieveAddresses(): Promise<string[]> {
     try {
-      return this.multiChainService.getAddresses();
+      return await this.multiChainService.getAddresses();
     } catch (e) {
       throw new DomainException(e.message);
     }
@@ -36,7 +35,7 @@ export class MultiChainController {
   @ApiResponse({ status: 400, description: 'Permission grant failed' })
   async grant(@Body() body: GrantBody): Promise<void> {
     try {
-      return this.multiChainService.grant(body.address, body.permissions);
+      return await this.multiChainService.grant(body.address, body.permissions);
     } catch (e) {
       throw new DomainException(e.message);
     }
@@ -48,7 +47,7 @@ export class MultiChainController {
   @ApiResponse({ status: 400, description: 'Stream creation failed' })
   async createStream(@Body() body: StreamBody): Promise<void> {
     try {
-      return this.multiChainService.createStream(body.name);
+      return await this.multiChainService.createStream(body.name);
     } catch (e) {
       throw new DomainException(e.message);
     }
@@ -60,7 +59,7 @@ export class MultiChainController {
   @ApiResponse({ status: 400, description: 'Transaction creation failed' })
   async createTransaction(@Body() body: TransactionBody): Promise<void> {
     try {
-      return this.multiChainService.createTransaction(body.stream, v4(), body.data);
+      return await this.multiChainService.createTransaction(body.stream, v4(), body.data);
     } catch (e) {
       throw new DomainException(e.message);
     }

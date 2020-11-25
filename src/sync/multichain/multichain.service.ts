@@ -37,19 +37,19 @@ export class MultiChainService {
   }
 
   async getAddresses(): Promise<string[]> {
-    return await this.getConnection().getAddresses();
+    return this.getConnection().getAddresses();
   }
 
   async grant(address: string, permissions: string): Promise<void> {
-    return await this.getConnection().grant([address, permissions]);
+    return this.getConnection().grant([address, permissions]);
   }
 
   async createStream(streamName: string): Promise<void> {
-    return await this.getConnection().create(['stream', streamName, true]);
+    return this.getConnection().create(['stream', streamName, true]);
   }
 
   async createTransaction(streamName: string, key: string, data: string): Promise<void> {
-    return await this.getConnection().publish([streamName, key, Buffer.from(data).toString('hex')]);
+    return this.getConnection().publish([streamName, key, Buffer.from(data).toString('hex')]);
   }
 
   async listStreamItems(stream: string, start: number, count: number, verbose: boolean): Promise<Item[]> {
