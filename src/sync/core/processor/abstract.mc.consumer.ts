@@ -6,7 +6,7 @@ import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { MultiChainService } from '../../multichain/multichain.service';
 
 export abstract class AbstractMsConsumer implements OnModuleInit {
-  private address: string;
+  private addresses: string[];
   private loopInterval = 1000;
   private retryMechanism: Retry;
 
@@ -37,14 +37,12 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
     const offset = await this.getOffset();
 
     try {
-      const retrieveOptions = { start: offset, stream: this.streamName };
-      const items = await this.multichainService.listStreamItems(retrieveOptions);
+      const items = await this.multichainService.listStreamItems(this.streamName, offset, 10, true);
 
       for (let i = 0; i < items.length; i++) {
         const streamData = Buffer.from(items[i].data, 'hex').toString();
         try {
-          const parsedMessage = JSON.parse(streamData);
-          if (!parsedMessage.source || !(parsedMessage.source === this.address)) {
+          if (!items[i].publishers.some((publisher) => this.addresses.includes(publisher))) {
             await this.publishToEventStore(JSON.parse(streamData));
           }
         } catch (e) {
@@ -56,7 +54,7 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
       }
     } catch (e) {
       if (e.code === -703) {
-        await this.multichainService.subscribe({ stream: this.streamName });
+        await this.multichainService.subscribe(this.streamName, true);
       } else if (e.code === 'ECONNREFUSED' || e.code == 'ECONNRESET') {
         this.retryMechanism.incrementRetryCount();
         this.multichainService.initConnection();
@@ -70,8 +68,13 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    const addresses = await this.multichainService.getAddresses();
-    this.address = addresses[0];
+    try {
+      this.addresses = await this.multichainService.getAddresses();
+    } catch (e) {
+      this.logger.error(`Failed to retrieve blockchain addresses ${e.message}. Exiting.`);
+      process.exit(0);
+    }
+
     await this.listenerLoop();
   }
 }

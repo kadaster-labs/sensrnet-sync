@@ -6,6 +6,7 @@ import { TransactionBody } from './model/transaction-body';
 import { Body, Controller, Get, Post, UseFilters } from '@nestjs/common';
 import { DomainExceptionFilter } from '../core/errors/domain-exception.filter';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { DomainException } from '../core/errors/domain-exception';
 
 @ApiBearerAuth()
 @ApiTags('Multichain')
@@ -21,8 +22,12 @@ export class MultiChainController {
   @ApiOperation({ summary: 'Retrieve Addresses' })
   @ApiResponse({ status: 200, description: 'Addresses retrieved' })
   @ApiResponse({ status: 400, description: 'Addresses retrieval failed' })
-  async retrieveAddresses(): Promise<string> {
-    return this.multiChainService.getAddresses();
+  async retrieveAddresses(): Promise<string[]> {
+    try {
+      return this.multiChainService.getAddresses();
+    } catch (e) {
+      throw new DomainException(e.message);
+    }
   }
 
   @Post('grant')
@@ -30,7 +35,11 @@ export class MultiChainController {
   @ApiResponse({ status: 200, description: 'Permission granted' })
   @ApiResponse({ status: 400, description: 'Permission grant failed' })
   async grant(@Body() body: GrantBody): Promise<void> {
-    return this.multiChainService.grant(body.address, body.permissions);
+    try {
+      return this.multiChainService.grant(body.address, body.permissions);
+    } catch (e) {
+      throw new DomainException(e.message);
+    }
   }
 
   @Post('stream')
@@ -38,7 +47,11 @@ export class MultiChainController {
   @ApiResponse({ status: 200, description: 'Stream created' })
   @ApiResponse({ status: 400, description: 'Stream creation failed' })
   async createStream(@Body() body: StreamBody): Promise<void> {
-    return this.multiChainService.createStream(body.name);
+    try {
+      return this.multiChainService.createStream(body.name);
+    } catch (e) {
+      throw new DomainException(e.message);
+    }
   }
 
   @Post('transaction')
@@ -46,6 +59,10 @@ export class MultiChainController {
   @ApiResponse({ status: 200, description: 'Transaction created' })
   @ApiResponse({ status: 400, description: 'Transaction creation failed' })
   async createTransaction(@Body() body: TransactionBody): Promise<void> {
-    return this.multiChainService.createTransaction(body.stream, v4(), body.data);
+    try {
+      return this.multiChainService.createTransaction(body.stream, v4(), body.data);
+    } catch (e) {
+      throw new DomainException(e.message);
+    }
   }
 }
