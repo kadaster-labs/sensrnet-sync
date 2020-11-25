@@ -54,7 +54,7 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
       }
     } catch (e) {
       if (e.code === -703) {
-        await this.multichainService.subscribe(this.streamName, true);
+        await this.multichainService.subscribe(this.streamName);
       } else if (e.code === 'ECONNREFUSED' || e.code == 'ECONNRESET') {
         this.retryMechanism.incrementRetryCount();
         this.multichainService.initConnection();

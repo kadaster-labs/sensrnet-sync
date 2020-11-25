@@ -56,8 +56,8 @@ export class MultiChainService {
     return this.getConnection().listStreamItems([stream, verbose, count, start]);
   }
 
-  async subscribe(stream: string, rescan: boolean): Promise<void> {
-    return this.getConnection().subscribe([stream, rescan]);
+  async subscribe(stream: string): Promise<void> {
+    return this.getConnection().subscribe([stream]);
   }
 
 }
