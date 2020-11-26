@@ -34,7 +34,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.0",
     "mongoose": "^5.9.21",
-    "multichain-node": "^2.2.0-version1.0.4",
+    "multinodejs": "^2.0.0",
     "geteventstore-promise": "^3.2.1",
     "swagger-ui-express": "^4.1.4"
   },

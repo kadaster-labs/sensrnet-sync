@@ -1,9 +1,8 @@
 /// <reference types="./multichain" />
-import { Connection, Item, Settings } from 'multichain';
-import * as multichain from 'multichain-node';
+import { Connection, Item } from 'multichain';
+import * as multichain from 'multinodejs';
 import { Injectable, Logger } from '@nestjs/common';
 import { MultiChainConfig } from '../../multichain.config';
-import { DomainException } from '../core/errors/domain-exception';
 
 @Injectable()
 export class MultiChainService {
@@ -13,8 +12,7 @@ export class MultiChainService {
 
   constructor(
     private readonly multichainConfig: MultiChainConfig,
-  ) {
-  }
+  ) {}
 
   initConnection(): void {
     const config = this.multichainConfig.config;
@@ -38,55 +36,28 @@ export class MultiChainService {
     this.connection = connection;
   }
 
-  async getAddresses(): Promise<string> {
-    try {
-      return await this.getConnection().getAddresses();
-    } catch (e) {
-      throw new DomainException(e.message);
-    }
+  async getAddresses(): Promise<string[]> {
+    return this.getConnection().getAddresses();
   }
 
   async grant(address: string, permissions: string): Promise<void> {
-    try {
-      return await this.getConnection().grant({
-        addresses: address,
-        permissions: permissions,
-      });
-    } catch (e) {
-      throw new DomainException(e.message);
-    }
+    return this.getConnection().grant([address, permissions]);
   }
 
   async createStream(streamName: string): Promise<void> {
-    try {
-      return await this.getConnection().create({
-        open: true,
-        name: streamName,
-        type: 'stream',
-      });
-    } catch (e) {
-      throw new DomainException(e.message);
-    }
+    return this.getConnection().create(['stream', streamName, true]);
   }
 
   async createTransaction(streamName: string, key: string, data: string): Promise<void> {
-    try {
-      return await this.getConnection().publish({
-        key: key,
-        stream: streamName,
-        data: Buffer.from(data).toString('hex'),
-      });
-    } catch (e) {
-      throw new DomainException(e.message);
-    }
+    return this.getConnection().publish([streamName, key, Buffer.from(data).toString('hex')]);
   }
 
-  async listStreamItems(settings: Settings): Promise<Item[]> {
-    return this.getConnection().listStreamItems(settings);
+  async listStreamItems(stream: string, start: number, count: number, verbose: boolean): Promise<Item[]> {
+    return this.getConnection().listStreamItems([stream, verbose, count, start]);
   }
 
-  async subscribe(settings: Settings): Promise<void> {
-    return this.getConnection().subscribe(settings);
+  async subscribe(stream: string): Promise<void> {
+    return this.getConnection().subscribe([stream]);
   }
 
 }
