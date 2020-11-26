@@ -1,6 +1,15 @@
 # SensrNet Sync Application
 
-This is the sync component for the SensRNet application. 
+<p>
+    <a href="https://github.com/kadaster-labs/sensrnet-sync/actions?query=workflow%3A%22Node.js+CI%22" alt="Build status">
+        <img src="https://github.com/kadaster-labs/sensrnet-sync/workflows/Node.js%20CI/badge.svg" />
+    </a>
+    <a href="https://sonarcloud.io/dashboard?id=kadaster-labs_sensrnet-sync" alt="Quality Gate">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=kadaster-labs_sensrnet-sync&metric=alert_status" />
+    </a>
+</p>
+
+This is the sync component for the SensRNet application.
 It features a NestJS API.
 
 For more information see our [documentation](https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/Architecture.md#component-sync) (and especially details about [MultiChain](https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/SyncMultiChainEN.md)).
