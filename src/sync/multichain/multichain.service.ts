@@ -52,6 +52,10 @@ export class MultiChainService {
     return this.getConnection().publish([streamName, key, Buffer.from(data).toString('hex')]);
   }
 
+  async createVariable(variableName: string, data: Record<string, any>): Promise<void> {
+    return this.getConnection().create(['variable', variableName, true, JSON.stringify(data)]);
+  }
+
   async listStreamItems(stream: string, start: number, count: number, verbose: boolean): Promise<Item[]> {
     return this.getConnection().listStreamItems([stream, verbose, count, start]);
   }

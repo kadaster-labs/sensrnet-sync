@@ -36,7 +36,8 @@
     "mongoose": "^5.9.21",
     "multinodejs": "^2.0.0",
     "geteventstore-promise": "^3.2.1",
-    "swagger-ui-express": "^4.1.4"
+    "swagger-ui-express": "^4.1.4",
+    "patch-package": "^6.2.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.4.1",
