@@ -3,16 +3,15 @@ import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class SensorOwnershipTransferred extends SensorEvent {
+  @Expose()
+  public readonly oldOrganizationId: string;
 
   @Expose()
-  public readonly oldOwnerId: string;
+  public readonly newOrganizationId: string;
 
-  @Expose()
-  public readonly newOwnerId: string;
-
-  constructor(sensorId: string, oldOwnerId: string, newOwnerId: string) {
+  constructor(sensorId: string, oldOrganizationId: string, newOrganizationId: string) {
     super(sensorId);
-    this.oldOwnerId = oldOwnerId;
-    this.newOwnerId = newOwnerId;
+    this.oldOrganizationId = oldOrganizationId;
+    this.newOrganizationId = newOrganizationId;
   }
 }

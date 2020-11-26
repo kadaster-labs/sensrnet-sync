@@ -7,8 +7,7 @@ export class AbstractMultiChainController {
 
   constructor(
     private readonly multichainConsumer: AbstractMsConsumer,
-  ) {
-  }
+  ) {}
 
   @Get('checkpoint')
   @ApiOperation({ summary: 'Retrieve checkpoint offset' })
@@ -25,5 +24,4 @@ export class AbstractMultiChainController {
   async setMultichainOffset(@Body() body: OffsetBody): Promise<void> {
     await this.multichainConsumer.setOffset(body.offset);
   }
-
 }

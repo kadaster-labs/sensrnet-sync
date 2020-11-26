@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
-import {
-  DatastreamAdded, DatastreamDeleted, DatastreamUpdated, SensorActivated, SensorDeactivated, SensorDeleted,
-  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated,
+import { DatastreamAdded, DatastreamDeleted, DatastreamUpdated, SensorActivated, SensorDeactivated, SensorDeleted,
+  SensorOwnershipShared, SensorOwnershipTransferred, SensorRegistered, SensorRelocated, SensorUpdated
 } from './index';
 
 class SensorEventType {

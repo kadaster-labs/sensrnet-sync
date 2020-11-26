@@ -4,7 +4,6 @@ import { Event } from '../events/event';
 import { MultiChainService } from '../../multichain/multichain.service';
 
 export class AbstractMultiChainProducer {
-
   private retryMechanism: Retry;
   protected logger: Logger = new Logger(this.constructor.name);
 

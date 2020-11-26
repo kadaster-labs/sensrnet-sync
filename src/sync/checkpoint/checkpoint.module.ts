@@ -6,14 +6,11 @@ import { CheckpointSchema } from './models/checkpoint.model';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Checkpoint', schema: CheckpointSchema }]),
-  ],
-  providers: [
+  ], providers: [
     CheckpointService,
-  ],
-  exports: [
+  ], exports: [
     CheckpointService,
   ],
 })
 
-export class CheckpointModule {
-}
+export class CheckpointModule {}

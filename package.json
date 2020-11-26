@@ -33,7 +33,7 @@
     "class-validator": "^0.12.2",
     "geteventstore-promise": "^3.2.1",
     "mongoose": "^5.9.21",
-    "multichain-node": "^2.2.0-version1.0.4",
+    "multinodejs": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.0",

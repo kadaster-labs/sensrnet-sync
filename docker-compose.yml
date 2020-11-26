@@ -14,7 +14,7 @@ services:
     environment:
       - PORT=3500
       - MULTICHAIN_HOST=host.docker.internal
-      - MULTICHAIN_PORT=8002
+      - MULTICHAIN_PORT=8570
       - MULTICHAIN_USER=multichainrpc
       - MULTICHAIN_PASSWORD=password
       - MONGO_HOST=mongo

@@ -1,11 +1,11 @@
 import { Logger } from '@nestjs/common';
-import { OwnerDeleted, OwnerRegistered, OwnerUpdated } from './index';
+import { OrganizationDeleted, OrganizationRegistered, OrganizationUpdated } from './index';
 
-class OwnerEventType {
+class OrganizationEventType {
   constructor() {
-    this.add(OwnerRegistered);
-    this.add(OwnerUpdated);
-    this.add(OwnerDeleted);
+    this.add(OrganizationRegistered);
+    this.add(OrganizationUpdated);
+    this.add(OrganizationDeleted);
   }
 
   private supportedTypes: { [key: string]: any; } = {};
@@ -21,7 +21,6 @@ class OwnerEventType {
   private add(event: any) {
     this.supportedTypes[event.name] = event;
   }
-
 }
 
-export const ownerEventType = new OwnerEventType();
+export const organizationEventType = new OrganizationEventType();
