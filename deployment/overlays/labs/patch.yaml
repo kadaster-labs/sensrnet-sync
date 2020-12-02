@@ -8,4 +8,3 @@ spec:
       containers:
       - name: sync-bridge
         image: sensrnetregistry.azurecr.io/sensrnet/sync-bridge:latest
-        resources: {}
