@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import { GrantBody } from './model/grant-body';
 import { StreamBody } from './model/stream-body';
 import { ApproveBody } from './model/approve-body';
@@ -82,7 +81,7 @@ export class MultiChainController {
   @ApiOperation({ summary: 'Disapprove Filter' })
   @ApiResponse({ status: 200, description: 'Filter disapproved' })
   @ApiResponse({ status: 400, description: 'Filter disapproval failed' })
-  async disApproveFilter(@Body() body: ApproveBody): Promise<void> {
+  async disapproveFilter(@Body() body: ApproveBody): Promise<void> {
     try {
       return await this.multiChainService.approveFrom(body.address, body.filterName, false);
     } catch (e) {
