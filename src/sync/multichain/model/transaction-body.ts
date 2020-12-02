@@ -17,6 +17,15 @@ export class TransactionBody {
   @ApiProperty({
     type: String,
     required: true,
+    description: 'The transaction key.',
+  })
+  readonly key: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: String,
+    required: true,
     description: 'The transaction data.',
   })
   readonly data: string;

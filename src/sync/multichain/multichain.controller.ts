@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { GrantBody } from './model/grant-body';
 import { StreamBody } from './model/stream-body';
+import { ApproveBody } from './model/approve-body';
 import { MultiChainService } from './multichain.service';
 import { TransactionBody } from './model/transaction-body';
 import { Body, Controller, Get, Post, UseFilters } from '@nestjs/common';
@@ -59,7 +60,31 @@ export class MultiChainController {
   @ApiResponse({ status: 400, description: 'Transaction creation failed' })
   async createTransaction(@Body() body: TransactionBody): Promise<void> {
     try {
-      return await this.multiChainService.createTransaction(body.stream, v4(), body.data);
+      return await this.multiChainService.createTransaction(body.stream, body.key, body.data);
+    } catch (e) {
+      throw new DomainException(e.message);
+    }
+  }
+
+  @Post('approve')
+  @ApiOperation({ summary: 'Approve Filter' })
+  @ApiResponse({ status: 200, description: 'Filter approved' })
+  @ApiResponse({ status: 400, description: 'Filter approval failed' })
+  async approveFilter(@Body() body: ApproveBody): Promise<void> {
+    try {
+      return await this.multiChainService.approveFrom(body.address, body.filterName, true);
+    } catch (e) {
+      throw new DomainException(e.message);
+    }
+  }
+
+  @Post('disapprove')
+  @ApiOperation({ summary: 'Disapprove Filter' })
+  @ApiResponse({ status: 200, description: 'Filter disapproved' })
+  @ApiResponse({ status: 400, description: 'Filter disapproval failed' })
+  async disApproveFilter(@Body() body: ApproveBody): Promise<void> {
+    try {
+      return await this.multiChainService.approveFrom(body.address, body.filterName, false);
     } catch (e) {
       throw new DomainException(e.message);
     }

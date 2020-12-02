@@ -19,6 +19,8 @@ declare module 'multichain' {
     grant(grant): Promise<void>
 
     create(stream): Promise<void>
+
+    approveFrom(details): Promise<void>
   }
 
   export interface Item {

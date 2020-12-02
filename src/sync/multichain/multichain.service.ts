@@ -64,4 +64,8 @@ export class MultiChainService {
     return this.getConnection().subscribe([stream]);
   }
 
+  async approveFrom(address: string, filterName: string, approve: boolean): Promise<void> {
+    return this.getConnection().approveFrom([address, filterName, approve]);
+  }
+
 }
