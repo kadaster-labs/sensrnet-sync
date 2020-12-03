@@ -8,6 +8,7 @@
     "url": "https://github.com/kadaster-labs/sensrnet-sync"
   },
   "scripts": {
+    "postinstall": "patch-package",
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "format": "prettier --write \\\"src/**/*.ts\\\"",
     "start": "ts-node -r tsconfig-paths/register src/main.ts",
@@ -37,7 +38,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.0",
-    "swagger-ui-express": "^4.1.4"
+    "swagger-ui-express": "^4.1.4",
+    "patch-package": "^6.2.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.4.1",

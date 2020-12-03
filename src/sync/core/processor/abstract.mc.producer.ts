@@ -1,9 +1,12 @@
 import { Retry } from './retry';
-import { Logger } from '@nestjs/common';
+import { Logger, OnModuleInit } from '@nestjs/common';
 import { Event } from '../events/event';
 import { MultiChainService } from '../../multichain/multichain.service';
+import { SensorRegistered } from '../events/sensor/sensor-registered.event';
+import { OrganizationRegistered } from '../events/organization/organization-registered.event';
 
-export class AbstractMultiChainProducer {
+export class AbstractMultiChainProducer implements OnModuleInit {
+  private addresses: string[];
   private retryMechanism: Retry;
   protected logger: Logger = new Logger(this.constructor.name);
 
@@ -26,7 +29,16 @@ export class AbstractMultiChainProducer {
     if (event.aggregateId) {
       while (!processed) {
         try {
+          if (event instanceof OrganizationRegistered || event instanceof SensorRegistered) {
+            try {
+              const name = event.aggregateId.split('-').join('');
+              await this.multichainService.createVariable(name, {addresses: this.addresses});
+            } catch (e) {
+              this.logger.warn(e.message);
+            }
+          }
           await this.multichainService.createTransaction(this.streamName, event.aggregateId, eventMessage);
+
           processed = true;
         } catch (e) {
           this.logger.error(`Failed to publish transaction: ${e.message}.`);
@@ -38,5 +50,14 @@ export class AbstractMultiChainProducer {
     }
 
     this.retryMechanism.resetRetryCount();
+  }
+
+  async onModuleInit(): Promise<void> {
+    try {
+      this.addresses = await this.multichainService.getAddresses();
+    } catch (e) {
+      this.logger.error(`Failed to retrieve blockchain addresses ${e.message}. Exiting.`);
+      process.exit(0);
+    }
   }
 }

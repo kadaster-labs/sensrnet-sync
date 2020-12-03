@@ -1,0 +1,19 @@
+diff --git a/node_modules/multinodejs/lib/commands.js b/node_modules/multinodejs/lib/commands.js
+index a368d5c..080c37a 100644
+--- a/node_modules/multinodejs/lib/commands.js
++++ b/node_modules/multinodejs/lib/commands.js
+@@ -82,6 +82,14 @@ module.exports = {
+     // use the fourth parameters of each field for Upgrade
+     create: ["stream|streamfilter|txfilter|upgrade", "name", "open|restrictions|restrictions|false", {"custom-fields|js-code|js-code|params": {}}],
+ 
++    // Variable methods
++    getvariablehistory: ["variable", {"verbose": false}, {"count": "MAX"}, {"start": startDefault}],
++    getvariableinfo: ["variable", {"verbose": false}],
++    getvariablevalue: ["variable"],
++    listvariables: [{"variables": "*"}, {"verbose": false}, {"count": "MAX"}, {"start": startDefault}],
++    setvariablevalue: ["variable", {"value": null}],
++    setvariablevaluefrom: ["from-address", "variable", {"value": null}],
++
+     // createFrom is also used on Filters & Upgrade,
+     // use the second parameters for that
+     createFrom: ["from-address", "type=stream|type=filter/upgrade", "name", "open/params|open=false", {"custom-fields|protocol-version": {}}],
