@@ -5,7 +5,8 @@ FROM node:12.18.4 AS builder
 WORKDIR /app
 
 COPY ./package*.json ./
-RUN npm ci
+COPY patches patches
+RUN npm ci --unsafe-perm
 
 COPY tsconfig*.json ./
 COPY src src
