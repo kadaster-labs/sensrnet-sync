@@ -18,7 +18,7 @@ spec:
         - name: EVENT_STORE_PORT
           value: eventstore-tcp
         - name: MULTICHAIN_HOST
-          value: multichain-service.multichain.svc.cluster.local
+          value: multichain-node-service
         - name: MULTICHAIN_USER
           valueFrom:
               secretKeyRef:

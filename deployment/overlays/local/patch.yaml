@@ -7,6 +7,6 @@ spec:
     spec:
       containers:
       - name: sync-bridge
-        image: sensrnetregistry.azurecr.io/sensrnet/sync-bridge:latest
+        image: sensrnet-sync_sync-bridge:latest
         imagePullPolicy: Never
         resources: {}
