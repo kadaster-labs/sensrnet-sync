@@ -5,9 +5,6 @@ import { Exclude, Expose } from 'class-transformer';
 export abstract class Event {
 
   @Expose()
-  public readonly nodeId: string;
-
-  @Expose()
   public readonly aggregateId: string;
 
   @Expose()

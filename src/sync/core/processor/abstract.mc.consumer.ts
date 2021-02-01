@@ -1,6 +1,6 @@
-import { Event } from '../events/event';
-import { Logger, OnModuleInit } from '@nestjs/common';
 import { Retry } from './retry';
+import { Logger, OnModuleInit } from '@nestjs/common';
+import { Event as ESEvent } from 'geteventstore-promise';
 import { EventStore } from '../../eventstore/event-store';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { MultiChainService } from '../../multichain/multichain.service';
@@ -31,7 +31,7 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
     await this.checkpointService.updateOne({ _id: this.checkpointId }, { offset });
   }
 
-  abstract async publishToEventStore(eventMessage: Event): Promise<void> ;
+  abstract async publishToEventStore(eventMessage: ESEvent): Promise<void> ;
 
   async listenerLoop(): Promise<void> {
     const offset = await this.getOffset();
@@ -43,7 +43,10 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
         const streamData = Buffer.from(items[i].data, 'hex').toString();
         try {
           if (!items[i].publishers.some((publisher) => this.addresses.includes(publisher))) {
-            await this.publishToEventStore(JSON.parse(streamData));
+            const event = JSON.parse(streamData);
+            const { version, eventType, ...data } = event;
+            const eventMessage = { data, metadata: { version }, eventType } as ESEvent;
+            await this.publishToEventStore(eventMessage);
           }
         } catch (e) {
           this.logger.warn(`Failed to parse stream message '${streamData}' as event; error: ${e.message}`);
@@ -75,6 +78,9 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
       process.exit(0);
     }
 
-    await this.listenerLoop();
+    const readFromChain = process.env.READ_FROM_CHAIN ? process.env.READ_FROM_CHAIN === 'true' : false
+    if (readFromChain) {
+      await this.listenerLoop();
+    }
   }
 }

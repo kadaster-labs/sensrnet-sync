@@ -1,14 +1,15 @@
+import { Event } from '../events/event';
 import { Logger, OnModuleInit } from '@nestjs/common';
 import { EventStore } from '../../eventstore/event-store';
+import { AbstractMultiChainProducer } from './abstract.mc.producer';
 import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { NoSubscriptionException } from '../errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
-import { Event } from '../events/event';
-import { plainToClass } from 'class-transformer';
-import { AbstractMultiChainProducer } from './abstract.mc.producer';
+import { AbstractEventType } from '../events/abstract-event-type';
 
 export abstract class AbstractESListener implements OnModuleInit {
+
   private subscription: EventStoreCatchUpSubscription;
 
   protected logger: Logger = new Logger(this.constructor.name);
@@ -16,7 +17,7 @@ export abstract class AbstractESListener implements OnModuleInit {
   protected constructor(
     protected readonly streamName: string,
     protected readonly checkpointId: string,
-    protected readonly eventType: Record<any, any>,
+    protected readonly eventType: AbstractEventType,
     protected readonly eventStoreService: EventStore,
     protected readonly checkpointService: CheckpointService,
     protected readonly multichainProducer: AbstractMultiChainProducer,
@@ -50,12 +51,11 @@ export abstract class AbstractESListener implements OnModuleInit {
         const update = { offset: eventMessage.positionEventNumber };
         const callback = async () => this.checkpointService.updateOne(conditions, update);
 
-        if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
-          const eventType = this.eventType.getType(eventMessage.eventType);
+        if (!eventMessage.metadata || !eventMessage.metadata.originSync) {
+          const eventData = {...eventMessage, data: {...eventMessage.data, eventType: eventMessage.eventType}};
+          const event: Event = this.eventType.getEvent(eventData);
 
-          if (eventType) {
-            const eventMessageFormatted = {...eventMessage.data, eventType: eventMessage.eventType };
-            const event: Event = plainToClass(eventType, eventMessageFormatted as Event);
+          if (event) {
             await this.multichainProducer.publishEvent(event);
           }
         }

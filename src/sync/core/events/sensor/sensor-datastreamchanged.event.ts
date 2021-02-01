@@ -4,6 +4,10 @@ import { Exclude, Expose } from 'class-transformer';
 @Exclude()
 export abstract class DatastreamChanged extends SensorEvent {
 
+  static version = '1.0.0';
+
+  public readonly version = DatastreamChanged.version;
+
   @Expose()
   public readonly dataStreamId: string;
 

@@ -1,8 +1,13 @@
-import { OrganizationEvent } from './organization.event';
 import { Exclude, Expose } from 'class-transformer';
+import { OrganizationEvent } from '../../organization.event';
 
 @Exclude()
 export class OrganizationRegistered extends OrganizationEvent {
+
+  static version = '1.0.0';
+
+  public readonly version = OrganizationRegistered.version;
+
   @Expose()
   public readonly website: string;
 

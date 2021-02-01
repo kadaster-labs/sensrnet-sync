@@ -1,8 +1,13 @@
 import { Exclude, Expose } from 'class-transformer';
-import { OrganizationEvent } from './organization.event';
+import { OrganizationEvent } from '../../organization.event';
 
 @Exclude()
 export class OrganizationUpdated extends OrganizationEvent {
+
+  static version = '1.0.0';
+
+  public readonly version = OrganizationUpdated.version;
+
   @Expose()
   public readonly website: string;
 
@@ -18,6 +23,8 @@ export class OrganizationUpdated extends OrganizationEvent {
   constructor(organizationId: string, website: string, contactName: string,
               contactEmail: string, contactPhone: string) {
     super(organizationId);
+    // this.version = '1.0.0';
+
     this.website = website;
     this.contactName = contactName;
     this.contactEmail = contactEmail;
