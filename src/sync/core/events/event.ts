@@ -4,6 +4,8 @@ import { Exclude, Expose } from 'class-transformer';
 @Exclude()
 export abstract class Event {
 
+  public readonly version: string;
+
   @Expose()
   public readonly aggregateId: string;
 
@@ -18,11 +20,13 @@ export abstract class Event {
 
   @Expose()
   toEventMessage(): EventMessage {
+    const { version, ...eventData } = this;
+
     return new EventMessage(
       `${this.streamRoot()}-${this.aggregateId}`,
       this.constructor.name,
-      this,
-      { originSync: true },
+      eventData,
+      {version, originSync: true},
     );
   }
 }
