@@ -6,8 +6,6 @@ export class SensorRelocated extends SensorEvent {
 
   static version = '1.0.0';
 
-  public readonly version = SensorRelocated.version;
-
   @Expose()
   readonly longitude: number;
 
@@ -21,7 +19,8 @@ export class SensorRelocated extends SensorEvent {
   readonly baseObjectId: string;
 
   constructor(sensorId: string, longitude: number, latitude: number, height: number, baseObjectId: string) {
-    super(sensorId);
+    super(sensorId, SensorRelocated.version);
+
     this.longitude = longitude;
     this.latitude = latitude;
     this.height = height;

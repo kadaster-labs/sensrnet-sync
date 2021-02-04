@@ -6,13 +6,12 @@ export class DatastreamDeleted extends SensorEvent {
 
   static version = '1.0.0';
 
-  public readonly version = DatastreamDeleted.version;
-
   @Expose()
   readonly dataStreamId: string;
 
   constructor(sensorId: string, dataStreamId: string) {
-    super(sensorId);
+    super(sensorId, DatastreamDeleted.version);
+
     this.dataStreamId = dataStreamId;
   }
 }

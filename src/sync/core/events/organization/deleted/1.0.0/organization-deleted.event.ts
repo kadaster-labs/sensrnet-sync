@@ -6,9 +6,7 @@ export class OrganizationDeleted extends OrganizationEvent {
 
   static version = '1.0.0';
 
-  public readonly version = OrganizationDeleted.version;
-
   constructor(organizationId: string) {
-    super(organizationId);
+    super(organizationId, OrganizationDeleted.version);
   }
 }

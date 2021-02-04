@@ -12,8 +12,9 @@ export abstract class Event {
   @Expose()
   public readonly eventType: string;
 
-  protected constructor(aggregateId: string) {
+  protected constructor(aggregateId: string, version: string) {
     this.aggregateId = aggregateId;
+    this.version = version;
   }
 
   abstract streamRoot(): string;

@@ -6,8 +6,6 @@ export class OrganizationUpdated extends OrganizationEvent {
 
   static version = '1.0.0';
 
-  public readonly version = OrganizationUpdated.version;
-
   @Expose()
   public readonly website: string;
 
@@ -22,8 +20,7 @@ export class OrganizationUpdated extends OrganizationEvent {
 
   constructor(organizationId: string, website: string, contactName: string,
               contactEmail: string, contactPhone: string) {
-    super(organizationId);
-    // this.version = '1.0.0';
+    super(organizationId, OrganizationUpdated.version);
 
     this.website = website;
     this.contactName = contactName;

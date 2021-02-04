@@ -6,8 +6,6 @@ export abstract class DatastreamChanged extends SensorEvent {
 
   static version = '1.0.0';
 
-  public readonly version = DatastreamChanged.version;
-
   @Expose()
   public readonly dataStreamId: string;
 
@@ -51,7 +49,8 @@ export abstract class DatastreamChanged extends SensorEvent {
               observedProperty: string, unitOfMeasurement: string, isPublic: boolean, isOpenData: boolean,
               isReusable: boolean, documentationUrl: string, dataLink: string,
               dataFrequency: number, dataQuality: number) {
-    super(sensorId);
+    super(sensorId, DatastreamChanged.version);
+
     this.dataStreamId = dataStreamId;
     this.name = name;
     this.reason = reason;

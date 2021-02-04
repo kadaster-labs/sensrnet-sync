@@ -78,8 +78,9 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
       process.exit(0);
     }
 
-    const readFromChain = process.env.READ_FROM_CHAIN ? process.env.READ_FROM_CHAIN === 'true' : false
-    if (readFromChain) {
+    const disableReading = process.env.DISABLE_CHAIN_READ ? process.env.DISABLE_CHAIN_READ === 'true' : false
+    if (!disableReading) {
+      Logger.debug(`Started listening to stream ${this.streamName} on chain.`);
       await this.listenerLoop();
     }
   }

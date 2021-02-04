@@ -6,8 +6,6 @@ export class SensorRegistered extends SensorEvent {
 
   static version = '1.0.1';
 
-  public readonly version = SensorRegistered.version;
-
   @Expose()
   readonly organizationId: string;
 
@@ -56,7 +54,8 @@ export class SensorRegistered extends SensorEvent {
               observationArea: Record<string, any>, documentationUrl: string,
               theme: string[], category: string, typeName: string,
               typeDetails: Record<string, any>) {
-    super(sensorId);
+    super(sensorId, SensorRegistered.version);
+
     this.organizationId = organizationId;
     this.name = name;
     this.location = location;

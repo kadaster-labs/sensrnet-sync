@@ -17,7 +17,7 @@ services:
       - MULTICHAIN_PORT=8570
       - MULTICHAIN_USER=multichainrpc
       - MULTICHAIN_PASSWORD=password
-      - READ_FROM_CHAIN=false
+      - DISABLE_CHAIN_READ=false
       - MONGO_HOST=mongo
       - MONGO_PORT=27017
       - MONGO_DATABASE=sensrnet

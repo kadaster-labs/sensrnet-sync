@@ -6,8 +6,6 @@ export class SensorUpdated extends SensorEvent {
 
   static version = '1.0.0';
 
-  public readonly version = SensorUpdated.version;
-
   @Expose()
   readonly name: string;
 
@@ -42,7 +40,8 @@ export class SensorUpdated extends SensorEvent {
               observationArea: Record<string, any>,
               documentationUrl: string, theme: string[], category: string, typeName: string,
               typeDetails: Record<string, any>) {
-    super(sensorId);
+    super(sensorId, SensorUpdated.version);
+
     this.name = name;
     this.aim = aim;
     this.description = description;

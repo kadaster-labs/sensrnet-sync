@@ -6,8 +6,6 @@ export class SensorRelocated extends SensorEvent {
 
   static version = '1.0.1';
 
-  public readonly version = SensorRelocated.version;
-
   @Expose()
   readonly location: number[];
 
@@ -15,7 +13,8 @@ export class SensorRelocated extends SensorEvent {
   readonly baseObjectId: string;
 
   constructor(sensorId: string, location: number[], baseObjectId: string) {
-    super(sensorId);
+    super(sensorId, SensorRelocated.version);
+
     this.location = location;
     this.baseObjectId = baseObjectId;
   }
