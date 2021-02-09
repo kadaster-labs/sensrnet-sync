@@ -1,10 +1,10 @@
 import { Exclude, Expose } from 'class-transformer';
-import { OrganizationEvent } from '../../organization.event';
+import { OrganizationEvent } from '../organization.event';
 
 @Exclude()
-export class OrganizationRegistered extends OrganizationEvent {
+export class OrganizationUpdated extends OrganizationEvent {
 
-  static version = '1.0.0';
+  static version = '1';
 
   @Expose()
   public readonly website: string;
@@ -20,7 +20,7 @@ export class OrganizationRegistered extends OrganizationEvent {
 
   constructor(organizationId: string, website: string, contactName: string,
               contactEmail: string, contactPhone: string) {
-    super(organizationId, OrganizationRegistered.version);
+    super(organizationId, OrganizationUpdated.version);
 
     this.website = website;
     this.contactName = contactName;

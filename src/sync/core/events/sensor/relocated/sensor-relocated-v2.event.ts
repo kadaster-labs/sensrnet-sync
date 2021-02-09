@@ -1,10 +1,10 @@
-import { SensorEvent } from '../../sensor.event';
+import { SensorEvent } from '../sensor.event';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class SensorRelocated extends SensorEvent {
 
-  static version = '1.0.1';
+  static version = '2';
 
   @Expose()
   readonly location: number[];
