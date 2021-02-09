@@ -1,9 +1,12 @@
-import { OrganizationEvent } from './organization.event';
 import { Exclude } from 'class-transformer';
+import { OrganizationEvent } from '../organization.event';
 
 @Exclude()
 export class OrganizationDeleted extends OrganizationEvent {
+
+  static version = '1';
+
   constructor(organizationId: string) {
-    super(organizationId);
+    super(organizationId, OrganizationDeleted.version);
   }
 }

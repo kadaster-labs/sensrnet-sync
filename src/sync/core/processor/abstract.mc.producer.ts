@@ -1,9 +1,9 @@
 import { Retry } from './retry';
-import { Logger, OnModuleInit } from '@nestjs/common';
 import { Event } from '../events/event';
+import { Logger, OnModuleInit } from '@nestjs/common';
+import { SensorRegistered } from '../events/sensor/registered';
+import { OrganizationRegistered } from '../events/organization';
 import { MultiChainService } from '../../multichain/multichain.service';
-import { SensorRegistered } from '../events/sensor/sensor-registered.event';
-import { OrganizationRegistered } from '../events/organization/organization-registered.event';
 
 export class AbstractMultiChainProducer implements OnModuleInit {
   private addresses: string[];

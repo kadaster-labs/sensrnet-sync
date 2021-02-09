@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { MultiChainService } from '../../multichain/multichain.service';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { Event } from '../events/event';
-import { plainToClass } from 'class-transformer';
 import { organizationEventType } from '../events/organization';
 import { EventStore } from '../../eventstore/event-store';
 import { AbstractMsConsumer } from './abstract.mc.consumer';
+import { Event as ESEvent } from 'geteventstore-promise';
 
 @Injectable()
 export class OrganizationMultiChainConsumer extends AbstractMsConsumer {
@@ -18,8 +18,14 @@ export class OrganizationMultiChainConsumer extends AbstractMsConsumer {
       eventStoreService, checkpointService, multichainService);
   }
 
-  async publishToEventStore(eventMessage: Event): Promise<void> {
-    const event: Event = plainToClass(organizationEventType.getType(eventMessage.eventType), eventMessage);
-    return await this.eventStoreService.createEvent(event.toEventMessage());
+  async publishToEventStore(eventMessage: ESEvent): Promise<void> {
+    const event: Event = organizationEventType.getEvent(eventMessage);
+
+    let result;
+    if (event) {
+      result = await this.eventStoreService.createEvent(event.toEventMessage());
+    }
+
+    return result;
   }
 }

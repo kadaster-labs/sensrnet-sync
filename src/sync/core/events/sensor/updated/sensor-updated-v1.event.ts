@@ -1,8 +1,11 @@
-import { SensorEvent } from './sensor.event';
+import { SensorEvent } from '../sensor.event';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class SensorUpdated extends SensorEvent {
+
+  static version = '1';
+
   @Expose()
   readonly name: string;
 
@@ -37,7 +40,8 @@ export class SensorUpdated extends SensorEvent {
               observationArea: Record<string, any>,
               documentationUrl: string, theme: string[], category: string, typeName: string,
               typeDetails: Record<string, any>) {
-    super(sensorId);
+    super(sensorId, SensorUpdated.version);
+
     this.name = name;
     this.aim = aim;
     this.description = description;

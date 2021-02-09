@@ -1,14 +1,15 @@
+import { Event } from '../events/event';
 import { Logger, OnModuleInit } from '@nestjs/common';
 import { EventStore } from '../../eventstore/event-store';
+import { AbstractEventType } from '../events/abstract-event-type';
+import { AbstractMultiChainProducer } from './abstract.mc.producer';
 import { EventStoreCatchUpSubscription } from 'node-eventstore-client';
 import { CheckpointService } from '../../checkpoint/checkpoint.service';
 import { NoSubscriptionException } from '../errors/no-subscription-exception';
 import { SubscriptionExistsException } from '../errors/subscription-exists-exception';
-import { Event } from '../events/event';
-import { plainToClass } from 'class-transformer';
-import { AbstractMultiChainProducer } from './abstract.mc.producer';
 
 export abstract class AbstractESListener implements OnModuleInit {
+
   private subscription: EventStoreCatchUpSubscription;
 
   protected logger: Logger = new Logger(this.constructor.name);
@@ -16,7 +17,7 @@ export abstract class AbstractESListener implements OnModuleInit {
   protected constructor(
     protected readonly streamName: string,
     protected readonly checkpointId: string,
-    protected readonly eventType: Record<any, any>,
+    protected readonly eventType: AbstractEventType,
     protected readonly eventStoreService: EventStore,
     protected readonly checkpointService: CheckpointService,
     protected readonly multichainProducer: AbstractMultiChainProducer,
@@ -45,24 +46,7 @@ export abstract class AbstractESListener implements OnModuleInit {
 
   async openSubscription(): Promise<void> {
     if (!this.subscriptionExists()) {
-      const onEvent = async (_, eventMessage) => {
-        const conditions = { _id: this.checkpointId };
-        const update = { offset: eventMessage.positionEventNumber };
-        const callback = async () => this.checkpointService.updateOne(conditions, update);
-
-        if (!eventMessage['metadata'] || !eventMessage['metadata'].originSync) {
-          const eventType = this.eventType.getType(eventMessage.eventType);
-
-          if (eventType) {
-            const eventMessageFormatted = {...eventMessage.data, eventType: eventMessage.eventType };
-            const event: Event = plainToClass(eventType, eventMessageFormatted as Event);
-            await this.multichainProducer.publishEvent(event);
-          }
-        }
-        await callback();
-      };
-
-      await this.subscribeToStreamFrom(this.streamName, this.checkpointId, onEvent);
+      await this.subscribeToStreamFromLastOffset();
     } else {
       throw new SubscriptionExistsException();
     }
@@ -81,11 +65,7 @@ export abstract class AbstractESListener implements OnModuleInit {
     }
   }
 
-  async subscribeToStreamFrom(
-    streamName: string,
-    checkpointId: string,
-    onEvent: (_: any, eventMessage: any) => Promise<void>
-  ): Promise<void> {
+  async subscribeToStreamFromLastOffset(): Promise<void> {
     const timeoutMs = process.env.EVENT_STORE_TIMEOUT ? Number(process.env.EVENT_STORE_TIMEOUT) : 10000;
 
     const exitCallback = () => {
@@ -102,19 +82,37 @@ export abstract class AbstractESListener implements OnModuleInit {
     const timeout = setTimeout(exitCallback, timeoutMs);
     try {
       const offset = await this.getOffset();
-      this.logger.log(`Subscribing to ES stream ${streamName} from offset ${offset}.`);
+      this.logger.log(`Subscribing to ES stream ${this.streamName} from offset ${offset}.`);
+
+      const onEvent = async (_, eventMessage) => {
+        if (eventMessage.positionEventNumber > offset) {
+          const conditions = { _id: this.checkpointId };
+          const update = { offset: eventMessage.positionEventNumber };
+          const callback = async () => this.checkpointService.updateOne(conditions, update);
+
+          if (!eventMessage.metadata || !eventMessage.metadata.originSync) {
+            const eventData = {...eventMessage, data: {...eventMessage.data, eventType: eventMessage.eventType}};
+            const event: Event = this.eventType.getEvent(eventData);
+
+            if (event) {
+              await this.multichainProducer.publishEvent(event);
+            }
+          }
+          await callback();
+        }
+      };
 
       try {
-        const subscription = await this.eventStoreService.subscribeToStreamFrom(streamName, offset, onEvent,
+        const subscription = await this.eventStoreService.subscribeToStreamFrom(this.streamName, offset, onEvent,
           null, droppedCallback);
         clearTimeout(timeout);
 
         this.setSubscription(subscription);
       } catch {
-        this.logger.error(`Failed to subscribe to stream ${streamName}.`);
+        this.logger.error(`Failed to subscribe to stream ${this.streamName}.`);
       }
     } catch {
-      this.logger.error(`Failed to determine offset of stream ${streamName}.`);
+      this.logger.error(`Failed to determine offset of stream ${this.streamName}.`);
     }
   }
 

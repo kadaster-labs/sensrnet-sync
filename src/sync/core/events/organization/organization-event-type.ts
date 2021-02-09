@@ -1,25 +1,15 @@
-import { Logger } from '@nestjs/common';
-import { OrganizationDeleted, OrganizationRegistered, OrganizationUpdated } from './index';
+import { AbstractEventType } from '../abstract-event-type';
+import { OrganizationUpdated, getOrganizationUpdatedEvent } from './updated';
+import { OrganizationDeleted, getOrganizationDeletedEvent } from './deleted';
+import { OrganizationRegistered, getOrganizationRegisteredEvent } from './registered';
 
-class OrganizationEventType {
+class OrganizationEventType extends AbstractEventType {
   constructor() {
-    this.add(OrganizationRegistered);
-    this.add(OrganizationUpdated);
-    this.add(OrganizationDeleted);
-  }
+    super();
 
-  private supportedTypes: { [key: string]: any; } = {};
-
-  getType(eventTypeName: string) {
-    const t = this.supportedTypes[eventTypeName];
-    if (!t) {
-      Logger.warn(`Unsupported event received! eventType: ${eventTypeName}`);
-    }
-    return t;
-  }
-
-  private add(event: any) {
-    this.supportedTypes[event.name] = event;
+    this.add(OrganizationRegistered, getOrganizationRegisteredEvent);
+    this.add(OrganizationUpdated, getOrganizationUpdatedEvent);
+    this.add(OrganizationDeleted, getOrganizationDeletedEvent);
   }
 }
 
