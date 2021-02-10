@@ -12,7 +12,7 @@
 This is the sync component for the SensRNet application.
 It features a NestJS API.
 
-For more information see our [documentation](https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/Architecture.md#component-sync) (and especially details about [MultiChain](https://github.com/kadaster-labs/sensrnet-home/blob/master/docs/SyncMultiChainEN.md)).
+For more information see our [documentation](https://github.com/kadaster-labs/sensrnet-home/blob/main/docs/Architecture.md#component-sync) (and especially details about [MultiChain](https://github.com/kadaster-labs/sensrnet-home/blob/main/docs/SyncMultiChainEN.md)).
 
 ## Architecture
 
