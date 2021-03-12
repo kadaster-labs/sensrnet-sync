@@ -1,13 +1,13 @@
 import { Body, Get, Post } from '@nestjs/common';
-import { OffsetBody } from './model/offset-body';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AbstractESListener } from '../processor/abstract.es.listener';
+import { OffsetBody } from './model/offset-body';
 
 export abstract class AbstractESController {
 
   protected constructor(
     private readonly eventStoreListener: AbstractESListener,
-  ) {}
+  ) { }
 
   @Post('subscription/open')
   @ApiOperation({ summary: 'Open subscription' })

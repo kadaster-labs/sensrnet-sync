@@ -1,13 +1,13 @@
 import { Body, Get, Post } from '@nestjs/common';
-import { OffsetBody } from './model/offset-body';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AbstractMsConsumer } from '../processor/abstract.mc.consumer';
+import { OffsetBody } from './model/offset-body';
 
 export class AbstractMultiChainController {
 
   constructor(
     private readonly multichainConsumer: AbstractMsConsumer,
-  ) {}
+  ) { }
 
   @Get('checkpoint')
   @ApiOperation({ summary: 'Retrieve checkpoint offset' })
