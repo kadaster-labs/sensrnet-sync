@@ -1,1 +1,0 @@
-{"version":3,"file":"checkpoint.model.js","sourceRoot":"","sources":["../../../../src/sync/checkpoint/models/checkpoint.model.ts"],"names":[],"mappings":";;;AAAA,uCAAkC;AAErB,QAAA,gBAAgB,GAAG,IAAI,iBAAM,CAAC;IACzC,GAAG,EAAE,EAAE,IAAI,EAAE,MAAM,EAAE,QAAQ,EAAE,IAAI,EAAE;IACrC,MAAM,EAAE,EAAE,IAAI,EAAE,MAAM,EAAE,QAAQ,EAAE,KAAK,EAAE;CAC1C,EAAE;IACD,UAAU,EAAE,IAAI;CACjB,CAAC,CAAC"}
