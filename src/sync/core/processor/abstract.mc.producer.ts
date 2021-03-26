@@ -1,9 +1,10 @@
-import { Retry } from './retry';
-import { Event } from '../events/event';
 import { Logger, OnModuleInit } from '@nestjs/common';
-import { SensorRegistered } from '../events/sensor/registered';
-import { OrganizationRegistered } from '../events/organization';
 import { MultiChainService } from '../../multichain/multichain.service';
+import { Event } from '../events/event';
+import { OrganizationRegistered } from '../events/legal-entity';
+import { ObservationGoalRegistered } from '../events/observation-goal';
+import { DeviceRegistered } from '../events/sensordevice';
+import { Retry } from './retry';
 
 export class AbstractMultiChainProducer implements OnModuleInit {
   private addresses: string[];
@@ -15,6 +16,12 @@ export class AbstractMultiChainProducer implements OnModuleInit {
     private readonly multichainService: MultiChainService,
   ) {
     this.retryMechanism = new Retry(10);
+  }
+
+  private inSupportedAggregateCreationEvents(event: Event): boolean {
+    return event instanceof OrganizationRegistered
+      || event instanceof DeviceRegistered
+      || event instanceof ObservationGoalRegistered
   }
 
   async publishEvent(event: Event): Promise<void> {
@@ -29,10 +36,10 @@ export class AbstractMultiChainProducer implements OnModuleInit {
     if (event.aggregateId) {
       while (!processed) {
         try {
-          if (event instanceof OrganizationRegistered || event instanceof SensorRegistered) {
+          if (this.inSupportedAggregateCreationEvents(event)) {
             try {
               const name = event.aggregateId.split('-').join('');
-              await this.multichainService.createVariable(name, {addresses: this.addresses});
+              await this.multichainService.createVariable(name, { addresses: this.addresses });
             } catch (e) {
               this.logger.warn(e.message);
             }

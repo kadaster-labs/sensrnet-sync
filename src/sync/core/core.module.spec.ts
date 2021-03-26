@@ -1,18 +1,18 @@
 import { Test } from '@nestjs/testing';
 import { EventStore } from '../eventstore/event-store';
 import { MultiChainConfig } from '../../multichain.config';
-import { OrganizationEsListener } from './processor/organization.es.listener';
-import { SensorESListener } from './processor/sensor.es.listener';
+import { LegalEntityEsListener } from './processor/legal-entity.es.listener';
+import { SensorDeviceESListener } from './processor/sensordevice.es.listener';
 import { CheckpointService } from '../checkpoint/checkpoint.service';
 import { MultiChainService } from '../multichain/multichain.service';
-import { OrganizationEsController } from './controller/organization.es.controller';
-import { SensorESController } from './controller/sensor.es.controller';
-import { OrganizationMultiChainConsumer } from './processor/organization.mc.consumer';
-import { OrganizationMultiChainProducer } from './processor/organization.mc.producer';
-import { SensorMultiChainConsumer } from './processor/sensor.mc.consumer';
-import { SensorMultiChainProducer } from './processor/sensor.mc.producer';
-import { OrganizationMultiChainController } from './controller/organization.mc.controller';
-import { SensorMultiChainController } from './controller/sensor.mc.controller';
+import { LegalEntityEsController } from './controller/legal-entity.es.controller';
+import { SensorDeviceESController } from './controller/sensordevice.es.controller';
+import { LegalEntityMultiChainConsumer } from './processor/legal-entity.mc.consumer';
+import { LegalEntityMultiChainProducer } from './processor/legal-entity.mc.producer';
+import { SensorDeviceMultiChainConsumer } from './processor/sensordevice.mc.consumer';
+import { SensorDeviceMultiChainProducer } from './processor/sensordevice.mc.producer';
+import { LegalEntityMultiChainController } from './controller/legal-entity.mc.controller';
+import { SensorDeviceMultiChainController } from './controller/sensordevice.mc.controller';
 
 const mockEventStore = {
   exists: async () => true,
@@ -34,10 +34,10 @@ describe('Core (integration)', () => {
   beforeAll(async () => {
     moduleRef = await Test.createTestingModule({
       controllers: [
-        OrganizationEsController,
-        OrganizationMultiChainController,
-        SensorESController,
-        SensorMultiChainController,
+        LegalEntityEsController,
+        LegalEntityMultiChainController,
+        SensorDeviceESController,
+        SensorDeviceMultiChainController,
       ], providers: [
         {
           provide: EventStore,
@@ -52,18 +52,18 @@ describe('Core (integration)', () => {
           useValue: mockMultiChainService,
         },
         MultiChainConfig,
-        OrganizationEsListener,
-        SensorESListener,
-        OrganizationMultiChainConsumer,
-        OrganizationMultiChainProducer,
-        SensorMultiChainConsumer,
-        SensorMultiChainProducer,
+        LegalEntityEsListener,
+        SensorDeviceESListener,
+        LegalEntityMultiChainConsumer,
+        LegalEntityMultiChainProducer,
+        SensorDeviceMultiChainConsumer,
+        SensorDeviceMultiChainProducer,
       ],
     }).compile();
   });
 
   it(`Should open an es subscription`, async () => {
-    const organizationController: OrganizationEsController = moduleRef.get(OrganizationEsController);
+    const organizationController: LegalEntityEsController = moduleRef.get(LegalEntityEsController);
 
     let success;
     try {
@@ -77,7 +77,7 @@ describe('Core (integration)', () => {
   });
 
   it(`Should not open an es subscription again`, async () => {
-    const organizationController: OrganizationEsController = moduleRef.get(OrganizationEsController);
+    const organizationController: LegalEntityEsController = moduleRef.get(LegalEntityEsController);
 
     let success;
     try {

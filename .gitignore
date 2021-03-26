@@ -38,3 +38,4 @@ node_modules
 certs
 
 .idea/
+dist/

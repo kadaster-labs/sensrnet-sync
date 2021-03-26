@@ -9,7 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const documentOptions = new DocumentBuilder()
-    .setTitle('Sensrnet Sync API')
+    .setTitle('SensRNet Sync API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
