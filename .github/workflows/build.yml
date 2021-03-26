@@ -32,6 +32,8 @@ jobs:
     steps:
     # Check out the code
     - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.AUTH_TOKEN }} # Use administrator personal access token for pushing to protected branch
 
     - uses: actions/setup-node@v1
       with:
