@@ -31,12 +31,24 @@ In order to run this application containerized, you'll need docker installed.
 * [OS X](https://docs.docker.com/mac/started/)
 * [Linux](https://docs.docker.com/linux/started/)
 
+#### Modules:
+
+- health: Functionality to determine the application health.
+- sync:
+    - checkpoint: Interface to interact with checkpoints.
+    - core: Module to read and write from Eventstore and MultiChain.
+    - eventstore: Interface to Eventstore.
+    - multichain: Interface to MultiChain.
+
 ### Usage
 
 #### Standalone
 
 Eventstore:
 * Should be running. For instructions, view the [Eventstore Documentation](https://developers.eventstore.com/).
+
+MongoDB:
+* Should be running. For instructions, view the [MongoDB Documentation](https://docs.mongodb.com/manual/installation/).
 
 MultiChain:
 * Should be running. For instructions, view the [MultiChain Documentation](https://www.multichain.com/).
