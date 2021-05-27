@@ -40,6 +40,10 @@ export class MultiChainService {
     return this.getConnection().getAddresses();
   }
 
+  async getPrivateKey(address: string): Promise<string> {
+    return this.getConnection().dumpPrivKey({ address });
+  }
+
   async grant(address: string, permissions: string): Promise<void> {
     return this.getConnection().grant([address, permissions]);
   }
