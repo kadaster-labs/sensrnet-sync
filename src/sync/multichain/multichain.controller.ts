@@ -1,9 +1,10 @@
 import { GrantBody } from './model/grant-body';
+import { KeyParams } from './model/key-params';
 import { StreamBody } from './model/stream-body';
 import { ApproveBody } from './model/approve-body';
 import { MultiChainService } from './multichain.service';
 import { TransactionBody } from './model/transaction-body';
-import { Body, Controller, Get, Post, UseFilters } from '@nestjs/common';
+import { Body, Query, Controller, Get, Post, UseFilters } from '@nestjs/common';
 import { DomainExceptionFilter } from '../core/errors/domain-exception.filter';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DomainException } from '../core/errors/domain-exception';
@@ -17,13 +18,25 @@ export class MultiChainController {
     private readonly multiChainService: MultiChainService,
   ) {}
 
-  @Get()
+  @Get('address')
   @ApiOperation({ summary: 'Retrieve Addresses' })
   @ApiResponse({ status: 200, description: 'Addresses retrieved' })
   @ApiResponse({ status: 400, description: 'Addresses retrieval failed' })
   async retrieveAddresses(): Promise<string[]> {
     try {
       return await this.multiChainService.getAddresses();
+    } catch (e) {
+      throw new DomainException(e.message);
+    }
+  }
+
+  @Get('key')
+  @ApiOperation({ summary: 'Retrieve Private Key' })
+  @ApiResponse({ status: 200, description: 'Private Key retrieved' })
+  @ApiResponse({ status: 400, description: 'Private Key retrieval failed' })
+  async retrievePrivateKey(@Query() params: KeyParams): Promise<string> {
+    try {
+      return await this.multiChainService.getPrivateKey(params.address);
     } catch (e) {
       throw new DomainException(e.message);
     }

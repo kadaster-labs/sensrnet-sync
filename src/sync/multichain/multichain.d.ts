@@ -10,6 +10,8 @@ declare module 'multichain' {
   export interface Connection {
     getAddresses(): Promise<string[]>
 
+    dumpPrivKey(address): Promise<string>
+
     publish(transaction): Promise<void>
 
     subscribe(settings): Promise<void>
