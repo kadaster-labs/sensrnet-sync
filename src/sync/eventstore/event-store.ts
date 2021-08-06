@@ -1,52 +1,50 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { MappedEventAppearedCallback, TCPClient } from 'geteventstore-promise';
-import { EventStoreConfiguration } from './event-store.configuration';
 import {
-  EventStoreCatchUpSubscription,
-  LiveProcessingStartedCallback,
-  SubscriptionDroppedCallback,
+    EventStoreCatchUpSubscription,
+    LiveProcessingStartedCallback,
+    SubscriptionDroppedCallback,
 } from 'node-eventstore-client';
 import { EventMessage } from '../core/events/event-message';
+import { EventStoreConfiguration } from './event-store.configuration';
 
 @Injectable()
 export class EventStore implements OnModuleInit {
-  private client!: TCPClient;
+    private client!: TCPClient;
 
-  constructor(private configuration: EventStoreConfiguration) {
-  }
+    constructor(private configuration: EventStoreConfiguration) {}
 
-  connect(): void {
-    this.client = new TCPClient(this.configuration.config);
-  }
+    connect(): void {
+        this.client = new TCPClient(this.configuration.config);
+    }
 
-  async createEvent(event: EventMessage): Promise<void> {
-    await this.client.writeEvent(
-      event.streamId,
-      event.eventType,
-      event.data,
-      event.metadata,
-    );
-  }
+    async createEvent(event: EventMessage): Promise<void> {
+        await this.client.writeEvent(event.streamId, event.eventType, event.data, event.metadata);
+    }
 
-  async subscribeToStreamFrom(
-    streamName: string,
-    fromEventNumber: number,
-    onEventAppeared?: MappedEventAppearedCallback<EventStoreCatchUpSubscription>,
-    onLiveProcessingStarted?: LiveProcessingStartedCallback,
-    onDropped?: SubscriptionDroppedCallback<EventStoreCatchUpSubscription>,
-  ): Promise<EventStoreCatchUpSubscription> {
+    async subscribeToStreamFrom(
+        streamName: string,
+        fromEventNumber: number,
+        onEventAppeared?: MappedEventAppearedCallback<EventStoreCatchUpSubscription>,
+        onLiveProcessingStarted?: LiveProcessingStartedCallback,
+        onDropped?: SubscriptionDroppedCallback<EventStoreCatchUpSubscription>,
+    ): Promise<EventStoreCatchUpSubscription> {
+        const settings = {
+            readBatchSize: 1,
+            resolveLinkTos: true,
+        };
 
-    const settings = {
-      readBatchSize: 1,
-      resolveLinkTos: true,
-    };
+        return await this.client.subscribeToStreamFrom(
+            streamName,
+            fromEventNumber,
+            onEventAppeared,
+            onLiveProcessingStarted,
+            onDropped,
+            settings,
+        );
+    }
 
-    return await this.client.subscribeToStreamFrom(streamName, fromEventNumber, onEventAppeared,
-      onLiveProcessingStarted, onDropped, settings);
-  }
-
-  async onModuleInit(): Promise<void> {
-    this.connect();
-  }
-
+    async onModuleInit(): Promise<void> {
+        this.connect();
+    }
 }

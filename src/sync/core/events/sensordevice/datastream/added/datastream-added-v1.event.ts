@@ -3,7 +3,6 @@ import { SensorDeviceEvent } from '../../sensordevice.event';
 
 @Exclude()
 export class DatastreamAdded extends SensorDeviceEvent {
-
     static version = '1';
 
     @Expose()
@@ -54,10 +53,25 @@ export class DatastreamAdded extends SensorDeviceEvent {
     @Expose()
     readonly dataLink: string;
 
-    constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, datastreamId: string, name: string,
-        description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-        theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-        containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string) {
+    constructor(
+        sensorDeviceId: string,
+        sensorId: string,
+        legalEntityId: string,
+        datastreamId: string,
+        name: string,
+        description: string,
+        unitOfMeasurement: Record<string, any>,
+        observationArea: Record<string, any>,
+        theme: string[],
+        dataQuality: string,
+        isActive: boolean,
+        isPublic: boolean,
+        isOpenData: boolean,
+        containsPersonalInfoData: boolean,
+        isReusable: boolean,
+        documentation: string,
+        dataLink: string,
+    ) {
         super(sensorDeviceId, DatastreamAdded.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;
@@ -76,5 +90,4 @@ export class DatastreamAdded extends SensorDeviceEvent {
         this.documentation = documentation;
         this.dataLink = dataLink;
     }
-
 }

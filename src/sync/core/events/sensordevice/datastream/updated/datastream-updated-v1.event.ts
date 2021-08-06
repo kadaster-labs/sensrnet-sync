@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { SensorDeviceEvent}  from '../../sensordevice.event';
+import { SensorDeviceEvent } from '../../sensordevice.event';
 
 @Exclude()
 export class DatastreamUpdated extends SensorDeviceEvent {
@@ -22,10 +22,25 @@ export class DatastreamUpdated extends SensorDeviceEvent {
     @Expose() readonly documentation: string;
     @Expose() readonly dataLink: string;
 
-    constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, datastreamId: string, name: string,
-        description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
-        theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
-        containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string) {
+    constructor(
+        sensorDeviceId: string,
+        sensorId: string,
+        legalEntityId: string,
+        datastreamId: string,
+        name: string,
+        description: string,
+        unitOfMeasurement: Record<string, any>,
+        observationArea: Record<string, any>,
+        theme: string[],
+        dataQuality: string,
+        isActive: boolean,
+        isPublic: boolean,
+        isOpenData: boolean,
+        containsPersonalInfoData: boolean,
+        isReusable: boolean,
+        documentation: string,
+        dataLink: string,
+    ) {
         super(sensorDeviceId, DatastreamUpdated.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;

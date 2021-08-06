@@ -3,13 +3,13 @@ import { SensorDeviceEvent } from '../../sensordevice.event';
 
 @Exclude()
 export class SensorRemoved extends SensorDeviceEvent {
-  static version = '1';
+    static version = '1';
 
-  @Expose() readonly sensorId: string;
+    @Expose() readonly sensorId: string;
 
-  constructor(deviceId: string, sensorId: string) {
-    super(deviceId, SensorRemoved.version);
+    constructor(deviceId: string, sensorId: string) {
+        super(deviceId, SensorRemoved.version);
 
-    this.sensorId = sensorId;
-  }
+        this.sensorId = sensorId;
+    }
 }

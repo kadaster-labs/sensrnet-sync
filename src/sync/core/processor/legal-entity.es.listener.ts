@@ -7,13 +7,18 @@ import { LegalEntityMultiChainProducer } from './legal-entity.mc.producer';
 
 @Injectable()
 export class LegalEntityEsListener extends AbstractESListener {
-  constructor(
-    multichainProducer: LegalEntityMultiChainProducer,
-    eventStoreService: EventStore,
-    checkpointService: CheckpointService,
-  ) {
-    super(`$ce-${legalEntityStreamRootValue}`, `sync-${legalEntityStreamRootValue}-es`, legalEntityEventType, eventStoreService,
-      checkpointService, multichainProducer);
-  }
-
+    constructor(
+        multichainProducer: LegalEntityMultiChainProducer,
+        eventStoreService: EventStore,
+        checkpointService: CheckpointService,
+    ) {
+        super(
+            `$ce-${legalEntityStreamRootValue}`,
+            `sync-${legalEntityStreamRootValue}-es`,
+            legalEntityEventType,
+            eventStoreService,
+            checkpointService,
+            multichainProducer,
+        );
+    }
 }

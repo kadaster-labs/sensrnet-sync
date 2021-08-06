@@ -3,7 +3,6 @@ import { SensorDeviceEvent } from '../../sensordevice.event';
 
 @Exclude()
 export class DeviceRelocatedAtBaseObject extends SensorDeviceEvent {
-
     static version = '1';
 
     @Expose()
@@ -26,5 +25,4 @@ export class DeviceRelocatedAtBaseObject extends SensorDeviceEvent {
         this.location = location;
         this.baseObjectId = baseObjectId;
     }
-
 }

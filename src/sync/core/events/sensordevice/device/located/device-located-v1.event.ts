@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { SensorDeviceEvent}  from '../../sensordevice.event';
+import { SensorDeviceEvent } from '../../sensordevice.event';
 
 @Exclude()
 export class DeviceLocated extends SensorDeviceEvent {
@@ -16,5 +16,4 @@ export class DeviceLocated extends SensorDeviceEvent {
         this.description = description;
         this.location = location;
     }
-
-}  
+}

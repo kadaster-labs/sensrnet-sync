@@ -3,7 +3,6 @@ import { SensorDeviceEvent } from '../../sensordevice.event';
 
 @Exclude()
 export class ObservationGoalLinked extends SensorDeviceEvent {
-
     static version = '1';
 
     @Expose()
@@ -18,13 +17,17 @@ export class ObservationGoalLinked extends SensorDeviceEvent {
     @Expose()
     readonly observationGoalId: string;
 
-    constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, datastreamId: string,
-        observationGoalId: string) {
+    constructor(
+        sensorDeviceId: string,
+        sensorId: string,
+        legalEntityId: string,
+        datastreamId: string,
+        observationGoalId: string,
+    ) {
         super(sensorDeviceId, ObservationGoalLinked.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;
         this.datastreamId = datastreamId;
         this.observationGoalId = observationGoalId;
     }
-
 }

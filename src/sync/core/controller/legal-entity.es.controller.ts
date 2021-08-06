@@ -9,11 +9,7 @@ import { AbstractESController } from './abstract.es.controller';
 @Controller('LegalEntityES')
 @UseFilters(new DomainExceptionFilter())
 export class LegalEntityEsController extends AbstractESController {
-
-  constructor(
-    eventStoreListener: LegalEntityEsListener,
-  ) {
-    super(eventStoreListener);
-  }
-
+    constructor(eventStoreListener: LegalEntityEsListener) {
+        super(eventStoreListener);
+    }
 }
