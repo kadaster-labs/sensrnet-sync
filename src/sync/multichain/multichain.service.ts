@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as multichain from 'multinodejs';
 import { MultiChainConfig } from '../../multichain.config';
-import { Connection, Item } from 'multichain';
+import { Connection, Item } from '../../multichain.d';
 
 @Injectable()
 export class MultiChainService {

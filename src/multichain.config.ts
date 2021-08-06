@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MultichainConfiguration } from 'multichain';
+import { MultichainConfiguration } from './multichain.d';
 
 @Injectable()
 export class MultiChainConfig {
