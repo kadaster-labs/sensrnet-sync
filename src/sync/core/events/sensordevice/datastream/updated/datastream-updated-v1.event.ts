@@ -7,7 +7,7 @@ export class DatastreamUpdated extends SensorDeviceEvent {
 
     @Expose() readonly sensorId: string;
     @Expose() readonly legalEntityId: string;
-    @Expose() readonly dataStreamId: string;
+    @Expose() readonly datastreamId: string;
     @Expose() readonly name: string;
     @Expose() readonly description: string;
     @Expose() readonly unitOfMeasurement: Record<string, any>;
@@ -26,7 +26,7 @@ export class DatastreamUpdated extends SensorDeviceEvent {
         sensorDeviceId: string,
         sensorId: string,
         legalEntityId: string,
-        dataStreamId: string,
+        datastreamId: string,
         name: string,
         description: string,
         unitOfMeasurement: Record<string, any>,
@@ -44,7 +44,7 @@ export class DatastreamUpdated extends SensorDeviceEvent {
         super(sensorDeviceId, DatastreamUpdated.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;
-        this.dataStreamId = dataStreamId;
+        this.datastreamId = datastreamId;
         this.name = name;
         this.description = description;
         this.unitOfMeasurement = unitOfMeasurement;
