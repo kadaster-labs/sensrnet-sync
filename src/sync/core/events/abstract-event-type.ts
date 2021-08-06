@@ -3,23 +3,22 @@ import { Event as ESEvent } from 'geteventstore-promise';
 import { Event } from './event';
 
 export abstract class AbstractEventType {
+    protected logger: Logger = new Logger(this.constructor.name);
 
-  protected logger: Logger = new Logger(this.constructor.name);
+    public supportedTypes: Record<string, any> = {};
 
-  public supportedTypes: Record<string, any> = {};
+    getEvent(eventTypeName: ESEvent): Event {
+        const upcastFn = this.supportedTypes[eventTypeName.eventType];
 
-  getEvent(eventTypeName: ESEvent): Event {
-    const upcastFn = this.supportedTypes[eventTypeName.eventType];
+        const event = upcastFn ? upcastFn(eventTypeName) : undefined;
+        if (!event) {
+            this.logger.warn(`Unsupported event received! eventType: ${eventTypeName.eventType}`);
+        }
 
-    const event = upcastFn ? upcastFn(eventTypeName) : undefined;
-    if (!event) {
-      this.logger.warn(`Unsupported event received! eventType: ${eventTypeName.eventType}`);
+        return event;
     }
 
-    return event;
-  }
-
-  public add(eventClass: Record<string, any>, upcastFn: (eventMessage) => Event): void {
-    this.supportedTypes[eventClass.name] = upcastFn;
-  }
+    public add(eventClass: Record<string, any>, upcastFn: (eventMessage) => Event): void {
+        this.supportedTypes[eventClass.name] = upcastFn;
+    }
 }

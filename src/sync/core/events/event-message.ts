@@ -1,9 +1,8 @@
 export class EventMessage {
-  constructor(
-    public readonly streamId: string,
-    public readonly eventType: string,
-    public readonly data: Record<string, any> = {},
-    public readonly metadata: Record<string, any> = {},
-  ) {
-  }
+    constructor(
+        public readonly streamId: string,
+        public readonly eventType: string,
+        public readonly data: Record<string, any> = {},
+        public readonly metadata: Record<string, any> = {},
+    ) {}
 }

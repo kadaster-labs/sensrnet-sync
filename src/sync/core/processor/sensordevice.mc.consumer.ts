@@ -9,25 +9,28 @@ import { AbstractMsConsumer } from './abstract.mc.consumer';
 
 @Injectable()
 export class SensorDeviceMultiChainConsumer extends AbstractMsConsumer {
-
-  constructor(
-    eventStoreService: EventStore,
-    checkpointService: CheckpointService,
-    multichainService: MultiChainService,
-  ) {
-    super(`${sensorDeviceStreamRootValue}`, `sync-${sensorDeviceStreamRootValue}-multichain`,
-      eventStoreService, checkpointService, multichainService);
-  }
-
-  async publishToEventStore(eventMessage: ESEvent): Promise<void> {
-    const event: Event = sensorDeviceEventType.getEvent(eventMessage);
-
-    let result;
-    if (event) {
-      result = await this.eventStoreService.createEvent(event.toEventMessage());
+    constructor(
+        eventStoreService: EventStore,
+        checkpointService: CheckpointService,
+        multichainService: MultiChainService,
+    ) {
+        super(
+            `${sensorDeviceStreamRootValue}`,
+            `sync-${sensorDeviceStreamRootValue}-multichain`,
+            eventStoreService,
+            checkpointService,
+            multichainService,
+        );
     }
 
-    return result;
-  }
+    async publishToEventStore(eventMessage: ESEvent): Promise<void> {
+        const event: Event = sensorDeviceEventType.getEvent(eventMessage);
 
+        let result;
+        if (event) {
+            result = await this.eventStoreService.createEvent(event.toEventMessage());
+        }
+
+        return result;
+    }
 }

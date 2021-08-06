@@ -9,11 +9,7 @@ import { AbstractMultiChainController } from './abstract.ms.controller';
 @Controller('ObservationGoalMC')
 @UseFilters(new DomainExceptionFilter())
 export class ObservationGoalMultiChainController extends AbstractMultiChainController {
-
-  constructor(
-    multichainConsumer: ObservationGoalMultiChainConsumer,
-  ) {
-    super(multichainConsumer);
-  }
-
+    constructor(multichainConsumer: ObservationGoalMultiChainConsumer) {
+        super(multichainConsumer);
+    }
 }

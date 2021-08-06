@@ -3,7 +3,6 @@ import { SensorDeviceEvent } from '../../sensordevice.event';
 
 @Exclude()
 export class DeviceRelocated extends SensorDeviceEvent {
-
     static version = '1';
 
     @Expose()
@@ -22,5 +21,4 @@ export class DeviceRelocated extends SensorDeviceEvent {
         this.description = description;
         this.location = location;
     }
-
 }
