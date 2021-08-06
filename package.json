@@ -1,6 +1,6 @@
 {
   "name": "sensrnet-sync-bridge",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "SensRNet Sync Bridge Component",
   "author": "https://github.com/kadaster-labs/sensrnet-home/blob/main/MAINTAINERS.md",
   "license": "EUPL-1.2",
