@@ -5,11 +5,7 @@ import { AbstractMultiChainProducer } from './abstract.mc.producer';
 
 @Injectable()
 export class LegalEntityMultiChainProducer extends AbstractMultiChainProducer {
-
-  constructor(
-    multichainService: MultiChainService,
-  ) {
-    super(`${legalEntityStreamRootValue}`, multichainService);
-  }
-
+    constructor(multichainService: MultiChainService) {
+        super(`${legalEntityStreamRootValue}`, multichainService);
+    }
 }

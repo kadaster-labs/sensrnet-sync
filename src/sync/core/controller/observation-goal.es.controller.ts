@@ -9,11 +9,7 @@ import { AbstractESController } from './abstract.es.controller';
 @Controller('ObservationGoalES')
 @UseFilters(new DomainExceptionFilter())
 export class ObservationGoalEsController extends AbstractESController {
-
-  constructor(
-    eventStoreListener: ObservationGoalEsListener,
-  ) {
-    super(eventStoreListener);
-  }
-
+    constructor(eventStoreListener: ObservationGoalEsListener) {
+        super(eventStoreListener);
+    }
 }

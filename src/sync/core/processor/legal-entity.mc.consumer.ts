@@ -9,25 +9,28 @@ import { AbstractMsConsumer } from './abstract.mc.consumer';
 
 @Injectable()
 export class LegalEntityMultiChainConsumer extends AbstractMsConsumer {
-
-  constructor(
-    eventStoreService: EventStore,
-    checkpointService: CheckpointService,
-    multichainService: MultiChainService,
-  ) {
-    super(`${legalEntityStreamRootValue}`, `sync-${legalEntityStreamRootValue}-multichain`,
-      eventStoreService, checkpointService, multichainService);
-  }
-
-  async publishToEventStore(eventMessage: ESEvent): Promise<void> {
-    const event: Event = legalEntityEventType.getEvent(eventMessage);
-
-    let result;
-    if (event) {
-      result = await this.eventStoreService.createEvent(event.toEventMessage());
+    constructor(
+        eventStoreService: EventStore,
+        checkpointService: CheckpointService,
+        multichainService: MultiChainService,
+    ) {
+        super(
+            `${legalEntityStreamRootValue}`,
+            `sync-${legalEntityStreamRootValue}-multichain`,
+            eventStoreService,
+            checkpointService,
+            multichainService,
+        );
     }
 
-    return result;
-  }
+    async publishToEventStore(eventMessage: ESEvent): Promise<void> {
+        const event: Event = legalEntityEventType.getEvent(eventMessage);
 
+        let result;
+        if (event) {
+            result = await this.eventStoreService.createEvent(event.toEventMessage());
+        }
+
+        return result;
+    }
 }

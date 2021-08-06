@@ -5,11 +5,7 @@ import { AbstractMultiChainProducer } from './abstract.mc.producer';
 
 @Injectable()
 export class SensorDeviceMultiChainProducer extends AbstractMultiChainProducer {
-
-  constructor(
-    multichainService: MultiChainService,
-  ) {
-    super(`${sensorDeviceStreamRootValue}`, multichainService);
-  }
-
+    constructor(multichainService: MultiChainService) {
+        super(`${sensorDeviceStreamRootValue}`, multichainService);
+    }
 }

@@ -7,14 +7,18 @@ import { ObservationGoalMultiChainProducer } from './observation-goal.mc.produce
 
 @Injectable()
 export class ObservationGoalEsListener extends AbstractESListener {
-
-  constructor(
-    multichainProducer: ObservationGoalMultiChainProducer,
-    eventStoreService: EventStore,
-    checkpointService: CheckpointService,
-  ) {
-    super(`$ce-${observationGoalStreamRootValue}`, `sync-${observationGoalStreamRootValue}-es`, observationGoalEventType, eventStoreService,
-      checkpointService, multichainProducer);
-  }
-
+    constructor(
+        multichainProducer: ObservationGoalMultiChainProducer,
+        eventStoreService: EventStore,
+        checkpointService: CheckpointService,
+    ) {
+        super(
+            `$ce-${observationGoalStreamRootValue}`,
+            `sync-${observationGoalStreamRootValue}-es`,
+            observationGoalEventType,
+            eventStoreService,
+            checkpointService,
+            multichainProducer,
+        );
+    }
 }

@@ -7,13 +7,18 @@ import { SensorDeviceMultiChainProducer } from './sensordevice.mc.producer';
 
 @Injectable()
 export class SensorDeviceESListener extends AbstractESListener {
-  constructor(
-    multichainProducer: SensorDeviceMultiChainProducer,
-    eventStoreService: EventStore,
-    checkpointService: CheckpointService,
-  ) {
-    super(`$ce-${sensorDeviceStreamRootValue}`, `sync-${sensorDeviceStreamRootValue}-es`, sensorDeviceEventType, eventStoreService, checkpointService,
-      multichainProducer);
-  }
-
+    constructor(
+        multichainProducer: SensorDeviceMultiChainProducer,
+        eventStoreService: EventStore,
+        checkpointService: CheckpointService,
+    ) {
+        super(
+            `$ce-${sensorDeviceStreamRootValue}`,
+            `sync-${sensorDeviceStreamRootValue}-es`,
+            sensorDeviceEventType,
+            eventStoreService,
+            checkpointService,
+            multichainProducer,
+        );
+    }
 }

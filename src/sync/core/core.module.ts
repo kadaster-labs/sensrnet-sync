@@ -21,34 +21,27 @@ import { SensorDeviceMultiChainConsumer } from './processor/sensordevice.mc.cons
 import { SensorDeviceMultiChainProducer } from './processor/sensordevice.mc.producer';
 
 @Module({
-  imports: [
-    CheckpointModule,
-    EventStoreModule,
-    MultiChainModule,
-    CoreModule,
-  ],
-  controllers: [
-    LegalEntityEsController,
-    LegalEntityMultiChainController,
-    ObservationGoalEsController,
-    ObservationGoalMultiChainController,
-    SensorDeviceESController,
-    SensorDeviceMultiChainController,
-  ],
-  providers: [
-    EventStore,
-    MultiChainConfig,
-    LegalEntityEsListener,
-    ObservationGoalEsListener,
-    SensorDeviceESListener,
-    LegalEntityMultiChainConsumer,
-    LegalEntityMultiChainProducer,
-    ObservationGoalMultiChainConsumer,
-    ObservationGoalMultiChainProducer,
-    SensorDeviceMultiChainConsumer,
-    SensorDeviceMultiChainProducer,
-  ],
+    imports: [CheckpointModule, EventStoreModule, MultiChainModule, CoreModule],
+    controllers: [
+        LegalEntityEsController,
+        LegalEntityMultiChainController,
+        ObservationGoalEsController,
+        ObservationGoalMultiChainController,
+        SensorDeviceESController,
+        SensorDeviceMultiChainController,
+    ],
+    providers: [
+        EventStore,
+        MultiChainConfig,
+        LegalEntityEsListener,
+        ObservationGoalEsListener,
+        SensorDeviceESListener,
+        LegalEntityMultiChainConsumer,
+        LegalEntityMultiChainProducer,
+        ObservationGoalMultiChainConsumer,
+        ObservationGoalMultiChainProducer,
+        SensorDeviceMultiChainConsumer,
+        SensorDeviceMultiChainProducer,
+    ],
 })
-
-export class CoreModule {
-}
+export class CoreModule {}

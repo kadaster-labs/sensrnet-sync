@@ -3,19 +3,18 @@ import { ObservationGoalEvent } from '../observation-goal.event';
 
 @Exclude()
 export class ObservationGoalRemoved extends ObservationGoalEvent {
+    static version = '1';
 
-  static version = '1';
+    @Expose()
+    readonly observationGoalId: string;
 
-  @Expose()
-  readonly observationGoalId: string;
+    @Expose()
+    readonly legalEntityId: string;
 
-  @Expose()
-  readonly legalEntityId: string;
+    constructor(observationGoalId: string, legalEntityId: string) {
+        super(observationGoalId, ObservationGoalRemoved.version);
 
-  constructor(observationGoalId: string, legalEntityId: string) {
-    super(observationGoalId, ObservationGoalRemoved.version);
-
-    this.observationGoalId = observationGoalId;
-    this.legalEntityId = legalEntityId;
-  }
+        this.observationGoalId = observationGoalId;
+        this.legalEntityId = legalEntityId;
+    }
 }

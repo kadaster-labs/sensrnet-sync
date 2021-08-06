@@ -5,11 +5,7 @@ import { AbstractMultiChainProducer } from './abstract.mc.producer';
 
 @Injectable()
 export class ObservationGoalMultiChainProducer extends AbstractMultiChainProducer {
-
-  constructor(
-    multichainService: MultiChainService,
-  ) {
-    super(`${observationGoalStreamRootValue}`, multichainService);
-  }
-
+    constructor(multichainService: MultiChainService) {
+        super(`${observationGoalStreamRootValue}`, multichainService);
+    }
 }

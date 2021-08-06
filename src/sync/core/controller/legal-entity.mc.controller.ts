@@ -9,11 +9,7 @@ import { AbstractMultiChainController } from './abstract.ms.controller';
 @Controller('LegalEntityMC')
 @UseFilters(new DomainExceptionFilter())
 export class LegalEntityMultiChainController extends AbstractMultiChainController {
-
-  constructor(
-    multichainConsumer: LegalEntityMultiChainConsumer,
-  ) {
-    super(multichainConsumer);
-  }
-
+    constructor(multichainConsumer: LegalEntityMultiChainConsumer) {
+        super(multichainConsumer);
+    }
 }
