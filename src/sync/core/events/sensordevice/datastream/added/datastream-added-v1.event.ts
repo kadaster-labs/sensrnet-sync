@@ -13,7 +13,7 @@ export class DatastreamAdded extends SensorDeviceEvent {
     readonly legalEntityId: string;
 
     @Expose()
-    readonly dataStreamId: string;
+    readonly datastreamId: string;
 
     @Expose()
     readonly name: string;
@@ -54,14 +54,14 @@ export class DatastreamAdded extends SensorDeviceEvent {
     @Expose()
     readonly dataLink: string;
 
-    constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, dataStreamId: string, name: string,
+    constructor(sensorDeviceId: string, sensorId: string, legalEntityId: string, datastreamId: string, name: string,
         description: string, unitOfMeasurement: Record<string, any>, observationArea: Record<string, any>,
         theme: string[], dataQuality: string, isActive: boolean, isPublic: boolean, isOpenData: boolean,
         containsPersonalInfoData: boolean, isReusable: boolean, documentation: string, dataLink: string) {
         super(sensorDeviceId, DatastreamAdded.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;
-        this.dataStreamId = dataStreamId;
+        this.datastreamId = datastreamId;
         this.name = name;
         this.description = description;
         this.unitOfMeasurement = unitOfMeasurement;

@@ -7,11 +7,11 @@ export class DatastreamRemoved extends SensorDeviceEvent {
   static version = '1';
 
   @Expose()
-  public readonly dataStreamId: string;
+  public readonly datastreamId: string;
 
-  constructor(sensorDeviceId: string, dataStreamId: string) {
+  constructor(sensorDeviceId: string, datastreamId: string) {
     super(sensorDeviceId, DatastreamRemoved.version);
-    this.dataStreamId = dataStreamId;
+    this.datastreamId = datastreamId;
   }
 
 }
