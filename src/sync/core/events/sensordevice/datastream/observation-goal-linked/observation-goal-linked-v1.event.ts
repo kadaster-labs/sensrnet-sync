@@ -13,7 +13,7 @@ export class ObservationGoalLinked extends SensorDeviceEvent {
     readonly legalEntityId: string;
 
     @Expose()
-    readonly dataStreamId: string;
+    readonly datastreamId: string;
 
     @Expose()
     readonly observationGoalId: string;
@@ -23,7 +23,7 @@ export class ObservationGoalLinked extends SensorDeviceEvent {
         super(sensorDeviceId, ObservationGoalLinked.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;
-        this.dataStreamId = datastreamId;
+        this.datastreamId = datastreamId;
         this.observationGoalId = observationGoalId;
     }
 
