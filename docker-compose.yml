@@ -2,8 +2,10 @@ version: '3.7'
 
 networks:
   backend:
-    name: backend
+    name: sensrnet-network
     driver: bridge
+    ipam:
+      driver: default
 
 services:
   sync-bridge:
