@@ -18,7 +18,11 @@ const mockEventStore = {
     exists: async () => true,
     getEvents: () => [],
     connect: (): void => void 0,
-    subscribeToStreamFrom: async () => true,
+    subscribeToStreamFrom: async () => ({
+        _connection: {
+            on: () => true,
+        },
+    }),
 };
 
 const mockCheckpointService = {
