@@ -33,7 +33,7 @@
     "@nestjs/terminus": "^7.0.1",
     "class-transformer": "^0.3.2",
     "class-validator": "^0.12.2",
-    "geteventstore-promise": "^3.2.4",
+    "geteventstore-promise": "^4.0.0",
     "mongoose": "^5.11.10",
     "multinodejs": "^2.0.0",
     "patch-package": "^6.2.2",
