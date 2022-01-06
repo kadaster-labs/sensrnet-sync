@@ -1,26 +1,11 @@
 import { Exclude, Expose } from 'class-transformer';
-import { SensorDeviceEvent } from '../../sensordevice.event';
+import { DatastreamUpdatedBase } from './datastream-updated-base.event';
 
 @Exclude()
-export class DatastreamUpdated extends SensorDeviceEvent {
+export class DatastreamUpdated extends DatastreamUpdatedBase {
     static version = '2';
 
-    @Expose() readonly sensorId: string;
-    @Expose() readonly legalEntityId: string;
-    @Expose() readonly datastreamId: string;
-    @Expose() readonly name: string;
-    @Expose() readonly description: string;
-    @Expose() readonly unitOfMeasurement: Record<string, any>;
     @Expose() readonly observedArea: Record<string, any>;
-    @Expose() readonly theme: string[];
-    @Expose() readonly dataQuality: string;
-    @Expose() readonly isActive: boolean;
-    @Expose() readonly isPublic: boolean;
-    @Expose() readonly isOpenData: boolean;
-    @Expose() readonly containsPersonalInfoData: boolean;
-    @Expose() readonly isReusable: boolean;
-    @Expose() readonly documentation: string;
-    @Expose() readonly dataLink: string;
 
     constructor(
         sensorDeviceId: string,
@@ -41,22 +26,25 @@ export class DatastreamUpdated extends SensorDeviceEvent {
         documentation: string,
         dataLink: string,
     ) {
-        super(sensorDeviceId, DatastreamUpdated.version);
-        this.sensorId = sensorId;
-        this.legalEntityId = legalEntityId;
-        this.datastreamId = datastreamId;
-        this.name = name;
-        this.description = description;
-        this.unitOfMeasurement = unitOfMeasurement;
+        super(
+            sensorDeviceId,
+            sensorId,
+            legalEntityId,
+            datastreamId,
+            name,
+            description,
+            unitOfMeasurement,
+            theme,
+            dataQuality,
+            isActive,
+            isPublic,
+            isOpenData,
+            containsPersonalInfoData,
+            isReusable,
+            documentation,
+            dataLink,
+            DatastreamUpdated.version,
+        );
         this.observedArea = observedArea;
-        this.theme = theme;
-        this.dataQuality = dataQuality;
-        this.isActive = isActive;
-        this.isPublic = isPublic;
-        this.isOpenData = isOpenData;
-        this.containsPersonalInfoData = containsPersonalInfoData;
-        this.isReusable = isReusable;
-        this.documentation = documentation;
-        this.dataLink = dataLink;
     }
 }
