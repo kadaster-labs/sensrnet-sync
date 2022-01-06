@@ -1,10 +1,8 @@
 import { Exclude, Expose } from 'class-transformer';
-import { SensorDeviceEvent } from '../../sensordevice.event';
+import { SensorDeviceEvent } from '../sensordevice.event';
 
 @Exclude()
-export class DatastreamUpdatedBase extends SensorDeviceEvent {
-    static version = '1';
-
+export class DatastreamBase extends SensorDeviceEvent {
     @Expose() readonly sensorId: string;
     @Expose() readonly legalEntityId: string;
     @Expose() readonly datastreamId: string;

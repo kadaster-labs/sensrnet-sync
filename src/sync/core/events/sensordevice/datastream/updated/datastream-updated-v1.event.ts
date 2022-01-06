@@ -1,8 +1,8 @@
 import { Exclude, Expose } from 'class-transformer';
-import { DatastreamUpdatedBase } from './datastream-updated-base.event';
+import { DatastreamBase } from '../datastream-base.event';
 
 @Exclude()
-export class DatastreamUpdated extends DatastreamUpdatedBase {
+export class DatastreamUpdated extends DatastreamBase {
     static version = '1';
 
     @Expose() readonly observationArea: Record<string, any>;
