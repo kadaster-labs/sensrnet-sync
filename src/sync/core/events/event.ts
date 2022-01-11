@@ -5,21 +5,22 @@ import { EventMessage } from './event-message';
 export abstract class Event {
     public readonly version: string;
 
-    @Expose()
-    public readonly aggregateId: string;
+    @Expose() public eventType: string;
 
-    @Expose()
-    public readonly eventType: string;
+    @Expose() public readonly aggregateId: string;
 
     protected constructor(aggregateId: string, version: string) {
         this.aggregateId = aggregateId;
         this.version = version;
     }
 
+    setEventType(eventType: string): void {
+        this.eventType = eventType;
+    }
+
     abstract streamRoot(): string;
 
-    @Expose()
-    toEventMessage(): EventMessage {
+    @Expose() toEventMessage(): EventMessage {
         const { version, ...eventData } = this;
 
         return new EventMessage(`${this.streamRoot()}-${this.aggregateId}`, this.constructor.name, eventData, {

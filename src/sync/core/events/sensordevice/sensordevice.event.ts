@@ -6,8 +6,7 @@ import { sensorDeviceStreamRootValue } from './sensordevice.stream';
 export abstract class SensorDeviceEvent extends Event {
     static streamRootValue = sensorDeviceStreamRootValue;
 
-    @Expose()
-    readonly deviceId: string;
+    @Expose() readonly deviceId: string;
 
     protected constructor(sensorDeviceId: string, version: string) {
         super(sensorDeviceId, version);
