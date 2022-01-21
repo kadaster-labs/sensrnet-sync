@@ -10,7 +10,7 @@ services:
     build:
       context: .
     ports:
-      - 3500:3500
+      - "3500:3500"
     environment:
       - PORT=3500
       - MULTICHAIN_HOST=host.docker.internal

@@ -2,8 +2,8 @@ import { Exclude, Expose } from 'class-transformer';
 import { SensorDeviceEvent } from '../../sensordevice.event';
 
 @Exclude()
-export class DatastreamAdded extends SensorDeviceEvent {
-    static version = '1';
+export class DatastreamUpdated extends SensorDeviceEvent {
+    static version = '2';
 
     @Expose() readonly sensorId: string;
     @Expose() readonly legalEntityId: string;
@@ -11,7 +11,7 @@ export class DatastreamAdded extends SensorDeviceEvent {
     @Expose() readonly name: string;
     @Expose() readonly description: string;
     @Expose() readonly unitOfMeasurement: Record<string, any>;
-    @Expose() readonly observationArea: Record<string, any>;
+    @Expose() readonly observedArea: Record<string, any>;
     @Expose() readonly theme: string[];
     @Expose() readonly dataQuality: string;
     @Expose() readonly isActive: boolean;
@@ -30,7 +30,7 @@ export class DatastreamAdded extends SensorDeviceEvent {
         name: string,
         description: string,
         unitOfMeasurement: Record<string, any>,
-        observationArea: Record<string, any>,
+        observedArea: Record<string, any>,
         theme: string[],
         dataQuality: string,
         isActive: boolean,
@@ -41,14 +41,14 @@ export class DatastreamAdded extends SensorDeviceEvent {
         documentation: string,
         dataLink: string,
     ) {
-        super(sensorDeviceId, DatastreamAdded.version);
+        super(sensorDeviceId, DatastreamUpdated.version);
         this.sensorId = sensorId;
         this.legalEntityId = legalEntityId;
         this.datastreamId = datastreamId;
         this.name = name;
         this.description = description;
         this.unitOfMeasurement = unitOfMeasurement;
-        this.observationArea = observationArea;
+        this.observedArea = observedArea;
         this.theme = theme;
         this.dataQuality = dataQuality;
         this.isActive = isActive;
