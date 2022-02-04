@@ -31,7 +31,7 @@ export abstract class AbstractMsConsumer implements OnModuleInit {
         await this.checkpointService.updateOne({ _id: this.checkpointId }, { offset });
     }
 
-    abstract async publishToEventStore(eventMessage: ESEvent): Promise<void>;
+    abstract publishToEventStore(eventMessage: ESEvent): Promise<void>;
 
     async listenerLoop(): Promise<void> {
         const offset = await this.getOffset();
