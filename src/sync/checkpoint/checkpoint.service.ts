@@ -7,11 +7,11 @@ import { Checkpoint } from './checkpoint.interface';
 export class CheckpointService {
     constructor(@InjectModel('Checkpoint') private checkpointModel: Model<Checkpoint>) {}
 
-    async findOne(conditions: FilterQuery<any>): Promise<Checkpoint> {
+    async findOne(conditions: FilterQuery<Checkpoint>): Promise<Checkpoint> {
         return this.checkpointModel.findOne(conditions);
     }
 
-    async updateOne(conditions: FilterQuery<any>, update: UpdateQuery<any>): Promise<any> {
+    async updateOne(conditions: FilterQuery<Checkpoint>, update: UpdateQuery<Checkpoint>): Promise<any> {
         const options = { upsert: true };
         return this.checkpointModel.updateOne(conditions, update, options);
     }
