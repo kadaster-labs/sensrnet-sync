@@ -33,7 +33,7 @@
     "class-transformer": "^0.3.2",
     "class-validator": "^0.12.2",
     "geteventstore-promise": "^4.0.0",
-    "mongoose": "^6.2.0",
+    "mongoose": "^6.12.0",
     "multinodejs": "^2.0.0",
     "patch-package": "^6.2.2",
     "reflect-metadata": "^0.1.13",
